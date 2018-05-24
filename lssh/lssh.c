@@ -3,13 +3,11 @@
 #include <unistd.h>
 #include <string.h>
 
-#include <fcntl.h>
-
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -64,10 +62,6 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
-    char *redir_outfile = NULL;
-
-    char **args_pipe = NULL;
-
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
@@ -95,31 +89,6 @@ int main(void)
             break;
         }
 
-        if (strcmp(args[0], "cd") == 0) {
-            if (args_count != 2) {
-                printf("usage: cd dirname\n");
-                continue;
-            }
-
-            if (chdir(args[1]) == -1) {
-                perror("chdir failed");
-                continue;
-            }
-        }
-
-        if (args_count >= 3 && strcmp(args[args_count-2], ">") == 0) {
-            redir_outfile = args[args_count-1];
-            args[args_count-2] = NULL;
-        }
-
-        for (int i = 0; i < args_count; i++) {
-            if (strcmp(args[i], "|") == 0) {
-                args_pipe = args + i + 1;
-
-                args[i] = NULL;
-            }
-        } 
-
         #if DEBUG
 
         // Some debugging output
@@ -132,74 +101,7 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        int bg = 0;
-
-        if (strcmp(args[args_count-1], "&") == 0) {
-            bg = 1;
-
-            args[args_count-1] = NULL;
-        }
-
-        while (waitpid(-1, NULL, WNOHANG) > 0) {
-            ;
-        }
-
-        pid_t child_pid = fork();
-
-        if (child_pid == -1) {
-            perror("fork failed");
-            continue;
-        }
-
-        if (child_pid == 0) {
-            if (redir_outfile != NULL) {
-                int fd = open(redir_outfile, O_CREAT|O_WRONLY);
-                
-                if (fd == -1) {
-                    perror("failed to open file\n");
-                } else {
-                    dup2(fd, 1);
-                }
-            }
-
-            if (args_pipe != NULL) {
-                int fds[2];
-
-                if (pipe(fds) < 0) {
-                    perror("pipe failed");
-                }
-
-                pid_t pipe_child_pid = fork();
-
-                if (pipe_child_pid == -1) {
-                    perror("fork failed");
-                    continue;
-                }
-
-                if (pipe_child_pid == 0) {
-                    dup2(fds[0], 0);
-                    close(fds[1]);
-
-                    execvp(args_pipe[0], args_pipe);
-                    perror("execvp failed");
-                
-                } else {
-                    dup2(fds[1], 1);
-                    close(fds[0]);
-
-                    execvp(args[0], args);
-                    perror("exec failed");
-                }
-            }
-
-            execvp(args[0], args); 
-            perror("exec failed");
-
-        } else {
-            if (!bg) {
-                waitpid(child_pid, 0, 0);
-            }
-        }
+        
     }
 
     return 0;
