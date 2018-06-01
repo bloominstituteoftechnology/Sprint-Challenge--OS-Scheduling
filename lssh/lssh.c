@@ -98,10 +98,31 @@ int main(void)
             printf("%d: '%s'\n", i, args[i]);
         }
 
+        if(strcmp(args[0], "cd") == 0){
+          if(args_count == 2){
+            int flag = chdir(args[1]);
+            if(flag == -1){
+              perror("chdir");
+            }
+          }
+          continue;
+        }
+
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+
+        int rc = fork();
+        if(rc < 0){
+          fprintf(stderr, "fork failed\n");
+          exit(1);
+        }
+        else if(rc == 0){
+          execvp(args[0],args);
+        }
+        else{
+          waitpid(rc,NULL,0);
+        }
     }
 
     return 0;
