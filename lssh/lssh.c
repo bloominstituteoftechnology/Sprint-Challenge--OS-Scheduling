@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -101,7 +102,25 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        pid_t pid, wpid;
+        int status;
+
+        pid = fork();
+        if (pid == 0) {
+            if (execvp(args[0], args) == -1) {
+                perror("Error");
+                break;
+            }
+        } 
+        else if (pid < 0) {
+            perror("error");
+        } 
+        else {
+            do {
+                wpid = waitpid(pid, &status, WUNTRACED);
+            } 
+            while (!WIFEXITED(status) && !WIFSIGNALED(status));
+        }
     }
 
     return 0;

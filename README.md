@@ -5,10 +5,15 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+- Translates applications to machine code
+- Schedules processes
+- Communicates directly with I/O devices
 
 2. Describe the job of the Scheduler in the OS in general.
+The scheduler dynamically and perpetually establishes the priority of all queued processes, and delivers the highest priority process(es) to the cpu.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+An MLFQ reduces redundancy by managing priorities based on observed behavior. When a process enters the queue, it is given highest priority. If it uses up the allocated time slice, it moves to a lower priority queue. If it gives up the CPU early, then it gets to keep its high priority. This has an administrative cost, but the turnaround is still higher than a less hierarchical alternative.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
