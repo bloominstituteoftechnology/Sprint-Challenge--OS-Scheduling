@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -88,15 +89,22 @@ int main(void)
             continue;
         }
 
-        // if (strcmp(args[0], "cd") == 0)
-        // {
-        //     // char cmd[1024] = "";
-        //     // strcat(cmd, "/usr/bin/");
-        //     // strcat("/usr/bin/cd"/, args[0]);
-        //     // args[0] = cmd;
-        //     execvp("/usr/bin/cd", args);
-        //     continue;
-        // }
+        if (strcmp(args[0], "cd") == 0)
+        {
+            if (args_count == 2)
+            {
+                int err = chdir(args[1]);
+                if (err < 0)
+                {
+                    perror("chdir\n");
+                }
+            }
+            else
+            {
+                printf("usage: cd [directory]\n");
+            }
+            continue;
+        }
 
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0)
@@ -128,9 +136,9 @@ int main(void)
         }
         else if (rc == 0)
         {
-            char command[1024] = "";
-            strcat(command, "/bin/");
-            strcat(command, args[0]);
+            // char command[1024] = "";
+            // strcat(command, "/usr/");
+            // strcat(command, args[0]);
             // args[0] = command;
             // char *argv[1024];
             // int i;
@@ -139,7 +147,7 @@ int main(void)
             //     argv[i - 1] = args[i];
             // }
             // argv[i - 1] = NULL;
-            printf("%s\n", args[0]);
+            // printf("%s\n", args[0]);
             // printf("in child\n");
             // int j;
             // for (j = 0; argv[j] != NULL; j++)
@@ -147,7 +155,7 @@ int main(void)
             //     printf("%s\n", argv[j]);
             // }
             // printf("%s\n", argv[j]);
-            execvp(command, args);
+            execvp(args[0], args);
         }
         else
         {
