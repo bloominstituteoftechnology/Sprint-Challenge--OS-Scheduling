@@ -125,17 +125,17 @@ int main(void)
                 {
                     perror("bad");
                 }
-                else
-                {
-                    exit(1);
-                }
             }
-            execvp(args[0], args);
             if (execvp(args[0], args) == -1)
             {
                 perror("hellz no");
             }
-            exit(1);
+            execvp(args[0], args);
+            // exit(1);
+        }
+        else
+        {
+            waitpid(fk, NULL, 0);
         }
 
         // exit(2);
