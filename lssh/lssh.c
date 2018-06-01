@@ -115,7 +115,7 @@ int main(void)
             fprintf(stderr, "Error occured when forking!\n");
             exit(1);
         }
-        else if (rc == 1)
+        else if (rc == 0)
         {
             printf("Child process\n");
 
