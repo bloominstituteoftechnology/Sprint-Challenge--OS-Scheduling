@@ -123,11 +123,11 @@ int main(void)
 
                 if (dir < 0)
                 {
-                    perror("chdir");
+                    perror("bad");
                 }
                 else
                 {
-                    continue;
+                    exit(1);
                 }
             }
             execvp(args[0], args);
@@ -138,7 +138,7 @@ int main(void)
             exit(1);
         }
 
-        // continue;
+        // exit(2);
     }
 
     return 0;
