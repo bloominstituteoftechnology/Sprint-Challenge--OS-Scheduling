@@ -118,6 +118,27 @@ int main(void)
         }
         else if (rc == 0)
         {
+            if (strcmp(args[0], "cd") == 0)
+            {
+                printf("handling cd\n\n");
+
+                // check if 2 arguments entered if not prompt user
+                if (args_count != 2)
+                {
+                    printf("Usage: cd [path]");
+                }
+
+                // run chdir() on second arg
+                chdir(args[1]);
+
+                // handle chdir error
+                if (chdir(args[1]) == -1)
+                {
+                    printf("in chdir: %d\n", chdir(args[1]));
+                    perror("chdir");
+                }
+                continue;
+            }
 
             int exe_value = execvp(*args, args);
 
@@ -127,6 +148,7 @@ int main(void)
                 printf("ERROR: exec failure\n");
             }
         }
+
         else
         {
             waitpid(rc, NULL, 0);
