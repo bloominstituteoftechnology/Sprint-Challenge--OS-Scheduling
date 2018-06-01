@@ -7,7 +7,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 1 // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -31,21 +31,22 @@
  */
 char **parse_commandline(char *str, char **args, int *args_count)
 {
-    char *token;
-    
-    *args_count = 0;
+  char *token;
 
-    token = strtok(str, " \t\n\r");
+  *args_count = 0;
 
-    while (token != NULL && *args_count < MAX_TOKENS - 1) {
-        args[(*args_count)++] = token;
+  token = strtok(str, " \t\n\r");
 
-        token = strtok(NULL, " \t\n\r");
-    }
+  while (token != NULL && *args_count < MAX_TOKENS - 1)
+  {
+    args[(*args_count)++] = token;
 
-    args[*args_count] = NULL;
+    token = strtok(NULL, " \t\n\r");
+  }
 
-    return args;
+  args[*args_count] = NULL;
+
+  return args;
 }
 
 /**
@@ -53,56 +54,91 @@ char **parse_commandline(char *str, char **args, int *args_count)
  */
 int main(void)
 {
-    // Holds the command line the user types in
-    char commandline[COMMANDLINE_BUFSIZE];
+  // Holds the command line the user types in
+  char commandline[COMMANDLINE_BUFSIZE];
 
-    // Holds the parsed version of the command line
-    char *args[MAX_TOKENS];
+  // Holds the parsed version of the command line
+  char *args[MAX_TOKENS];
 
-    // How many command line args the user typed
-    int args_count;
+  // How many command line args the user typed
+  int args_count;
 
-    // Shell loops forever (until we tell it to exit)
-    while (1) {
-        // Print a prompt
-        printf("%s", PROMPT);
-        fflush(stdout); // Force the line above to print
+  // Shell loops forever (until we tell it to exit)
+  while (1)
+  {
+    // Print a prompt
+    printf("%s", PROMPT);
+    fflush(stdout); // Force the line above to print
 
-        // Read input from keyboard
-        fgets(commandline, sizeof commandline, stdin);
+    // Read input from keyboard
+    fgets(commandline, sizeof commandline, stdin);
 
-        // Exit the shell on End-Of-File (CRTL-D)
-        if (feof(stdin)) {
-            break;
-        }
-
-        // Parse input into individual arguments
-        parse_commandline(commandline, args, &args_count);
-
-        if (args_count == 0) {
-            // If the user entered no commands, do nothing
-            continue;
-        }
-
-        // Exit the shell if args[0] is the built-in "exit" command
-        if (strcmp(args[0], "exit") == 0) {
-            break;
-        }
-
-        #if DEBUG
-
-        // Some debugging output
-
-        // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
-
-        #endif
-        
-        /* Add your code for implementing the shell's logic here */
-        
+    // Exit the shell on End-Of-File (CRTL-D)
+    if (feof(stdin))
+    {
+      break;
     }
 
-    return 0;
+    // Parse input into individual arguments
+    parse_commandline(commandline, args, &args_count);
+
+    if (args_count == 0)
+    {
+      // If the user entered no commands, do nothing
+      continue;
+    }
+
+    // Exit the shell if args[0] is the built-in "exit" command
+    if (strcmp(args[0], "exit") == 0)
+    {
+      break;
+    }
+
+#if DEBUG
+
+    // Some debugging output
+
+    // Print out the parsed command line in args[]
+    for (int i = 0; args[i] != NULL; i++)
+    {
+      printf("%d: '%s'\n", i, args[i]);
+    }
+
+#endif
+
+    /* Add your code for implementing the shell's logic here */
+
+    int status, wc;
+    int rc = fork();
+
+    if (rc == 0)
+    {
+      if (strcmp(args[0], "cd") == 0)
+      {
+        if (args_count < 2)
+          printf("Enter directory\n");
+        else
+        {
+          int cd = chdir(args[1]);
+          if (cd < 0)
+            perror("lssh");
+          continue;
+        }
+      }
+      else if (execvp(args[0], args) < 0)
+        perror("lssh");
+      exit(1);
+    }
+    else if (rc < 0)
+      perror("lssh");
+    else
+    {
+      do
+      {
+        wc = waitpid(rc, &status, WUNTRACED);
+      } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    }
+  }
+
+  return 0;
 }
