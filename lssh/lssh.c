@@ -102,6 +102,21 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
+        int rc = fork();
+        if(rc < 0) {
+        	fprintf(stderr, "\n\nThere was a problem while forking, please try again\n\n");
+        	exit(1);
+		}
+		else if(rc == 0) {
+			printf("\n\nIn the child process!\n\n");
+			execvp(args[0], args);
+		}
+		else {
+			int wc = waitpid(rc, NULL, 0);
+			printf("\n\nParent here!\n\n");
+			
+		}
+        
     }
 
     return 0;
