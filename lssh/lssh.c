@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -107,6 +108,31 @@ int main(void)
 #endif
 
         /* Add your code for implementing the shell's logic here */
+        int fk = fork();
+
+        if (fk < 0)
+        {
+            printf(stderr, "OMGFE!!!");
+            exit(1);
+        }
+        else if (fk == 0)
+        {
+            if (strcmp(args[0], "cd") == 0)
+            {
+                int dir = chdir(args[1]);
+
+                if (dir < 0)
+                {
+                    perror("chdir");
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            execvp(args[0], args);
+            // exit(2);
+        }
     }
 
     return 0;
