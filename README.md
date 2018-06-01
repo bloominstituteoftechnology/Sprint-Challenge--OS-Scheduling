@@ -1,6 +1,6 @@
 # Sprint Challenge: Operating Systems and Scheduling
 
-## Multiple Choice and Short Answer Questions
+## Short Answer Questions
 
 Add your answers inline, below, with your pull request.
 
