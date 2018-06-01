@@ -15,7 +15,7 @@ The job of the Scheduler in the OS in general is it selects processes from the q
 The benefits of the MLFQ over a plain Round-Robin scheduler are that the MLFQ has 
 several OS schedulers that use queues for scheduling jobs and allows a process to 
 move between queues. It will help with speed and make it easier for small jobs. Round-Robin
-scheduler that its time with the process because from the CPU it spreads time between many different vying processes all at once. 
+scheduler that its time with the process because from the CPU it spreads time between many different vying processes all at once.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
