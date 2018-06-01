@@ -61,12 +61,12 @@ lambda-shell$ exit
 General plan of attack is to:
 
 * Loop until the user exits.
-  * Print a prompt.
-  * Read a line of input from the keyboard.
-  * Parse that line down into individual space-separated parts of the command.
-  * Fork a child process to run the new command.
-  * Exec the command in the child process.
-  * Parent process waits for child to complete.
+  * [x] Print a prompt.
+  * [x] Read a line of input from the keyboard.
+  * [x] Parse that line down into individual space-separated parts of the command.
+  * [] Fork a child process to run the new command.
+  * [] Exec the command in the child process.
+  * [] Parent process waits for child to complete.
 
 Most of the shell's boilerplate is already written, but you'll have to implement the logic of it.
 
@@ -132,7 +132,7 @@ Note that `.` and `..` are actual directories. You don't need to write any speci
 
 Be sure to think about where this functionality should live in the file. The order of execution of the code matters!
 
-### Stretch Goal 1: Background Tasks
+# Stretch Goal 1: Background Tasks
 
 In bash, you can run a program in the background by adding an `&` after the command.
 
@@ -168,7 +168,7 @@ Mini stretch challenge: wait for the `SIGCHLD` signal and put the above `while` 
 Note that you might get weird output when doing this, like the prompt might appear before the program completes, or not at all if the program's output overwrites it. If it looks like it hangs at the end, just hit `RETURN` to get
 another prompt back.
 
-### Stretch Goal 2: File Redirection
+# Stretch Goal 2: File Redirection
 
 In bash, you can redirect the output of a program into a file with `>`. This creates a new file and puts the output of the command in there instead of writing it to the screen.
 
