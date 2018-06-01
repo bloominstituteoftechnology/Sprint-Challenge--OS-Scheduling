@@ -107,8 +107,6 @@ int main(void)
             exit(1);
         }
         else if (rc == 0) {
-            printf("hello, child here (pid: %d) \n", (int) getpid());
-            char *args[]={"/bin/ls",NULL};
             execvp(args[0], args);
         } else {
             int wc = waitpid(rc, NULL, 0);
