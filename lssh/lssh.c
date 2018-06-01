@@ -79,6 +79,8 @@ int main(void)
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
+        while(waitpid(-1,NULL,WNOHANG) >0);
+
         if (args_count == 0) {
             // If the user entered no commands, do nothing
             continue;
@@ -112,18 +114,30 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
 
-        int rc = fork();
-        if(rc < 0){
-          fprintf(stderr, "fork failed\n");
-          exit(1);
-        }
-        else if(rc == 0){
-          execvp(args[0],args);
+        if(strcmp(args[args_count -1],"&") ==0){
+          args[args_count-1] = NULL;
+          int rc = fork();
+          if(rc < 0){
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+          }
+          else if(rc == 0){
+            execvp(args[0],args);
+          }
         }
         else{
-          waitpid(rc,NULL,0);
+          int rc = fork();
+          if(rc < 0){
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+          }
+          else if(rc == 0){
+            execvp(args[0],args);
+          }
+          else{
+            waitpid(rc,NULL,0);
+          }
         }
     }
-
     return 0;
 }
