@@ -8,7 +8,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -107,9 +107,24 @@ int main(void)
             fprintf(stderr, "fork failed\n");
             exit(1);
         }
-        //cd
         else if (rc == 0) {
-            if (strcmp(args[0], "cd") == 0) {
+            //redirect
+            int redir_check = -1;
+            for (int i = 0; i < args_count - 1; i++) {
+                if (strcmp(args[i], ">") == 0) {
+                    redir_check = i + 1;
+                    args[i] = NULL;
+                    break;
+                }
+            }
+            if (redir_check > 0) {
+                printf("%d", redir_check);
+                int fd = open(args[redir_check]);
+                dup2(fd, 1);
+                execvp(args[0], args);
+            }
+            //cd
+            else if (strcmp(args[0], "cd") == 0) {
                 if (args_count < 2) printf("ERR: enter directory to change to\n");
                 else {
                     int change = chdir(args[1]);
@@ -117,14 +132,15 @@ int main(void)
                     continue;
                 }
             }
-        //&
+            //&
             else if (strcmp(args[args_count - 1], "&") == 0) {
+                printf("wehitgold!");
                 args[args_count - 1] = NULL;
                 execvp(args[0], args);
                 printf("%s", PROMPT);
                 fflush(stdout);
             }
-        //execute other commands
+            //execute other commands
             else execvp(args[0], args);
         } else {
             int wc = waitpid(rc, NULL, 0);
