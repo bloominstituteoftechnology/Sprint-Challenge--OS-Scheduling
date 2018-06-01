@@ -108,6 +108,7 @@ int main(void)
 #endif
 
     /* Add your code for implementing the shell's logic here */
+    pid_t paid;
     int rc = fork();
 
     if (rc < 0)
@@ -116,7 +117,19 @@ int main(void)
     }
     else if (rc == 0)
     {
-      execvp(args[0], args[1]);
+      printf("I am here");
+      execvp(args[0], args);
+      continue;
+    }
+    else
+    {
+      do
+      {
+        paid = wait(&rc);
+        if (paid != rc)
+          exit(1);
+      } while (paid != rc);
+      return rc;
     }
 
     return 0;
