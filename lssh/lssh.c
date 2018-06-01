@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -89,6 +90,13 @@ int main(void)
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
             break;
+        }
+
+        // CD functionality
+        if(strcmp(args[0], "cd") == 0){
+            chdir(args[1]);
+            perror("chdir");
+            continue;
         }
 
         #if DEBUG
