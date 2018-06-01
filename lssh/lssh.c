@@ -112,8 +112,8 @@ int main(void)
 
         if (fk < 0)
         {
-            printf(stderr, "OMGFE!!!");
-            exit(1);
+            perror("nope");
+            // exit(1);
         }
         else if (fk == 0)
         {
@@ -131,8 +131,14 @@ int main(void)
                 }
             }
             execvp(args[0], args);
-            // exit(2);
+            if (execvp(args[0], args) == -1)
+            {
+                perror("hellz no");
+            }
+            exit(1);
         }
+
+        // continue;
     }
 
     return 0;
