@@ -101,6 +101,16 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int rc = fork();
+
+       if (rc < 0) {
+           fprintf(stderr, "Child process failed.\n");
+           exit(1);
+       } else if (rc == 0) {
+           execvp(args[0], args);
+       } else {
+           int wc = waitpid(rc, NULL, 0);
+       }
         
     }
 
