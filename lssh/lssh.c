@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -101,6 +102,42 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+    
+    int rc = fork();
+    if (rc < 0) {    
+        fprintf(stderr, "fork failed\n");
+        exit(1);
+    } else if (rc == 0) {
+            if (strcmp(args[0], "cd") == 0 ) {
+             printf("you have reached CD Land\n");   
+            chdir(args[1]);
+            perror("chdir");
+            continue;
+        }
+
+
+
+
+            if (args_count == 1) {
+                printf("hello, 2 args child here\n");
+                char *myargs[2];    
+            myargs[0] = strdup(args[0]);     
+            myargs[1] = NULL;             
+            execvp(myargs[0], myargs);  
+            } else  {
+                printf("hello, 3 args child here\n");
+                char *myargs[3];    
+                myargs[0] = strdup(args[0]);    
+                myargs[1] = strdup(args[1]);    
+                myargs[2] = NULL;             
+                execvp(myargs[0], myargs);  
+
+            }
+
+    } else {
+        waitpid(rc, NULL, 0);    // `waitpid` call added here
+        printf("Thank you for using My Awesome Shell\n");
+    }
         
     }
 
