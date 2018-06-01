@@ -101,8 +101,47 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        int sheller = fork();
+        if (sheller < 0)
+        {
+            fprintf(stderr, "Shell Error At Fork...\n");
+            exit(1);
+        }
+        else if (sheller == 0 )
+        {
+            if(strcmp(args[0], "cd") == 0)
+            {
+                if(args_count < 2) printf("Please enter the directory you wish to change to...\n");
+                else 
+                {
+                    int initCd = chdir(args[1]);
+                    if (initCd < 0) perror("chdir");
+                    continue;
+
+                }
+            }
         
+        else if(strcmp(args[args_count - 1], "&") == 0)
+        {
+            args[args_count - 1] = NULL;
+            execvp(args[0], args);
+            printf("%s", PROMPT);
+            fflush(stdout);
+        }
+
+        else execvp(args[0], args);
+    } 
+    else 
+        {
+            int initCmd = waitpid(sheller, NULL, 0);
+        }
     }
+
+    while(waitpid(-1, NULL, WNOHANG) > 0);
+
+        
+    
 
     return 0;
 }
