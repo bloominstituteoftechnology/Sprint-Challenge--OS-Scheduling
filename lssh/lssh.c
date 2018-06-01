@@ -2,12 +2,49 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <signal.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
 #define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+
+/**
+ * Handle SIGCHILD signal
+ *
+ * wait() for zombies
+ */
+
+void sigchld_handler(int s) 
+{
+  int saved_errno = errno;
+  
+  while(waitpid(-1, NULL, WNOHANG) > 0);
+
+  errno = saved_errno;
+}
+
+/**
+ * Reaper
+ */
+
+void start_reaper(void)
+{
+  struct sigaction sa;
+
+  sa.sa_handler = sigchld_handler;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags = SA_RESTART;
+  
+  if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+    perror("sigaction");
+    exit(1);
+  }
+}
+
 
 /**
  * Parse the command line.
@@ -61,7 +98,7 @@ int main(void)
 
     // How many command line args the user typed
     int args_count;
-
+    
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
@@ -70,6 +107,9 @@ int main(void)
 
         // Read input from keyboard
         fgets(commandline, sizeof commandline, stdin);
+
+        // Prune the dead
+        start_reaper();
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
@@ -102,6 +142,41 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
+        int background = 0;
+
+        if (strcmp(args[0], "cd") == 0) {
+          if (chdir(args[1]) == 0) continue;
+          perror("chdir");
+        }
+
+        if (strcmp(args[args_count - 1], "&") == 0) {
+          background = 1;
+          args[args_count - 1] = NULL;
+        }
+
+        int rc = fork();
+        
+        if (rc < 0) {
+          printf("Fork failure\n");
+          exit(1);
+        } 
+        
+        else if (rc > 0) {
+          
+          if (background == 0) {
+            waitpid(rc, NULL, 0);
+          } 
+          
+          else {
+            printf("%s", PROMPT);
+            fflush(stdout);
+            background = 0;
+          }
+        } 
+        
+        else {
+          execvp(args[0], args);
+        }        
     }
 
     return 0;
