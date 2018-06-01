@@ -88,6 +88,16 @@ int main(void)
             continue;
         }
 
+        // if (strcmp(args[0], "cd") == 0)
+        // {
+        //     // char cmd[1024] = "";
+        //     // strcat(cmd, "/usr/bin/");
+        //     // strcat("/usr/bin/cd"/, args[0]);
+        //     // args[0] = cmd;
+        //     execvp("/usr/bin/cd", args);
+        //     continue;
+        // }
+
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0)
         {
@@ -121,14 +131,15 @@ int main(void)
             char command[1024] = "";
             strcat(command, "/bin/");
             strcat(command, args[0]);
-            char *argv[1024];
-            int i;
-            for (i = 1; args[i] != NULL; i++)
-            {
-                argv[i - 1] = args[i];
-            }
-            argv[i - 1] = NULL;
-            // printf("%s\n", command);
+            // args[0] = command;
+            // char *argv[1024];
+            // int i;
+            // for (i = 1; args[i] != NULL; i++)
+            // {
+            //     argv[i - 1] = args[i];
+            // }
+            // argv[i - 1] = NULL;
+            printf("%s\n", args[0]);
             // printf("in child\n");
             // int j;
             // for (j = 0; argv[j] != NULL; j++)
@@ -136,7 +147,7 @@ int main(void)
             //     printf("%s\n", argv[j]);
             // }
             // printf("%s\n", argv[j]);
-            execvp(command, argv);
+            execvp(command, args);
         }
         else
         {
@@ -145,6 +156,8 @@ int main(void)
             // return 0;
         }
     }
+
+    printf("Continue??");
 
     return 0;
 }
