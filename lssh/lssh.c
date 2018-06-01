@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -82,6 +83,16 @@ int main(void)
         if (args_count == 0) {
             // If the user entered no commands, do nothing
             continue;
+        }
+
+        if (strcmp(args[0], "cd") == 0) {
+          if (args_count == 2) {
+            int changedDir = chdir(args[1]);
+            if (changedDir < 0) {
+              perror("chdir");
+              continue; // ??? confused w/ this, come back to it
+            }
+          }
         }
 
         // Exit the shell if args[0] is the built-in "exit" command

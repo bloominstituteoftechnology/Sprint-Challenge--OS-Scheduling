@@ -16,7 +16,7 @@ Add your answers inline, below, with your pull request.
 
 3.  Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
 
-* A MLFQ improves on the scheduling model of Round Robin scheduling by using past behavior to predict processes prioritization. MLFQ knows that if a process is I/O-bound in the past, it will I/O bound in the future; likewise for CPU-bound processes. CPU-bound processes are pushed to lower-priority queues where I/O-bound processes are pushed to higher priority queues.
+* A MLFQ improves on the scheduling model of Round Robin scheduling by using past behavior to predict process prioritization. MLFQ knows that if a process is I/O-bound in the past, it will I/O bound in the future; likewise for CPU-bound processes. CPU-bound processes are pushed to lower-priority queues whereas I/O-bound processes are pushed to higher priority queues.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
