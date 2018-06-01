@@ -23,8 +23,8 @@ void sigchld_handler(int s)
   int saved_errno = errno;
   
   while(waitpid(-1, NULL, WNOHANG) > 0);
-
   errno = saved_errno;
+  printf("Loop has ended\n");
 }
 
 /**
@@ -32,7 +32,8 @@ void sigchld_handler(int s)
  */
 
 void start_reaper(void)
-{
+{ 
+  printf("Reaping has begun\n");
   struct sigaction sa;
 
   sa.sa_handler = sigchld_handler;
@@ -168,9 +169,8 @@ int main(void)
           } 
           
           else {
-            printf("%s", PROMPT);
-            fflush(stdout);
             background = 0;
+            continue;
           }
         } 
         
