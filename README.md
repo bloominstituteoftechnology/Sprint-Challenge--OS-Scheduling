@@ -4,22 +4,32 @@
 
 Add your answers inline, below, with your pull request.
 
-1. Name at least three things that a general-purpose operating system is responsible for handling.
+1.  Name at least three things that a general-purpose operating system is responsible for handling.
 
-2. Describe the job of the Scheduler in the OS in general.
+    * Processes
+    * Scheduling
+    * communication between hardware and software
 
-3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+2.  Describe the job of the Scheduler in the OS in general.
+
+    * The scheduler controls what processes are run. The order they are run in and the length of time they are allowed to run.
+
+3.  Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+    * The MLFQ allows different processes to have different priority levels. The higher the priority level, the sooner it gets its time on the CPU.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
 Important Safety Tip: Resist the urge to start coding until you:
-1. Read this complete challenge
+
+1.  Read this complete challenge
 
 then
 
-2. Inventory the code and figure out what needs to be written where.
+2.  Inventory the code and figure out what needs to be written where.
 
 ### Task 1: Implement the Ability to Execute Arbitrary Commands
+
 This program implements a new shell that you can use to run commands from in Unix, similar to bash!
 
 At the end of the day, you should be able to run your shell, then run commands within it like in the following example.
@@ -27,8 +37,8 @@ At the end of the day, you should be able to run your shell, then run commands w
 **NOTE: you do not need to implement the `ls` or `head` commands! These already exist in Unix. Your goal is to write a program that runs them with `exec()` when
 the user types in their names. And also the shell should be able to run _any_ command, not just `ls` and `head`.**
 
-```
-[bash]$ ./lssh 
+```c
+[bash]$ ./lssh
 lambda-shell$ ls -l
 total 32
 -rwxr-xr-x  1 beej  staff  9108 Mar 15 13:28 lssh
@@ -45,18 +55,18 @@ lambda-shell$ head lssh.c
 #define COMMANDLINE_BUFSIZE 1024
 #define DEBUG 0  // Set to 1 to turn on some debugging output
 lambda-shell$ exit
-[bash]$ 
+[bash]$
 ```
 
 General plan of attack is to:
 
 * Loop until the user exits.
-  * Print a prompt.
-  * Read a line of input from the keyboard.
-  * Parse that line down into individual space-separated parts of the command.
-  * Fork a child process to run the new command.
-  * Exec the command in the child process.
-  * Parent process waits for child to complete.
+  * [x] Print a prompt.
+  * [x] Read a line of input from the keyboard.
+  * [x] Parse that line down into individual space-separated parts of the command.
+  * [] Fork a child process to run the new command.
+  * [] Exec the command in the child process.
+  * [] Parent process waits for child to complete.
 
 Most of the shell's boilerplate is already written, but you'll have to implement the logic of it.
 
@@ -104,25 +114,25 @@ lambda-shell$ pwd
 /Users/example
 lambda-shell$ cd foobar
 chdir: No such file or directory
-lambda-shell$ 
+lambda-shell$
 ```
 
 If the user entered `cd` as the first argument:
 
-1. Check to make sure they've entered 2 total arguments
-2. Run the system call `chdir()` on the second argument to change directories
-3. Error check the result of `chdir()`. If it returns `-1`, meaning an error
-   occurred, you can print out an error message with:
-   ```
-   perror("chdir"); // #include <errno.h> to use this
-   ```
-4. Execute a `continue` statement to short-circuit the rest of the main loop.
+1.  Check to make sure they've entered 2 total arguments
+2.  Run the system call `chdir()` on the second argument to change directories
+3.  Error check the result of `chdir()`. If it returns `-1`, meaning an error
+    occurred, you can print out an error message with:
+    ```c
+    perror("chdir"); // #include <errno.h> to use this
+    ```
+4.  Execute a `continue` statement to short-circuit the rest of the main loop.
 
 Note that `.` and `..` are actual directories. You don't need to write any special case code to handle them.
 
 Be sure to think about where this functionality should live in the file. The order of execution of the code matters!
 
-### Stretch Goal 1: Background Tasks
+# Stretch Goal 1: Background Tasks
 
 In bash, you can run a program in the background by adding an `&` after the command.
 
@@ -134,10 +144,10 @@ Add similar functionality to `lssh` by checking to see if the last argument is a
 
 If it is:
 
-1. Strip the `&` off the `args` (by setting that pointer to `NULL`).
-2. Run the command in the child as usual.
-3. Prevent the parent from `wait()`ing for the child to complete. Just give a
-   new prompt immediately. The child will continue to run in the background.
+1.  Strip the `&` off the `args` (by setting that pointer to `NULL`).
+2.  Run the command in the child as usual.
+3.  Prevent the parent from `wait()`ing for the child to complete. Just give a
+    new prompt immediately. The child will continue to run in the background.
 
 In every instance of the main loop after the user hits `RETURN`, you should wait in a loop to reap any background zombies that have died in the meantime. You can use a loop do this with without blocking like so:
 
@@ -158,8 +168,7 @@ Mini stretch challenge: wait for the `SIGCHLD` signal and put the above `while` 
 Note that you might get weird output when doing this, like the prompt might appear before the program completes, or not at all if the program's output overwrites it. If it looks like it hangs at the end, just hit `RETURN` to get
 another prompt back.
 
-
-### Stretch Goal 2: File Redirection
+# Stretch Goal 2: File Redirection
 
 In bash, you can redirect the output of a program into a file with `>`. This creates a new file and puts the output of the command in there instead of writing it to the screen.
 
@@ -169,20 +178,23 @@ ls -l > foo.txt
 
 Check the `args` array for a `>`. If it's there:
 
-1. Get the output file name from the next element in `args`.
-2. Strip everything out of `args` from the `>` on. (Set the `args` element with
-   the `>` in it to `NULL`).
-3. In the child process:
-    1. `open()` the file for output. Store the resultant file descriptor in a
-       variable `fd`.
-    2. Use the `dup2()` system call to make `stdout` (file descriptor `1`) refer
-       to the newly-opened file instead:
+1.  Get the output file name from the next element in `args`.
+2.  Strip everything out of `args` from the `>` on. (Set the `args` element with
+    the `>` in it to `NULL`).
+3.  In the child process:
 
-	    ```c
-		int fd = open(...
-		dup2(fd, 1);  // Now stdout goes to the file instead
-		```
-	3. `exec` the program like normal.
+    1.  `open()` the file for output. Store the resultant file descriptor in a
+        variable `fd`.
+    2.  Use the `dup2()` system call to make `stdout` (file descriptor `1`) refer
+        to the newly-opened file instead:
+
+        ````c
+        		int fd = open(...
+        		dup2(fd, 1);  // Now stdout goes to the file instead
+        		```
+        ````
+
+    3.  `exec` the program like normal.
 
 Note that depending on your [`umask`](https://en.wikipedia.org/wiki/Umask), the
 newly-created file might not be actually readable by you. If you can't read it, run `chmod 600 filename` on the new file and then you'll have permission.

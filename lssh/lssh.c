@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0 // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -32,12 +33,13 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
 
-    while (token != NULL && *args_count < MAX_TOKENS - 1) {
+    while (token != NULL && *args_count < MAX_TOKENS - 1)
+    {
         args[(*args_count)++] = token;
 
         token = strtok(NULL, " \t\n\r");
@@ -63,7 +65,8 @@ int main(void)
     int args_count;
 
     // Shell loops forever (until we tell it to exit)
-    while (1) {
+    while (1)
+    {
         // Print a prompt
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
@@ -72,37 +75,97 @@ int main(void)
         fgets(commandline, sizeof commandline, stdin);
 
         // Exit the shell on End-Of-File (CRTL-D)
-        if (feof(stdin)) {
+        if (feof(stdin))
+        {
             break;
         }
 
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
-        if (args_count == 0) {
+        if (args_count == 0)
+        {
             // If the user entered no commands, do nothing
             continue;
         }
 
+        if (strcmp(args[0], "cd") == 0)
+        {
+            if (args_count == 2)
+            {
+                int err = chdir(args[1]);
+                if (err < 0)
+                {
+                    perror("chdir\n");
+                }
+            }
+            else
+            {
+                printf("usage: cd [directory]\n");
+            }
+            continue;
+        }
+
         // Exit the shell if args[0] is the built-in "exit" command
-        if (strcmp(args[0], "exit") == 0) {
+        if (strcmp(args[0], "exit") == 0)
+        {
             break;
         }
 
-        #if DEBUG
+#if DEBUG
 
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
+        for (int i = 0; args[i] != NULL; i++)
+        {
+
             printf("%d: '%s'\n", i, args[i]);
         }
 
-        #endif
-        
+#endif
+
         /* Add your code for implementing the shell's logic here */
-        
+
+        int rc = fork();
+
+        if (rc < 0)
+        {
+            printf("stop trying to use a spoon!");
+            exit(1);
+        }
+        else if (rc == 0)
+        {
+            // char command[1024] = "";
+            // strcat(command, "/usr/");
+            // strcat(command, args[0]);
+            // args[0] = command;
+            // char *argv[1024];
+            // int i;
+            // for (i = 1; args[i] != NULL; i++)
+            // {
+            //     argv[i - 1] = args[i];
+            // }
+            // argv[i - 1] = NULL;
+            // printf("%s\n", args[0]);
+            // printf("in child\n");
+            // int j;
+            // for (j = 0; argv[j] != NULL; j++)
+            // {
+            //     printf("%s\n", argv[j]);
+            // }
+            // printf("%s\n", argv[j]);
+            execvp(args[0], args);
+        }
+        else
+        {
+            int wc = waitpid(rc, NULL, 0);
+            // printf("in parent\n");
+            // return 0;
+        }
     }
+
+    printf("Continue??");
 
     return 0;
 }
