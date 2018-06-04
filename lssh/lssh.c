@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -101,6 +102,32 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        
+        int rc = fork();
+        if(rc < 0) {
+        	fprintf(stderr, "\n\nThere was a problem while forking, please try again\n\n");
+        	exit(1);
+		}
+		else if(rc == 0) {
+			printf("\n\nIn the child process!\n\n");
+			if (strcmp(args[0], "cd") == 0) {
+				if(args_count == 2) {
+					if (chdir(args[1]) == -1) {
+						perror("chdir");
+					}
+				}
+				else {
+					printf("Invalid entry");
+					continue;
+				}
+			}
+			execvp(args[0], args);
+		}
+		else {
+			int wc = waitpid(rc, NULL, 0);
+			printf("\n\nParent here!\n\n");
+			
+		}
         
     }
 
