@@ -79,6 +79,8 @@ int main(void)
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
+        while(waitpid(-1,NULL,WNOHANG) >0);
+
         if (args_count == 0) {
             // If the user entered no commands, do nothing
             continue;
@@ -98,11 +100,44 @@ int main(void)
             printf("%d: '%s'\n", i, args[i]);
         }
 
+        if(strcmp(args[0], "cd") == 0){
+          if(args_count == 2){
+            int flag = chdir(args[1]);
+            if(flag == -1){
+              perror("chdir");
+            }
+          }
+          continue;
+        }
+
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
 
+        if(strcmp(args[args_count -1],"&") ==0){
+          args[args_count-1] = NULL;
+          int rc = fork();
+          if(rc < 0){
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+          }
+          else if(rc == 0){
+            execvp(args[0],args);
+          }
+        }
+        else{
+          int rc = fork();
+          if(rc < 0){
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+          }
+          else if(rc == 0){
+            execvp(args[0],args);
+          }
+          else{
+            waitpid(rc,NULL,0);
+          }
+        }
+    }
     return 0;
 }
