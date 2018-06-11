@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -84,6 +85,16 @@ int main(void)
             continue;
         }
 
+        if (strcmp(args[0], "cd") == 0) {
+          if (args_count == 2) {
+            int changedDir = chdir(args[1]);
+            if (changedDir < 0) {
+              perror("chdir");
+              continue; // ??? confused w/ this, come back to it
+            }
+          }
+        }
+
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
             break;
@@ -101,6 +112,18 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int rc = fork();
+        
+        if (rc < 0) {
+          fprintf(stderr, "Fork failed, exiting\n");
+          exit(1);
+        
+        } else if (rc == 0) {
+          execvp(args[0], args);
+        
+        } else {
+          waitpid(rc, NULL, 0);
+        }
         
     }
 
