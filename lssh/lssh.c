@@ -101,7 +101,38 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        int rc = fork();
+        //This is just to check to see if the fork is failing the shell.
+        if(rc < 0) 
+        {
+            fprintf(stderr, "Shell failed at Fork\n");
+            exit(1);
+        }
+        //The strcmp is checking to see if args[0] is "cd".
+        //If it is cd but it has less than 2 args then it prints a help message
+        //Else if the chdir does not exist then it perrors out and continues the shell.
+            if(strcmp(args[0], "cd") == 0) 
+            {
+                if(args_count < 2) 
+                {
+                    printf("Enter the Directory you wish to go to\n");
+                }
+                else {
+                    if(chdir(args[1]) == -1) 
+                    {
+                        perror("chdir");
+                        continue;
+                    }
+                }
+            }
+        else if (rc == 0)
+        {
+            execvp(args[0], args);
+        }
+        else 
+        {
+            waitpid(rc, NULL, 0);
+        }
     }
 
     return 0;
