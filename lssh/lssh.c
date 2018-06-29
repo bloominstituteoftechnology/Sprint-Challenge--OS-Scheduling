@@ -91,6 +91,13 @@ int main(void)
             break;
         }
 
+	if (strcmp(args[0], "cd") == 0) {
+	  if (args_count != 2 || chdir(args[1]) == -1) {
+	    puts("Invalid directory");
+	  }
+	  continue;
+	}
+
         #if DEBUG
 
         // Some debugging output
