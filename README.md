@@ -10,6 +10,8 @@ Add your answers inline, below, with your pull request.
   - Manages running precoesses
 
 2. Describe the job of the Scheduler in the OS in general.
+  The scheduler essentially juggles runnnig processes in order to run them in a multi-threaded way.
+  This allows CPU's to execute many more programs that they have cores.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
 
