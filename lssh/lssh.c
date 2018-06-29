@@ -120,11 +120,11 @@ int main(void)
                 }
                 continue;
             }
-            execvp()
-        }
-
-
-        
+            execvp(args[0], args);
+        } else 
+        {
+            int wc = waitpid(rc, NULL, 0);
+        } 
     }
 
     return 0;
