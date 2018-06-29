@@ -120,14 +120,11 @@ int main(void)
             fprintf(stderr, "fork failed\n");
             exit(1);
         } else if (rc == 0) {
-            printf("child started\n");
             //child code
             execvp(args[0], args);
             continue;
-            printf("this should not be seen\n");
         } else {
             int wc = wait(NULL);
-            printf("parent finished.\n");
         }
     }
 
