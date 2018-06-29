@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -116,10 +117,17 @@ int main(void)
             fprintf(stderr, "Fork failed, please try again.\n");
             exit(1);
         }
-        else if (rc == 0) // Exec command in child process
+        else if (rc == 0) // Child process exec command
         {
             //printf(" ~~~ Lambda Shell running! ~~~ \n");
+            //printf("Hello from child process, pid: %d\n", (int)getpid());
             execvp(args[0], args);
+        }
+        else // Parent process, waits for child
+        {
+            int wc = waitpid(rc, NULL, 0);          
+            //printf("waitpid returns child pid: %d\n", wc);
+            //printf("Hello from parent process, pid: %d\n", (int)getpid());
         }
     }
 
