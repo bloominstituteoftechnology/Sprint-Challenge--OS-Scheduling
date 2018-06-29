@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -119,7 +120,19 @@ int main(void)
             fprintf(stderr, "Fork Failed\n");
             exit(1);
         } else if (rc == 0) {
-          
+        // step 2-------------------------------------
+            if (strcmp(args[0], "cd") == 0) {
+                if (args_count < 2)
+                printf("Directory Needs To Be Specified\n");
+                else {
+                    int change = chdir(args[1]);
+                    if(change < 0)
+                        perror("chdir");
+                    continue;
+                }
+            } else 
+            execvp(args[0], args);
+        }
     }
 
     return 0;
