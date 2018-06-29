@@ -107,9 +107,7 @@ int main(void)
        |** Add your code for implementing the shell's logic here **|
        \**********************************************************/
 
-    //    int backgroundTask = strcmp(args[i], "&"); // 0 for true
-
-    //    if (backgroundTask == 0) args[i] = '\0';
+       int backgroundTask = strcmp(args[args_count - 1], "&"); // 0 for true
 
         // are we changing directories?
         if (strcmp(args[0], "cd") == 0){
@@ -128,19 +126,16 @@ int main(void)
             exit(1);
         }
 
-        else if (childProcess == 0) execvp(args[0], args);
+        else if (childProcess == 0){
+            if (backgroundTask == 0) args[args_count - 1] = '\0';
+            execvp(args[0], args);
+        }
 
         else waitpid(childProcess, NULL, 0);
 
-        // int backgroundTask = 0;
-        // if (strcmp(args[i], "&") == 0){
-        //     args[i] = '\0';
-        //     backgroundTask = 1;
-        // }
-        // if there is a background task, prevent the parent from waiting for the child to complete
-        // while (waitpid(-1, NULL, WNOHANG) > 0) {}
-
     }
+    
+    while (waitpid(-1, NULL, WNOHANG) > 0);
 
     return 0;
 }
