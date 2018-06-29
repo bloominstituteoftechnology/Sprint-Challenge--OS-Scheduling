@@ -5,11 +5,14 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+  * managing the computers resources, providing a user interface, running software built for that operating.
 
 2. Describe the job of the Scheduler in the OS in general.
+  * the scheduler manages the execution of multiple processes depending on priority and is also responsible for the removal of processes once the cpu has finished processing it.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
-
+  * the benefits of MLFQ over round robin are the different levels of priority and blocking queue's so things get processed depending on the importance, as compared to round robin where every the scheduler just executes everything without importance or structure in a sort of circle.
+  
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
 Important Safety Tip: Resist the urge to start coding until you:
@@ -28,7 +31,7 @@ At the end of the day, you should be able to run your shell, then run commands w
 the user types in their names. And also the shell should be able to run _any_ command, not just `ls` and `head`.**
 
 ```
-[bash]$ ./lssh 
+[bash]$ ./lssh
 lambda-shell$ ls -l
 total 32
 -rwxr-xr-x  1 beej  staff  9108 Mar 15 13:28 lssh
@@ -45,7 +48,7 @@ lambda-shell$ head lssh.c
 #define COMMANDLINE_BUFSIZE 1024
 #define DEBUG 0  // Set to 1 to turn on some debugging output
 lambda-shell$ exit
-[bash]$ 
+[bash]$
 ```
 
 General plan of attack is to:
@@ -104,7 +107,7 @@ lambda-shell$ pwd
 /Users/example
 lambda-shell$ cd foobar
 chdir: No such file or directory
-lambda-shell$ 
+lambda-shell$
 ```
 
 If the user entered `cd` as the first argument:

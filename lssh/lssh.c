@@ -89,6 +89,7 @@ int main(void)
         if (strcmp(args[0], "exit") == 0) {
             break;
         }
+        // change directory if args[0] is the cd command
         if (strcmp(args[0], "cd") == 0) {
           chdir(args[1]);
         }
@@ -112,7 +113,7 @@ int main(void)
             exit(1);
         }
         else if (RC == 0) {
-            execlp(args[0], args[0], args[1], args[2], NULL);
+            execlp(args[0], args[0], args[1], args[2], args[3], args[4], NULL);
         }
         else {
             int wc = waitpid(RC, NULL, 0);
