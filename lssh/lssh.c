@@ -102,6 +102,18 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
+        int rc = fork();
+
+        if (rc < 0) {
+            fprintf(stderr, "Fork failed\n");
+            exit(1);
+        } else if (rc == 0) {
+            // child process - run the new command here
+
+        } else {
+            // parent process - wait for the child to complete
+            int wc = waitpid(rc, NULL, 0);
+        }
     }
 
     return 0;
