@@ -93,11 +93,11 @@ int main(void)
         #if DEBUG
 
         // Some debugging output
-        printf("args count %d\n", args_count);
+        // printf("args count %d\n", args_count);
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
         #endif
         
@@ -111,11 +111,16 @@ int main(void)
         } else if (rc == 0) {
             // child process - run the new command here
             if (strcmp(args[0], "cd") == 0) {
+              // user enters the correct number of args
               if (args_count == 2) {
                 int changeDir = chdir(args[1]);
                 if (changeDir < 0) {
                   perror("chdir");
                 }
+                continue;
+              } else {
+                // user did not enter the correct number of args
+                fprintf(stderr, "usage: cd dirname\n");
                 continue;
               }
             }
