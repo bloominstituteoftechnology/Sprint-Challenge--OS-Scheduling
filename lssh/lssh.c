@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
-#include <dirent.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -81,7 +80,7 @@ int main(void)
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
-        if (args_count == 0 || args[0] == "cd") {
+        if (args_count == 0) {
             // If the user entered no commands, do nothing
             continue;
         }
@@ -89,6 +88,9 @@ int main(void)
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
             break;
+        }
+        if (strcmp(args[0], "cd") == 0) {
+          chdir(args[1]);
         }
 
         #if DEBUG
@@ -102,6 +104,8 @@ int main(void)
 
         #endif
         /* Add your code for implementing the shell's logic here */
+        if (args[0] == "cd") continue;
+
         const int RC = fork();
         if (RC < 0) {
             fprintf(stderr, "Fork failed\n");
