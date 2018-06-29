@@ -48,6 +48,14 @@ char **parse_commandline(char *str, char **args, int *args_count)
     return args;
 }
 
+// void exec_fork(char args[])
+// {
+//   if (fork() == 0) // child
+//     execvp(args[0], args);
+//   else // parent
+//     printf("Parent Here\n");
+// }
+
 /**
  * Main
  */
@@ -101,7 +109,10 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        execvp(args[0], args);
+        if (fork() == 0) // child
+          execvp(args[0], args);
+        else // parent
+          wait(NULL);
     }
 
     return 0;
