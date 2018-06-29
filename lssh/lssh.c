@@ -80,7 +80,7 @@ int main(void)
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
-        if (args_count == 0 || strcmp(args[0], "cd")) {
+        if (args_count == 0) {
             // If the user entered no commands, do nothing
             continue;
         }
@@ -102,6 +102,11 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        // skip the rest of the loop if the first command is "cd"
+        if (strcmp(args[0], "cd") == 0) continue;
+
+        // initialize child process
         int childProcess = fork();
 
         if (childProcess < 0){
