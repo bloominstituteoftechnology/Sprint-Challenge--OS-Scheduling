@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "lambda-shell:"
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -48,11 +48,25 @@ char **parse_commandline(char *str, char **args, int *args_count)
     return args;
 }
 
+void prompt()
+{
+    char cwd[256];
+    printf("%s", PROMPT);
+    if (getcwd(cwd, sizeof(cwd)) == NULL)
+        perror("getcwd() error");
+    else
+        printf("%s", cwd); // prints current working directory! Looks much nicer.
+
+    printf("$ ");
+}
+
 /**
  * Main
  */
 int main(void)
 {
+    int background_flag = 0;
+
     // Holds the command line the user types in
     char commandline[COMMANDLINE_BUFSIZE];
 
@@ -65,7 +79,8 @@ int main(void)
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
-        printf("%s", PROMPT);
+        prompt();
+
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
@@ -89,18 +104,55 @@ int main(void)
             break;
         }
 
-        #if DEBUG
-
-        // Some debugging output
-
-        // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
+        if(!strcmp(args[args_count - 1], "&"))
+        {
+            args[args_count - 1] = NULL;
+            background_flag = 1;
         }
 
-        #endif
+        if(!strcmp(args[0], "cd")) {
+            if(args_count > 1)
+            {
+                chdir(args[1]);
+            }
+            else
+            {
+                printf("cd requires a second argument\n");
+            }
+        }
+
+        int rc = fork();
+        if(rc < 0)
+        {
+            fprintf(stderr, "fork failed\n");
+        }
+        else if (rc == 0)
+        {
+            execvp(args[0], args);
+            exit(0);
+        }
+        else
+        {
+            if(!background_flag)
+            {
+                int wc = waitpid(rc, NULL, 0);
+            }
+        }
+        while (waitpid(-1, NULL, WNOHANG) > 0)
+            ;
+        // #if DEBUG
+
+        // // Some debugging output
+
+        // // Print out the parsed command line in args[]
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
+
+        // #endif
         
         /* Add your code for implementing the shell's logic here */
+        background_flag = 0;
         
     }
 
