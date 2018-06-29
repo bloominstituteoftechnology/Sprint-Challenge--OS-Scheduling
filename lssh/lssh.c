@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <dirent.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -32,7 +34,7 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
@@ -79,7 +81,7 @@ int main(void)
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
-        if (args_count == 0) {
+        if (args_count == 0 || args[0] == "cd") {
             // If the user entered no commands, do nothing
             continue;
         }
@@ -99,10 +101,18 @@ int main(void)
         }
 
         #endif
-        
         /* Add your code for implementing the shell's logic here */
-        
+        const int RC = fork();
+        if (RC < 0) {
+            fprintf(stderr, "Fork failed\n");
+            exit(1);
+        }
+        else if (RC == 0) {
+            execlp(args[0], args[0], args[1], args[2], NULL);
+        }
+        else {
+            int wc = waitpid(RC, NULL, 0);
+        }
     }
-
     return 0;
 }
