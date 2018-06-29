@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -88,6 +89,18 @@ int main(void)
         if (strcmp(args[0], "exit") == 0) {
             break;
         }
+
+        // Checks to see if cd is in args[0]
+            // Checks to see if 2 arguments are passed into args
+                // Run 'chdir', print error if returns -1
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count == 2) {
+                if (chdir(args[1])== -1) perror("chdir");
+                chdir(args[1]);
+            }
+            continue;
+        }
+
 
         #if DEBUG
 
