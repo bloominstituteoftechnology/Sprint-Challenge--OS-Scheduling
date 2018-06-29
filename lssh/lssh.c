@@ -112,7 +112,11 @@ int main(void)
         if (fork() == 0) {   // Child
           if (strcmp(args[0], "cd") == 0) {
             printf("cd detected\n");
-            
+            if (args_count == 2) {
+
+            } else {
+              printf("Invalid input");
+            }
           }
           execvp(args[0], args);
         } else {             // Parent
