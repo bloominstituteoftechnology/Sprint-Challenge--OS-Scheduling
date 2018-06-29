@@ -108,6 +108,12 @@ int main(void)
             continue;
         }
 
+        // Background Tasks
+        if (strcmp(args[args_count - 1], "&") == 0)
+        {
+            args[args_count - 1] = NULL;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -132,7 +138,7 @@ int main(void)
         }
         else
         { // adult process
-            waitpid(rc, NULL, 0);
+            while (waitpid(-1, NULL, WNOHANG) > 0);
         }
     }
 
