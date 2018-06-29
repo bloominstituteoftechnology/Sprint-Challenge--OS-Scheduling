@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -99,27 +100,60 @@ int main(void)
         }
 
         #endif
+          // set up a pointer 
+        char *directory;
+            // compare args at the first index to the string cd
+        if(strcmp(args[0],"cd")==0)
+        {
+            // if args count from parse is not equal to 2
+            if (args_count !=2)
+            {
+                // if there is not a second arg print a message for the user
+                printf("There needs to be a path for cd.\n Example Path: cd desktop/lambda-school-folders\n");
+                // continue the program
+                continue;
+            }
+            else
+            {
+                // setting directory the second arg
+                directory = args[1];
+                // checking chdir for error
+                if(chdir(directory) == -1)
+                {
+                    // using perror i added in the errno
+                    perror("chdir");
+                }
+                // continue the code to "short-circuit" loop
+                continue;
+            }
+
+        }
+        else 
+        {
         
         /* Add your code for implementing the shell's logic here */
         // create a fork
         int rc = fork();
         //test for failure to fork
+        char *command[]={args[0],NULL};
         if(rc<0)
         {
             // printing to the standard error log if failed
             fprintf(stderr,"fork Failed");
         }
-        else if
+        else if (rc == 0)
         {
             // exexuting the command inside of the child
-            excvp(args[0],args);
+            execvp(command[0],command);
         }
         else
         {
             // Setting the parent to wait for the child
-            int wc = waitpid(rc, Null, 0);
+            waitpid(rc, NULL, 0);
+            continue;
         }
         
+        }
     }
 
     return 0;
