@@ -112,6 +112,11 @@ int main(void)
             exit(1);
         }
         else if (rc == 0) { //CHILD
+            if(strcmp(args[0], "cd") == 0) {
+            chdir(args[1]);
+            perror("chdir");
+            continue;
+            }
             execvp(args[0], args);
         }
         else { //PARENT
