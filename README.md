@@ -48,6 +48,8 @@ lambda-shell$ exit
 [bash]$ 
 ```
 
+![ls demo](https://github.com/jayyargh/Sprint-Challenge--OS-Scheduling/blob/master/ls-demo.png?raw=true "Demo of the LS Shell")
+
 General plan of attack is to:
 
 * Loop until the user exits.
