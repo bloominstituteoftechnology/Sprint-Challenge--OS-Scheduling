@@ -7,7 +7,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -109,10 +109,11 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        if (fork() == 0) // child
+        if (fork() == 0) {   // Child
           execvp(args[0], args);
-        else // parent
+        } else {             // Parent
           wait(NULL);
+        }
     }
 
     return 0;
