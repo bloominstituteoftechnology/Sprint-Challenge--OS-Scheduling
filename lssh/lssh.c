@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "Yasin-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -108,15 +108,42 @@ int main(void)
 
         /* Add your code for implementing the shell's logic here */
         int pid = fork();
-        if (pid == 0)
+        if (pid < 0)
         {
-            execvp(args[0], args);
+            fprintf(stderr, "Terminal Startup Failed, Please Contact Yasin\n");
         }
-        else if (pid > 0)
+        else if (pid == 0)
         {
-            waitpid(pid, NULL, 0);
+            if (strcmp(args[0], "cd") == 0)
+            {
+                if (args_count < 2)
+                {
+                    printf("You Must Enter A Directory\n");
+                }
+                else
+                {
+                    int cd = chdir(args[1]);
+                    if (cd < 0)
+                    {
+                        perror("lssh");
+                        continue;
+                    }
+                }
+
+                // execvp(args[0], args);
+            }
+            else if (strcmp(args[args_count - 1], "&") == 0)
+            {
+                args[args_count - 1] = NULL;
+                execvp(args[0], args);
+                printf("%s", PROMPT);
+                fflush(stdout);
+            }
+            else
+            {
+                waitpid(pid, NULL, 0);
+            }
         }
     }
-
     return 0;
 }
