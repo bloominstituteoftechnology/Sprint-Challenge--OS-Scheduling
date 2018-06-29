@@ -101,8 +101,63 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        int fkk = fork();
+        if (fkk < 0) { //if fork fails
+            perror("ERROR");
+        } else if (fkk == 0) {
+            if (strcmp(args[0], "cd") == 0) {
+                int chadir  = chdir(args[1]);
+                if (chadir < 0) {
+                    perror ("very fail");
+                }
+            }
+            if (execvp(args[0], args) == -1) {
+                perror("much fail");
+            }
+            execvp(args[0], args);
+        } else { 
+            waitpid(fkk, NULL, 0);
+        }
+
     }
 
     return 0;
 }
+
+
+//         // Ability to cd added
+//         if (strcmp(args[0], "cd") == 0) {
+//             // This makes sure the right quantity of arguments are entered
+//             if (args_count !=2) {
+//                 fprintf(stderr,"usage: cd directory_name\n");
+//                 continue;
+//             }
+//             // Ability to change directories added with 'chdir'
+//             if (chdir(args[1]) > 0) {
+//                 fprint(stderr, "chdir failed \n");
+//                 continue;
+//             }
+//             continue;
+//         }
+//         // Fork-exec pattern here
+//         pid_t child_pid = fork();
+//         // Error checking for fork call
+//         if (child_pid == -1) {
+//             fprintf(strderr, "fork failed\n");
+//             continue;
+//         }
+//         // Check for childs context
+//         if (child_pid == 0) {
+//             // Call exec command
+//             // use whichever exec variant you prefer
+//             execvp(args[0], args);
+//             // error check on exec
+//             fprintf(stderr, "exec failed\n");
+//             continue;
+//         } else {
+//             // Parent context just waits for the child
+//             waitpid(child_pid, NULL, 0);
+//         }
+//     }
+//     return 0;
+// }
