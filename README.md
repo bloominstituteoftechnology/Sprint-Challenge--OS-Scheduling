@@ -18,6 +18,10 @@ If a process is not finished executing or is blocking, the scheduler will move t
 
 3.  Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
 
+One benefit of the MLFQ over a Round-Robin scheduler is that turnaround time for processes is optimized. Another benefit of the MLFQ is that it minimizes response time and makes the OS feel responsive to the end user.
+
+MLFQ utlizes priorities of a process to determine how much time it should have to execute. Furthermore MLFQ changes a process's priority based on its behavior and use this behavior to predict a process's future behavior. For example, processes that wait on user input (keyboard presses) are given higher priority to maintain a high level of responsiveness. On the other hand, if a process uses the CPU for a long interval the MLFQ will reduce its priority by moving it to a lower priority queue.
+
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
 Important Safety Tip: Resist the urge to start coding until you:
