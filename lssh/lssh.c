@@ -96,15 +96,21 @@ int main(void)
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
+        int i;
+        for (i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
         }
 
         #endif
         
-        /* Add your code for implementing the shell's logic here */
+        /**********************************************************\
+       |** Add your code for implementing the shell's logic here **|
+       \**********************************************************/
 
-        // skip the rest of the loop if the first command is "cd"
+        // replace "&" with equivalent of NULL
+        if (strcmp(args[i], "&")) args[i] = '\0'; 
+
+        // are we changing directories?
         if (strcmp(args[0], "cd") == 0){
             int changeDIR = chdir(args[1]);
 
@@ -123,9 +129,11 @@ int main(void)
 
         else if (childProcess == 0) execvp(args[0], args);
 
-        else waitpid(childProcess, NULL, 0);
-        
+        else waitpid(childProcess, NULL, 0);        
     }
+
+    // if there is a background task, prevent the parent from waiting for the child to complete
+    while (waitpid(-1, NULL, WNOHANG) > 0) {}
 
     return 0;
 }
