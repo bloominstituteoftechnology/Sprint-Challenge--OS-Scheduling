@@ -101,6 +101,21 @@ int main(void)
             continue;
         }
 
+        // Stretch Goal #1: Background Tasks Progress
+        // Check to see if the last argument is an `&`.
+            // Strip the `&` off the `args` (by setting that pointer to `NULL`).
+        if (strcmp(args[args_count - 1], "&") == 0) {
+            args[args_count - 1] = NULL;
+            continue;
+        }
+
+        // Stretch Goal #2: File Redirection Progress 
+        // if (strcmp(args[0], ">") == 0) {
+        //     const filename = args[1];
+            
+        //     args[0] = NULL;
+        // }
+
 
         #if DEBUG
 
