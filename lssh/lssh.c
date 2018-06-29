@@ -55,7 +55,7 @@ char **parse_commandline(char *str, char **args, int *args_count)
     return args;
 }
 
-static void sigchld_hdl (int sig)
+void sigchld_hdl (int sig)
 {
     while (waitpid(-1, NULL, WNOHANG) > 0);
 }
@@ -79,8 +79,8 @@ int main(void)
     char *output;
     char **pipeArgs;
 
-        // Shell loops forever (until we tell it to exit)
-        while (1)
+    // Shell loops forever (until we tell it to exit)
+    while (1)
     {
         // Print a prompt
         printf("%s", PROMPT);
@@ -159,7 +159,7 @@ int main(void)
         }
 
 
-    #if DEBUG
+        #if DEBUG
 
         // Some debugging output
 
@@ -250,14 +250,15 @@ int main(void)
         else
         { // adult process
             if (backgroundTask)
-            {
-                struct sigaction act;
-                memset(&act, 0, sizeof(act));
-                act.sa_handler = sigchld_hdl;
-                if(sigaction(SIGCHLD, &act, 0)) 
+            { // http://www.microhowto.info/howto/reap_zombie_processes_using_a_sigchld_handler.html
+                struct sigaction sa;
+                sa.sa_handler = &sigchld_hdl;
+                sigemptyset(&sa.sa_mask);
+                sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
+                if (sigaction(SIGCHLD, &sa, 0) == -1) 
                 {
                     perror("sigaction \n");
-                    return 1;
+                    exit(1);
                 }
             }
             else{
