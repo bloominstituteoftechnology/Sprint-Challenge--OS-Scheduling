@@ -94,15 +94,27 @@ int main(void)
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        // * Fork a child process to run the new command.
+        // * Exec the command in the child process.
+        // * Parent process waits for child to complete.
+        int rc = fork();
+        if (rc < 0) {
+            fprintf(stderr, "Fork Failed\n");
+            exit(1);
+        } 
+        else if (rc == 0) { 
+            execvp(args[0], args);
+        }
+        else { 
+            waitpid(rc, NULL, 0);
+        }
     }
-
     return 0;
 }
