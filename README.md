@@ -5,10 +5,19 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+Ans: 
+* Scheduler.
+* Processor.
+* Memory.
+* Hardware and software resources.
 
 2. Describe the job of the Scheduler in the OS in general.
+Ans: 
+Schedulers are special system software which handle process scheduling in various ways. Their main task is to select the jobs from the process manager to be submitted into the CPU and to decide which process to run/remove.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+Ans: 
+MLFQ, instead of demanding a priori knowledge of the nature of a job, it instead observes the execution of a job and prioritizes it accordingly.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
@@ -79,7 +88,7 @@ If you finish early, look at extra credit to start implementing more features.
 
 ### Task 2: Implement the Ability to Change Directories with `cd`
 
-In bash, you can change directories with the built-in `cd` command.
+In bash, you can change directories with the built-in `cd` comman d.
 
 Each process keep track of which directory it is running in, and the shell is no exception. Each process can change its current directory, as well.
 
