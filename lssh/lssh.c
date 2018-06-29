@@ -100,8 +100,41 @@ int main(void)
 
         #endif
         
-        /* Add your code for implementing the shell's logic here */
-        
+        // add the ability to cd
+        if (strcmp(args[0], "cd") == 0) {
+            // make sure that the user entered the expected number of arguments
+            if(args_count != 2) {
+                fprintf(stderr, "usage: cd dirname\n");
+                continue;            }
+        }
+        // use 'chdir' to change directories
+        if (chdir(args[1] < 0) {
+            fprintf(stderr, "chdir failed");
+            continue;
+        }
+        // add a 'continue' here for good measure
+        continue;
+    }
+
+    // use the fork-exec pattern
+    pid_t child_pid = fork();
+    // error check on our fork call
+    if (child_pid == -1) {
+        fprintf(stderr, "fork failed\n");
+        continue;
+    }
+
+    // check for the child's content
+    if (child_pid) == 0) {
+        // call the exec command
+        // using whichever exec variant you prefer
+        execvp(args[0], args);
+        // error check on exec
+        fprintf(stderr, "exec failed\n");
+        continue;
+    } else {
+        // parent context just waits on the child
+        waitpid(child_pid, NULL, 0);
     }
 
     return 0;
