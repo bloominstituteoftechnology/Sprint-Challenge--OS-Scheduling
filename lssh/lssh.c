@@ -7,7 +7,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 1 // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -32,12 +32,13 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
 
-    while (token != NULL && *args_count < MAX_TOKENS - 1) {
+    while (token != NULL && *args_count < MAX_TOKENS - 1)
+    {
         args[(*args_count)++] = token;
 
         token = strtok(NULL, " \t\n\r");
@@ -63,7 +64,8 @@ int main(void)
     int args_count;
 
     // Shell loops forever (until we tell it to exit)
-    while (1) {
+    while (1)
+    {
         // Print a prompt
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
@@ -72,66 +74,76 @@ int main(void)
         fgets(commandline, sizeof commandline, stdin);
 
         // Exit the shell on End-Of-File (CRTL-D)
-        if (feof(stdin)) {
+        if (feof(stdin))
+        {
             break;
         }
 
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
-        if (args_count == 0) {
+        if (args_count == 0)
+        {
             // If the user entered no commands, do nothing
             continue;
         }
 
         // Exit the shell if args[0] is the built-in "exit" command
-        if (strcmp(args[0], "exit") == 0) {
+        if (strcmp(args[0], "exit") == 0)
+        {
             break;
         }
 
-        #if DEBUG
+#if DEBUG
 
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
+        for (int i = 0; args[i] != NULL; i++)
+        {
             printf("%d: '%s'\n", i, args[i]);
         }
 
-        #endif
-        
-        /* Add your code for implementing the shell's logic here */
-        char *cmdir = "/bin/";
-        if (args[0] != "exit") {
-            // if (args[0] == "cd") {
-            //     char *dir = args[1];
-            //     chdir(dir);
-            // }
-            // if (args[0] == "pwd") {
-            //     system(args[0]);
-            // }
-            char *comand[1024];
-            //snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
-            //printf("the command entered:\n%s\n", comand);
+#endif
 
-            int rc = fork();
-            if (rc == 0) {
-                if (args_count == 2) {
-                    char *space = " ";
-                    snprintf (comand, sizeof comand, "%s%s%s%s", cmdir, args[0], space, args[1]);
-                    //execv(comand, NULL);
-                    system(comand);
-                } else if (args_count == 1) {
-                    snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
-                    //execv(comand, NULL);
-                    system(comand);
-                }
-                //execv(comand, NULL);
-                return 0;
-            } else if (rc != 0) {
-                waitpid(rc, NULL, 0);
-            }
+        /* Add your code for implementing the shell's logic here */
+        if (strcmp(args[0], "cd") == 0)
+        {
+            char *dir = args[1];
+            int test;
+            test = chdir(dir);
         }
+        char *cmdir = "/bin/";
+        // if (args[0] != "exit") {
+
+        char *comand[1024];
+        //snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
+        //printf("the command entered:\n%s\n", comand);
+
+        int rc = fork();
+        if (rc == 0)
+        {
+            if (args_count == 2)
+            {
+                char *space = " ";
+                snprintf(comand, sizeof comand, "%s%s%s%s", cmdir, args[0], space, args[1]);
+                //execv(comand, NULL);
+                system(comand);
+            }
+            else if (args_count == 1)
+            {
+                snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
+                //execv(comand, NULL);
+                system(comand);
+            }
+            //execv(comand, NULL);
+            return 0;
+        }
+        else if (rc != 0)
+        {
+            waitpid(rc, NULL, 0);
+        }
+        // }
     }
 
     return 0;
