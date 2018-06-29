@@ -80,7 +80,7 @@ int main(void)
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
-        if (args_count == 0) {
+        if (args_count == 0 || strcmp(args[0], "cd")) {
             // If the user entered no commands, do nothing
             continue;
         }
@@ -113,7 +113,7 @@ int main(void)
             execvp(args[0], args);
         }
 
-        else wait(NULL);
+        else waitpid(childProcess, NULL, 0);
         
     }
 
