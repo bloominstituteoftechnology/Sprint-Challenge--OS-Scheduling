@@ -110,6 +110,10 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         if (fork() == 0) {   // Child
+          if (strcmp(args[0], "cd") == 0) {
+            printf("cd detected\n");
+            
+          }
           execvp(args[0], args);
         } else {             // Parent
           wait(NULL);
