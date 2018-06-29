@@ -119,7 +119,8 @@ int main(void)
             {
                 if (args_count < 2)
                 {
-                    printf("There's Rules To This Shit: You Must Enter A Directory To Chanfe To\n");
+                    printf("There's Rules To This Shit: You Must Enter A Directory To Change To\n");
+                    continue;
                 }
                 else
                 {
@@ -128,6 +129,7 @@ int main(void)
                     if (cd == -1)
                     {
                         perror("chdir failed");
+                        continue;
                     }
                     continue;
                 }
