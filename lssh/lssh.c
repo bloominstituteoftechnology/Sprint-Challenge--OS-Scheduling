@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -87,6 +88,24 @@ int main(void)
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
             break;
+        }
+
+        // Implement the ability to change directories with cd
+        if (strcmp(args[0], "cd") == 0) {
+            // check to ensure two arguments have been entered 
+            if (args_count != 2)
+            {
+                printf("Usage: cd path \n");
+            }
+            else
+            {
+                int result = chdir(args[1]);
+                if (result == -1)
+                {
+                    perror("chdir");
+                }
+            }
+            continue;
         }
 
         #if DEBUG
