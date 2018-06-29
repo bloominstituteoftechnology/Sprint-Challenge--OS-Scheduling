@@ -31,9 +31,9 @@
  */
 char **parse_commandline(char *str, char **args, int *args_count)
 {
-    char *token;
+    char *token; // pointer to an array of characters
     
-    *args_count = 0;
+    *args_count = 0; // pointer equals zero.
 
     token = strtok(str, " \t\n\r");
 
@@ -101,6 +101,29 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int rc = fork(); // fork returns the process id of the child process it creates. 
+
+        if (rc < 0)
+        {
+            fprintf(stderr, "Child process failed\n"); // formatted output to a stream.
+            exit(1);
+        } else if (rc == 0) 
+        {
+            if(strcmp(args[0], "cd") == 0) 
+            {
+                if(args_count == 2)
+                {
+                    if(chdir(args[1]) == -1)
+                    {
+                        perror("chdir");
+                    }
+                }
+                continue;
+            }
+            execvp()
+        }
+
+
         
     }
 
