@@ -119,7 +119,8 @@ int main(void)
                 if (args_count == 2) {
                     char *space = " ";
                     snprintf (comand, sizeof comand, "%s%s%s%s", cmdir, args[0], space, args[1]);
-                    execv(comand, NULL);
+                    //execv(comand, NULL);
+                    system(comand);
                 } else if (args_count == 1) {
                     snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
                     //execv(comand, NULL);
