@@ -117,6 +117,17 @@ int main(void)
                     printf("Usage: cd [path]");
                 }
 
+                // Run chdir() on second arg
+                chdir(args[1]);
+
+                // Handle chdir error
+                if (chdir(args[1]) == -1) {
+                    printf("in chdir: %d\n", chdir(args[1]));
+                    perror("chdir");
+                }
+                continue;
+            }
+
         return 0;
     }
 }
