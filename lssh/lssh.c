@@ -18,7 +18,7 @@
  * Takes a string like "ls -la .." and breaks it down into an array of pointers
  * to strings like this:
  *
- *   args[0] ---> "ls"
+ *   args[0] ---> "ls"    
  *   args[1] ---> "-la"
  *   args[2] ---> ".."
  *   args[3] ---> NULL (NULL is a pointer to address 0)
@@ -101,6 +101,24 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int rc = fork(); 
+
+        if(rc < 0) {
+            fprintf(stderr, "Child process failed. \n"); 
+            exit(1); 
+        } else if (rc == 0) {
+            if(strcmp(args[0], "cd") == 0) {
+                if(args_count == 2) {
+                    if(chdir(args[1])== -1) {  //changes directories with 2 arguments
+                        perror("chdir"); 
+                    }
+                }
+                continue; 
+            }
+            execvp(args[0], args); //child process can be different from parent
+        } else {
+            int wc = waitpid(rc, NULL, 0); 
+        }
         
     }
 
