@@ -3,6 +3,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h> // header file for bool
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -49,6 +53,11 @@ char **parse_commandline(char *str, char **args, int *args_count)
     return args;
 }
 
+static void sigchld_hdl (int sig)
+{
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+}
+
 /**
  * Main
  */
@@ -62,6 +71,8 @@ int main(void)
 
     // How many command line args the user typed
     int args_count;
+
+    bool backgroundTask = 0;
 
     // Shell loops forever (until we tell it to exit)
     while (1) {
@@ -112,9 +123,19 @@ int main(void)
         if (strcmp(args[args_count - 1], "&") == 0)
         {
             args[args_count - 1] = NULL;
+            backgroundTask = 1;
         }
 
-        #if DEBUG
+        // File Redirection
+        for (int i = 0; i <args_count; i++)
+        {
+            if (strcmp(args[i], ">") == 0)
+            {
+            
+            }
+        }
+
+    #if DEBUG
 
         // Some debugging output
 
@@ -134,13 +155,34 @@ int main(void)
         }
         else if (rc == 0) 
         { // child process satisfies this branch
-            execvp(args[0], &args[0]);
+            if (backgroundTask)
+            {
+                execvp(args[0], &args[0]);
+            }
+            else 
+            {
+                execvp(args[0], &args[0]);
+            }
         }
         else
         { // adult process
-            while (waitpid(-1, NULL, WNOHANG) > 0);
+            if (backgroundTask)
+            {
+                struct sigaction act;
+                memset(&act, 0, sizeof(act));
+                act.sa_handler = sigchld_hdl;
+                if(sigaction(SIGCHLD, &act, 0)) 
+                {
+                    perror("sigaction \n");
+                    return 1;
+                }
+            }
+            else{
+                waitpid(rc, NULL, 0);
+            }
         }
     }
+    
 
     return 0;
 }
