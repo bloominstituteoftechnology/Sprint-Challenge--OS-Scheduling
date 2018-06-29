@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -107,6 +108,15 @@ int main(void)
             fprintf(stderr, "Fork failed\n");
             exit(1);
         } else if (rc == 0) {
+            if (strcmp(args[0], "cd") == 0) {
+                int directory = chdir(args[1]);
+                if (directory < 0) {
+                    perror("No directory");
+                }
+                if (execvp(args[0], args) == -1) {
+                    perror("chdir");
+                }
+            }
             execvp(args[0], args);
         } else {
             waitpid(rc, NULL, 0);
