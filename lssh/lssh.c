@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "Lambda-shell Terminal\n\n"
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -63,11 +63,13 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
+    // Print a prompt
+    printf("%s", PROMPT);
+
     // Shell loops forever (until we tell it to exit)
     while (1)
     {
-        // Print a prompt
-        printf("%s\n> ", PROMPT);
+        printf("> ");
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
@@ -94,45 +96,66 @@ int main(void)
             break;
         }
 
-// comment out if you don't want to see the command line printed out word by word
-// #if DEBUG
+        // comment out if you don't want to see the command line printed out word by word
+        // #if DEBUG
 
-//         // Some debugging output
+        //         // Some debugging output
 
-//         // Print out the parsed command line in args[]
-//         for (int i = 0; args[i] != NULL; i++)
-//         {
-//             printf("%d: '%s'\n", i, args[i]);
-//         }
+        //         // Print out the parsed command line in args[]
+        //         for (int i = 0; args[i] != NULL; i++)
+        //         {
+        //             printf("%d: '%s'\n", i, args[i]);
+        //         }
 
-// #endif
+        // #endif
 
         /* Add your code for implementing the shell's logic here */
 
-        /* Execute Arbitrary Commands */
+        /* Change Directories with 'cd' */
+        if (strcmp(args[0], "cd") == 0)
+        {
+            if (args[1] == NULL)
+            {
+                fprintf(stderr, "expected argument to \"cd\"\n");
+                ;
+            }
+            else
+            {
+                if (chdir(args[1]) != 0)
+                {
+                    perror("cannot find");
+                }
+            }
+        }
 
         /* 
         Fork first, then have the child process execute the args.
         Most commands are shell executable out of the box, so no need
         to write extra code other than execvp().
         */
-        int rc = fork();
+        /* Execute Arbitrary Commands */
+        if (strcmp(args[0], "cd") != 0)
+        {
+            int rc = fork();
 
-        if (rc < 0)
-        {
-            fprintf(stderr, "fork failed\n"); // failed fork
-        }
-        else if (rc == 0)
-        {
-            // child process
-            if (execvp(args[0], args) == -1)
+            if (rc < 0)
             {
-                perror("cannot execute"); // throw error if execution fails
+                fprintf(stderr, "fork failed\n"); // failed fork
             }
-            exit(EXIT_FAILURE);
-        } else {
-            // parent process
-            wait();
+            else if (rc == 0)
+            {
+                // child process
+                if (execvp(args[0], args) == -1)
+                {
+                    perror("cannot execute"); // throw error if execution fails
+                }
+                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                // parent process
+                wait();
+            }
         }
     }
 
