@@ -65,14 +65,17 @@ int main(void)
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
-        printf("%s", PROMPT);
-        fflush(stdout); // Force the line above to print
+        char* username = getenv("USER")
+        printf("%s", username, PROMPT);
+        fflush(stdout);
+        return line; // Force the line above to print
 
         // Read input from keyboard
-        fgets(commandline, sizeof commandline, stdin);
+        if(fgets(commandline, sizeof commandline, stdin)) == NULL break;
+
 
         // Exit the shell on End-Of-File (CRTL-D)
-        if (feof(stdin)) {
+        if (feof(stdin) == 0) {
             break;
         }
 
@@ -101,7 +104,9 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+
+    
+
     }
 
     return 0;
