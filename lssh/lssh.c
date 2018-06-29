@@ -94,20 +94,28 @@ int main(void)
             break;
         }
 
-#if DEBUG
+// comment out if you don't want to see the command line printed out word by word
+// #if DEBUG
 
-        // Some debugging output
+//         // Some debugging output
 
-        // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++)
-        {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+//         // Print out the parsed command line in args[]
+//         for (int i = 0; args[i] != NULL; i++)
+//         {
+//             printf("%d: '%s'\n", i, args[i]);
+//         }
 
-#endif
+// #endif
 
         /* Add your code for implementing the shell's logic here */
 
+        /* Execute Arbitrary Commands */
+
+        /* 
+        Fork first, then have the child process execute the args.
+        Most commands are shell executable out of the box, so no need
+        to write extra code other than execvp().
+        */
         int rc = fork();
 
         if (rc < 0)
@@ -119,7 +127,7 @@ int main(void)
             // child process
             if (execvp(args[0], args) == -1)
             {
-                perror("cannot execute");
+                perror("cannot execute"); // throw error if execution fails
             }
             exit(EXIT_FAILURE);
         } else {
