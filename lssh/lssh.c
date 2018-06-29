@@ -105,6 +105,10 @@ int main(void)
         
         int rc = fork();
 
+        if (rc < 0) {
+            printf("Fork Failed\n");
+            exit(1);
+        
         return 0;
     }
 }
