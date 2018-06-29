@@ -101,7 +101,31 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count != 2) {
+                fprintf(stderr, "usage: cd dirname\n");
+                continue;
+            }
+            if (chdir(args[1]) < 0) {
+                fprintf(stderr, "chdir fail \n");
+                continue;
+            }
+
+            continue;
+        }
+        // use fork-exec pattern
+        pid_t child_pid = fork();
+        if (child_pid == -1) {
+            fprintf(stderr, "fork failed\n");
+            continue;
+        }
+        if (child_pid == 0) {
+            execvp(args[0], args);
+            fprintf(stderr, "exec failed\n");
+            continue;
+        } else {
+           waitpid(child_pid, NULL, 0);
+        }
     }
 
     return 0;
