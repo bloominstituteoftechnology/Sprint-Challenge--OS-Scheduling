@@ -103,7 +103,8 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
-    }
+        int rc = fork();
 
-    return 0;
+        return 0;
+    }
 }
