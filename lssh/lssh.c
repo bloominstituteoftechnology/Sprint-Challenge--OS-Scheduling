@@ -110,23 +110,18 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        if (fork() == 0) {   // Child
-          if (strcmp(args[0], "cd") == 0) {
-            // printf("cd detected %d\n", args_count);
-            if (args_count == 2) {
-              if (chdir(args[1]) == -1) {
-                perror("chdir");
-              } else {
-                continue;
-              }
-            } else {
-              printf("invalid input\n");
-            }
-          }
-          execvp(args[0], args);
-        } else {             // Parent
-          wait(NULL);
+
+        // If first argument is 'cd' and arg count is 2
+        if (strcmp(args[0], "cd") == 0 && args_count == 2) {
+          // Change dir and skip to next loop
+          if (chdir(args[1]) == -1) perror("chdir");
+          else continue;
         }
+
+         // Child process to execute program
+        if (fork() == 0) execvp(args[0], args);
+        // Parent process waits for child
+        else wait(NULL);
     }
 
     return 0;
