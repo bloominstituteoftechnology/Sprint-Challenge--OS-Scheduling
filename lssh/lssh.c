@@ -101,7 +101,12 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        int pid = fork();
+        if (pid == 0) {
+            execvp(args[0], args);
+        } else if (pid > 0) {
+            waitpid(pid, NULL, 0);
+        }
     }
 
     return 0;
