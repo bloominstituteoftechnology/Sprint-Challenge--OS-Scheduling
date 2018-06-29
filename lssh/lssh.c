@@ -67,6 +67,10 @@ int main(void)
     // Shell loops forever (until we tell it to exit)
     while (1)
     {
+        // doesn't seem to work
+        // while (waitpid(-1, NULL, WNOHANG) > 0)
+        //     ;
+
         // Print a prompt
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
@@ -117,7 +121,12 @@ int main(void)
             }
             continue;
         }
-
+        // int waitLater = 0;
+        // if (strcmp(args[args_count - 1], "&") == 0)
+        // {
+        //     args[args_count - 1] = NULL;
+        //     waitLater = 1;
+        // }
         int rc = fork();
         if (rc < 0)
         {
@@ -126,13 +135,16 @@ int main(void)
         }
         else if (rc == 0)
         {
-            // printf("hello, child here (pid: %d) \n", (int)getpid());
             execvp(args[0], args);
         }
         else
         {
+            // if (waitLater == 0)
+            // {
             waitpid(rc, NULL, 0);
-            // printf("hello, parent here (pid: %d) of child %d\n", (int)getpid(), rc);
+            // }
+            // else
+            //     continue;
         }
     }
 
