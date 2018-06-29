@@ -138,6 +138,37 @@ int main(void)
             exit(1);
         }
         else if (rc == 0) {
+            /*
+            check to see if the user entered `cd` in `args[0]` _before_ running the command. 
+            And if they did, you should short-circuit the rest of the main loop with a `continue` 
+            statement.
+
+
+            If the user entered `cd` as the first argument:
+
+            1. Check to make sure they've entered 2 total arguments
+            2. Run the system call `chdir()` on the second argument to change directories
+            3. Error check the result of `chdir()`. If it returns `-1`, meaning an error
+            occurred, you can print out an error message with:
+            ```
+            perror("chdir"); // #include <errno.h> to use this
+            ```
+            4. Execute a `continue` statement to short-circuit the rest of the main loop.
+
+            Note that `.` and `..` are actual directories. You don't need to write any special case code
+             to handle them.
+            */
+            if(strcmp(args[0], "cd") == 0) //if the user entered `cd` in `args[0]`
+            {
+                if(args_count == 2)
+                {
+                    if(chdir(args[1]) == -1)// Otherwise, -1 shall be returned, the current working directory shall remain unchanged, and errno shall be set to indicate the error
+                    {
+                        perror("chdir");
+                    }
+                }
+                continue;
+            }
            
             execvp(args[0], args);
             /*
