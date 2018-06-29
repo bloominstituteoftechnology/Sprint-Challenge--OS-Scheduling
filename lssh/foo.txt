@@ -1,0 +1,5 @@
+total 28
+---------- 1 nedu nedu     0 Jun 29 18:08 foo.txt
+-rwxrwxr-x 1 nedu nedu 13896 Jun 29 18:07 lssh
+-rw-rw-r-- 1 nedu nedu  5068 Jun 29 18:07 lssh.c
+-rw-rw-r-- 1 nedu nedu    40 Jun 29 10:22 Makefile

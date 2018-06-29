@@ -5,7 +5,9 @@
 #include <errno.h>
 #include <stdbool.h> // header file for bool
 #include <signal.h>
+#include <fcntl.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
@@ -73,9 +75,12 @@ int main(void)
     int args_count;
 
     bool backgroundTask = 0;
+    bool fileRedirection = 0;
+    char *output;
 
-    // Shell loops forever (until we tell it to exit)
-    while (1) {
+        // Shell loops forever (until we tell it to exit)
+        while (1)
+    {
         // Print a prompt
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
@@ -127,11 +132,17 @@ int main(void)
         }
 
         // File Redirection
-        for (int i = 0; i <args_count; i++)
+        for (int i = 1; args[i] != NULL; i++)
         {
             if (strcmp(args[i], ">") == 0)
             {
-            
+                fileRedirection = 1;
+                output = args[i + 1];
+            }
+
+            if (fileRedirection)
+            {
+                args[i] = NULL;
             }
         }
 
@@ -157,6 +168,13 @@ int main(void)
         { // child process satisfies this branch
             if (backgroundTask)
             {
+                execvp(args[0], &args[0]);
+            }
+            if (fileRedirection)
+            {
+                int fd = open(output, O_WRONLY | O_CREAT, S_IRUSR, S_IWUSR, S_IRGRP,  S_IROTH);
+                dup2(fd, 1);
+                close(fd);
                 execvp(args[0], &args[0]);
             }
             else 
