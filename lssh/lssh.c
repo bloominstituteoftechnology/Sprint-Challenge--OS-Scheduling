@@ -101,6 +101,11 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int rc = fork();
+
+        if (rc < 0) {
+            
+        }
         
     }
 
