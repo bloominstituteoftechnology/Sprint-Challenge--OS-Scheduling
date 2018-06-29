@@ -101,7 +101,25 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+
+        int rc = fork();
+        if (rc < 0) {
+            fprintf(stderr, "Failed\n");
+            exit(1);
+        } else if ( rc == 0 ) {
+            if (strcmp(args[0], "cd") == 0 && args_count == 2) {
+                if (args_count != 2) {
+                    fprintf(stderr, "Error: directory needed\n");
+                } else {
+                    if (chdir(args[1]) == -1) {
+                        perror("chdir");
+                    } 
+                } continue;
+            }
+            execvp(args[0], args);
+        } else {
+            waitpid(rc, NULL, 0);
+        }
     }
 
     return 0;
