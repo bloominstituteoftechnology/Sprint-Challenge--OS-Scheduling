@@ -111,14 +111,22 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
 
-        // If first argument is 'cd' and arg count is 2
+        // First argument is 'cd' and arg count is 2
         if (strcmp(args[0], "cd") == 0 && args_count == 2) {
           // Change dir and skip to next loop
           if (chdir(args[1]) == -1) perror("chdir");
           else continue;
         }
 
-         // Child process to execute program
+        // Last argument is '&'
+        if (strcmp(args[args_count - 1], "&") == 0) {
+          // Strip '&'
+          args[args_count - 1] = NULL;
+          // Make fork that runs in the background
+          
+        }
+
+        // Child process to execute program
         if (fork() == 0) execvp(args[0], args);
         // Parent process waits for child
         else wait(NULL);
