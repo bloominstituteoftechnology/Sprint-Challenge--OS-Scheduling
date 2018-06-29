@@ -101,7 +101,7 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        execvp(args[0], args);
     }
 
     return 0;
