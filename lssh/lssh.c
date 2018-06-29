@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -29,10 +30,9 @@
  *
  * @returns A copy of args for convenience.
  */
-char **parse_commandline(char *str, char **args, int *args_count)
-{
+char **parse_commandline(char *str, char **args, int *args_count) {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
@@ -51,8 +51,7 @@ char **parse_commandline(char *str, char **args, int *args_count)
 /**
  * Main
  */
-int main(void)
-{
+int main(void) {
     // Holds the command line the user types in
     char commandline[COMMANDLINE_BUFSIZE];
 
@@ -89,7 +88,7 @@ int main(void)
             break;
         }
 
-        #if DEBUG
+#if DEBUG
 
         // Some debugging output
 
@@ -98,10 +97,38 @@ int main(void)
             printf("%d: '%s'\n", i, args[i]);
         }
 
-        #endif
-        
+#endif
+
         /* Add your code for implementing the shell's logic here */
-        
+        int rc = fork();
+
+        if (rc < 0) {
+            fprintf(stderr, "Child process failed\n");
+            exit(1);
+        }
+        else if (rc == 0) {
+
+            if(strcmp(args[0], "cd") == 0) {
+                if (args_count < 2) {
+                    printf("Please enter a directory to change to!");
+                }
+                else {
+                    int changeTo = chdir(args[1]);
+                    if (changeTo < 0) {
+                        perror("chdir did not work");
+                    }
+                    continue;
+                }
+            }
+
+            execvp(args[0], args);
+        }
+        else {
+
+            waitpid(rc, NULL, 0);
+        }
+
+
     }
 
     return 0;
