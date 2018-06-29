@@ -8,12 +8,15 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 0 // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 1 // Set to 1 to turn on some debugging output, or 0 to turn off
 
 // https://github.com/shiena/ansicolor/blob/master/README.md
-#define ANSI_FOREGROUND_BLUE "\x1b[34m"
-#define ANSI_FOREGROUND_WHITE "\x1b[37m"
-#define ANSI_BLINK_ON "\x1b[5m"
+#define BLUE "\x1b[34m"
+#define WHITE "\x1b[37m"
+#define MAGENTA "\x1b[35m"
+#define RED "\x1b[31m"
+#define BOLD "\x1b[1m"
+#define BLINK_ON "\x1b[5m"
 
 /**
  * Parse the command line.
@@ -75,8 +78,8 @@ int main(void)
         // Print a prompt
         char cwd[256];
         getcwd(cwd, sizeof(cwd));
-        printf(ANSI_FOREGROUND_BLUE "%s", PROMPT);
-        printf(ANSI_FOREGROUND_WHITE "PWD = %s" ANSI_BLINK_ON ": ", cwd);
+        printf(BLUE "%s", PROMPT);
+        printf(WHITE "PWD = %s" BLINK_ON ": ", cwd);
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
@@ -106,7 +109,6 @@ int main(void)
 #if DEBUG
 
         // Some debugging output
-
         // Print out the parsed command line in args[]
         for (int i = 0; args[i] != NULL; i++)
         {
@@ -117,38 +119,34 @@ int main(void)
 
         /* Add your code for implementing the shell's logic here */
         int rc = fork();
-        if (rc < 0)
+        if (rc == 0)
         {
-            fprintf(stderr, "fork failed\n");
-            exit(1);
-        }
-        else if (rc == 0)
-        {
-            //cd
             if (strcmp(args[0], "cd") == 0)
             {
                 if (args_count < 2)
-                    printf("Please provide the directory name\n");
+                    printf(BOLD RED "Please provide the directory name\n");
                 else
                 {
                     int change = chdir(args[1]);
                     if (change < 0)
                         perror("chdir"); //Error check the result of chdir()
-                    continue;  //short-circuit the rest of the main loop
+                    continue;            //short-circuit the rest of the main loop
                 }
             }
-            //&
             else if (strcmp(args[args_count - 1], "&") == 0)
             {
-                printf("wehitgold!");
                 args[args_count - 1] = NULL;
                 execvp(args[0], args);
-                printf("%s", PROMPT);
+                printf(MAGENTA "%s\n", PROMPT);
                 fflush(stdout);
             }
-            //execute other commands
             else
                 execvp(args[0], args);
+        }
+        else if (rc < 0)
+        {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
         }
         else
         {
