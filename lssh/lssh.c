@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -104,7 +105,13 @@ int main(void)
         /* Add your code for implementing the shell's logic here */
 
         // skip the rest of the loop if the first command is "cd"
-        if (strcmp(args[0], "cd") == 0) continue;
+        if (strcmp(args[0], "cd") == 0){
+            int changeDIR = chdir(args[1]);
+
+            if (changeDIR == -1) perror("chdir");
+
+            continue;
+        }
 
         // initialize child process
         int childProcess = fork();
@@ -114,9 +121,7 @@ int main(void)
             exit(1);
         }
 
-        else if (childProcess == 0){
-            execvp(args[0], args);
-        }
+        else if (childProcess == 0) execvp(args[0], args);
 
         else waitpid(childProcess, NULL, 0);
         
