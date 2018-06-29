@@ -108,7 +108,10 @@ int main(void)
         if (rc < 0) {
             printf("Fork Failed\n");
             exit(1);
-        
-        return 0;
+        } else if (rc == 0) {
+            if (strcmp(args[0], "cd") == 0) {
+                printf("handling cd\n\n");
+
+                        return 0;
     }
 }
