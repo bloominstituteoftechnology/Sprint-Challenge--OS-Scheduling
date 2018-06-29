@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "lambda-shell:"
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -48,11 +49,27 @@ char **parse_commandline(char *str, char **args, int *args_count)
     return args;
 }
 
+void prompt()
+{
+    char cwd[256];
+    printf("%s", PROMPT);
+    if (getcwd(cwd, sizeof(cwd)) == NULL)
+        perror("getcwd() error");
+    else
+        printf("%s", cwd); // prints current working directory! Looks much nicer.
+
+    printf("$ ");
+}
+
 /**
  * Main
  */
 int main(void)
 {
+    int background_flag = 0;
+    int file_flag = 0;
+    char filename[256];
+
     // Holds the command line the user types in
     char commandline[COMMANDLINE_BUFSIZE];
 
@@ -65,7 +82,8 @@ int main(void)
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
-        printf("%s", PROMPT);
+        prompt();
+
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
@@ -89,6 +107,61 @@ int main(void)
             break;
         }
 
+        if(!strcmp(args[args_count - 1], "&"))
+        {
+            args[args_count - 1] = NULL;
+            args_count -= 1;
+            background_flag = 1;
+        }
+
+        if(!strcmp(args[0], "cd")) {
+            if(args_count > 1)
+            {
+                chdir(args[1]);
+            }
+            else
+            {
+                printf("cd requires a second argument\n");
+            }
+        }
+
+        for(int i = 0; i < args_count; i++)
+        {
+            if (!strcmp(args[i], ">"))
+            {
+                strcpy(filename, args[i+1]);
+                args[i] = NULL;
+                args_count = i + 1;
+                file_flag = 1;
+                break;
+            }
+        }
+
+        int rc = fork();
+        if(rc < 0)
+        {
+            fprintf(stderr, "fork failed\n");
+        }
+        else if (rc == 0)
+        {
+            if (file_flag)
+            {
+                int fd = open(filename, O_RDWR|O_CREAT|O_APPEND, 0600);
+                dup2(fd, 1);
+            }
+
+            execvp(args[0], args);
+            exit(0);
+        }
+        else
+        {
+            if(!background_flag)
+            {
+                int wc = waitpid(rc, NULL, 0);
+            }
+        }
+        while (waitpid(-1, NULL, WNOHANG) > 0)
+            ;
         #if DEBUG
 
         // Some debugging output
@@ -101,6 +174,8 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        background_flag = 0;
+        file_flag = 0;
         
     }
 
