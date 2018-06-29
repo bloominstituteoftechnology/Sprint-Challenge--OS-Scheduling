@@ -101,6 +101,34 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        int process = fork();
+
+        if(process < 0) {
+            fprintf(stderr, "fork failed");
+        }
+
+        if(strcmp(args[0], "cd") == 0) {
+            if(args_count < 2) {
+                chdir(args[1]);
+            }
+
+            else {
+                if(chdir(args[1]) == -1) {
+                    perror("chdir");
+                    continue;
+                }
+            }
+        }
+
+
+        if(process == 0) {
+            execvp(args[0], args);
+        }
+
+        else {
+            waitpid(process, NULL, 0);
+        }
         
     }
 
