@@ -14,6 +14,8 @@ Add your answers inline, below, with your pull request.
   This allows CPU's to execute many more programs that they have cores.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+  MLFQ sets priority levels for all running processes and allots certain windows of time for
+  each bracket. Round-Robin schedulers just cycle through the processes evenly.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
