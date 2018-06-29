@@ -107,18 +107,62 @@ int main(void)
 #endif
 
         /* Add your code for implementing the shell's logic here */
+        // adding the ability to cd
+        if (strcmp(args[0], "cd") == 0)
+        {
+            // this ensures user entered correct input by checking number of args
+            if (args_count != 2)
+            {
+                fprintf(stderr, "usage: cd dirname\n");
+                continue;
+            }
+            // use `chdir` to change directories to specified dir
+            if (chdir(args[1]) < 0)
+            {
+                fprintf(stderr, "chdir failed\n");
+                continue;
+            }
+            // add a `continue` here for extra error cushioning
+            continue;
+        }
 
-        int rc = fork();
-        if (rc < 0)
+        // use the fork-exec pattern
+        pid_t child_pid = fork();
+        // error check on fork call
+        if (child_pid == -1)
         {
-            fprintf(stderr, "fork failed\n");
-            exit(1);
+            fprintf(stderr, "fork failed \n");
+            continue;
         }
-        else if (rc == 0)
+
+        // check for the child's context
+        if (child_pid == 0)
         {
-            // exec returns with a value of -1 if error occurs
+            // call the exec command
+            // using whichever exec variant you prefer
             execvp(args[0], args);
+            // error check on exec
+            fprintf(stderr, "exec failed\n");
+            continue;
         }
+        else
+        {
+            // parent context just `wait`s on the child
+            waitpid(child_pid, NULL, 0);
+        }
+
+        // my code below
+        // int rc = fork();
+        // if (rc < 0)
+        // {
+        //     fprintf(stderr, "fork failed\n");
+        //     exit(1);
+        // }
+        // else if (rc == 0)
+        // {
+        //     // exec returns with a value of -1 if error occurs
+        //     execvp(args[0], args);
+        // }
     }
 
     return 0;
