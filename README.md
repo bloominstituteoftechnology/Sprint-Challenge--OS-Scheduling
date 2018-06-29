@@ -6,9 +6,18 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+	- Processes
+	- Scheduling
+	- Booting sequences
+
 2. Describe the job of the Scheduler in the OS in general.
+	
+	- The scheduler handles shifting processes in and out as they complete and are replaced by new processes depending on the timing.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+	- Round-Robin is a fast and simple scheduler that allots equal amounts of time in a circular fashion to each process as it assigns priority. It may be fast but it is not responsive as a MLFQ.
+	- MLFQ optimizes turnaround time by using a queue system that is much more efficient at prioritizing via scheduler. By hitting shorter termed processes first it minimizes turnaround time, it then memorizes shorter term processes and predicts further processes and prioritizes them based on their previous behavior in the queue's.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
