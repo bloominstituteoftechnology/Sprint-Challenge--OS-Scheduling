@@ -5,6 +5,9 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+  - Recieves none privileged commands from programs
+  - Sends privileged commands to kernel
+  - Manages running precoesses
 
 2. Describe the job of the Scheduler in the OS in general.
 
