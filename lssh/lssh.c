@@ -92,24 +92,25 @@ int main(void)
         #if DEBUG
 
         // Some debugging output
-
+        printf("args count %d\n", args_count);
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
         #endif
         
         /* Add your code for implementing the shell's logic here */
         
         int rc = fork();
-
+        
         if (rc < 0) {
             fprintf(stderr, "Fork failed\n");
             exit(1);
         } else if (rc == 0) {
             // child process - run the new command here
-
+            execvp(args[0], args);
+            printf("This should not be seen");
         } else {
             // parent process - wait for the child to complete
             int wc = waitpid(rc, NULL, 0);
