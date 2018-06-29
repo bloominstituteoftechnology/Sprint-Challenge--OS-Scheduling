@@ -128,6 +128,16 @@ int main(void)
                 continue;
             }
 
+            int exe_value = execvp(*args, args);
+
+            // Handle exec error
+            if (exe_value < 0) {
+                printf("ERROR: exec failure\n");
+            }
+        } else {
+            waitpid(rc, NULL, 0);
+        }
+
         return 0;
     }
 }
