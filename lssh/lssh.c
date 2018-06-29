@@ -63,13 +63,17 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
+    // HOld current directory for pwd using buffer size for commandline
+    char currDirect[COMMANDLINE_BUFSIZE];
+
     // Print a prompt
-    printf("%s", PROMPT);
+    printf("\n\n\n\033[31m%s\033[m", PROMPT);
 
     // Shell loops forever (until we tell it to exit)
     while (1)
     {
-        printf("> ");
+        getcwd(currDirect, 1024);
+        printf("\033[31m<Dir>\033[m %s\n> ", currDirect);
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
@@ -93,6 +97,7 @@ int main(void)
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0)
         {
+            printf("Goodbye\n");
             break;
         }
 
@@ -133,9 +138,10 @@ int main(void)
         Most commands are shell executable out of the box, so no need
         to write extra code other than execvp().
         */
-        /* Execute Arbitrary Commands */
+
         if (strcmp(args[0], "cd") != 0)
         {
+            /* Execute Arbitrary Commands */
             int rc = fork();
 
             if (rc < 0)
