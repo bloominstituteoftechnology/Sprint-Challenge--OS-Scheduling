@@ -101,7 +101,20 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        int rc = fork();
+        if (rc < 0)
+        { // fork failed; exit
+            fprintf(stderr, "fork failed \n"); 
+            exit(1);
+        }
+        else if (rc == 0) 
+        { // child process satisfies this branch
+            execvp(args[0], &args[0]);
+        }
+        else
+        { // adult process
+            waitpid(rc, NULL, 0);
+        }
     }
 
     return 0;
