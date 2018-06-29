@@ -101,6 +101,14 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int shell = fork();
+        if (shell < 0) {
+            fprinf(stderr, "Your shell blew up! \n");
+            exit(1);
+        }
+        else if (shell == 0) {
+            
+        }
         
     }
 
