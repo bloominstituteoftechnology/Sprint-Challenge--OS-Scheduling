@@ -12,6 +12,10 @@ Boot Sequence
 
 2.  Describe the job of the Scheduler in the OS in general.
 
+The Scheduler select processes to load into memory to be executed by the CPU. Schedulers prioritize processes by moving them into different priority queues. Each queue has a specific quantum of time associated with it and each process in a specific queue is given that quantum of time to execute.
+
+If a process is not finished executing or is blocking, the scheduler will move the process to a lower level queue with a larger time quantum or the blocking queue.
+
 3.  Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
