@@ -101,6 +101,24 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        // create a fork
+        int rc = fork();
+        //test for failure to fork
+        if(rc<0)
+        {
+            // printing to the standard error log if failed
+            fprintf(stderr,"fork Failed");
+        }
+        else if
+        {
+            // exexuting the command inside of the child
+            excvp(args[0],args);
+        }
+        else
+        {
+            // Setting the parent to wait for the child
+            int wc = waitpid(rc, Null, 0);
+        }
         
     }
 
