@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -101,7 +102,29 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+
+        // First argument is 'cd' and arg count is 2
+        if (strcmp(args[0], "cd") == 0 && args_count == 2) {
+            // Change dir and skip to next loop
+            if (chdir(args[1]) == -1) perror("chdir");
+            else continue;
+        }
+
+        // Last argument is '&'
+        if (strcmp(args[args_count - 1], "&") == 0) {
+            // Remove '&' from args
+            args[args_count - 1] = NULL;
+            // Make fork that runs in the background
+            if (fork() == 0) execvp(args[0], args);
+            else continue;
+        } else {
+            // Child process to execute program
+            if (fork() == 0) execvp(args[0], args);
+            // Parent process waits for child
+            else wait(NULL);
+        }
+
+        while (waitpid(-1, NULL, WNOHANG) > 0);
     }
 
     return 0;
