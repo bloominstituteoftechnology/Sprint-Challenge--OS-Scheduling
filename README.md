@@ -5,10 +5,15 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+Manages hardware and software resources.
+It handles user interface.
+It also handles security.
 
-2. Describe the job of the Scheduler in the OS in general.
 
-3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+2. Describe the job of the Scheduler in the OS in general. The scheduler sorts processes by priority level and allows for a more efficient process.
+
+3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler. It prefers the shorter jobs and finishes them more quickly whereas round robin does not give a preference. MLFQ allows us to put the fastest processes at the front which can be viewed as a more optimal way to use resources.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
