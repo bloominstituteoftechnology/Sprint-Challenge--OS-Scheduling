@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 
 #define PROMPT "lambda-shell:"
 
@@ -66,6 +67,8 @@ void prompt()
 int main(void)
 {
     int background_flag = 0;
+    int file_flag = 0;
+    char filename[256];
 
     // Holds the command line the user types in
     char commandline[COMMANDLINE_BUFSIZE];
@@ -107,6 +110,7 @@ int main(void)
         if(!strcmp(args[args_count - 1], "&"))
         {
             args[args_count - 1] = NULL;
+            args_count -= 1;
             background_flag = 1;
         }
 
@@ -121,6 +125,18 @@ int main(void)
             }
         }
 
+        for(int i = 0; i < args_count; i++)
+        {
+            if (!strcmp(args[i], ">"))
+            {
+                strcpy(filename, args[i+1]);
+                args[i] = NULL;
+                args_count = i + 1;
+                file_flag = 1;
+                break;
+            }
+        }
+
         int rc = fork();
         if(rc < 0)
         {
@@ -128,6 +144,12 @@ int main(void)
         }
         else if (rc == 0)
         {
+            if (file_flag)
+            {
+                int fd = open(filename, O_RDWR|O_CREAT|O_APPEND, 0600);
+                dup2(fd, 1);
+            }
+
             execvp(args[0], args);
             exit(0);
         }
@@ -153,6 +175,7 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         background_flag = 0;
+        file_flag = 0;
         
     }
 
