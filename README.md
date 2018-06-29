@@ -12,9 +12,11 @@ Add your answers inline, below, with your pull request.
 
 2. Describe the job of the Scheduler in the OS in general.
 
-    
+    Sorting processes by priority level & rotate them out as they are completed, or work on for a designated time and set to a lower priority. 
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+    MLFQ gives priority to shorter jobs & separtes processes into categories base on their need for the processor
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
