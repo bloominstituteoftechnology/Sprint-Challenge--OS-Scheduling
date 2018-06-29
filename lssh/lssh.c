@@ -103,13 +103,29 @@ int main(void)
         /* Add your code for implementing the shell's logic here */
         char *cmdir = "/bin/";
         if (args[0] != "exit") {
+            // if (args[0] == "cd") {
+            //     char *dir = args[1];
+            //     chdir(dir);
+            // }
+            // if (args[0] == "pwd") {
+            //     system(args[0]);
+            // }
             char *comand[1024];
-            snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
+            //snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
             //printf("the command entered:\n%s\n", comand);
 
             int rc = fork();
             if (rc == 0) {
-                execv(comand, NULL);
+                if (args_count == 2) {
+                    char *space = " ";
+                    snprintf (comand, sizeof comand, "%s%s%s%s", cmdir, args[0], space, args[1]);
+                    execv(comand, NULL);
+                } else if (args_count == 1) {
+                    snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
+                    //execv(comand, NULL);
+                    system(comand);
+                }
+                //execv(comand, NULL);
                 return 0;
             } else if (rc != 0) {
                 waitpid(rc, NULL, 0);
