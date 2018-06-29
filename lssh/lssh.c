@@ -104,8 +104,6 @@ int main(void)
         int pid = fork();
         if (pid == 0) {
             execvp(args[0], args);
-        } else if (pid > 0) {
-            waitpid(pid, NULL, 0);
         }
     }
 
