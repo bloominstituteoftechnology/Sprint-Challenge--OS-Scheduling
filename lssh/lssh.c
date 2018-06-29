@@ -2,34 +2,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-// #include <sys/types.h>
-// #include <sys/wait.h>
-// #include <errno.h>
+#include <sys/wait.h>
+
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
 #define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
-
-
-// int ls_cd(char **args);
-// char *builtin_str[] = { "cd" };
-// int (*builtin_func[]) (char **) = { &ls_cd };
-// int num_builtins() {
-//   return sizeof(builtin_str) / sizeof(char *);
-// }
-//     int ls_cd(char **args)
-//     {
-//         if(args[1] == NULL) {
-//             fprintf(stderr, "Expected Arg to be \"cd\"\n");
-//         } else {
-//             if(chdir(args[1]) != 0) {
-//                 perror("ChangeDir");
-//             }
-//         }
-//         return 1;
-//     }
 
 /**
  * Parse the command line.
@@ -84,8 +64,6 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
-  
-
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
@@ -124,7 +102,6 @@ int main(void)
         #if DEBUG
 
         // Some debugging output
-
         // Print out the parsed command line in args[]
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
@@ -133,9 +110,8 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        int ret = fork();
-        if (ret < 0) 
-        {
+    int ret = fork();
+        if (ret < 0) {
             fprintf(stderr, "Failed to Fork :/ \n");
             exit(1);
         }
@@ -150,16 +126,3 @@ int main(void)
     }
     return 0;
 }
-
-            // if(strcmp(args[0], "cd") == 0)
-            // {
-            //     if (args_count < 2) {
-            //     printf("Please enter the directory of your choosing\n");
-            //     } 
-            //     else 
-            //     { 
-            //        if (chdir(args[1] < 0)) { 
-            //         printf("This file or directory does not exist\n");
-            //         }
-            //         continue;
-            //     }
