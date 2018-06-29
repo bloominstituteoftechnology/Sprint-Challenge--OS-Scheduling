@@ -8,7 +8,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -162,16 +162,16 @@ int main(void)
         }
         while (waitpid(-1, NULL, WNOHANG) > 0)
             ;
-        // #if DEBUG
+        #if DEBUG
 
-        // // Some debugging output
+        // Some debugging output
 
-        // // Print out the parsed command line in args[]
-        // for (int i = 0; args[i] != NULL; i++) {
-        //     printf("%d: '%s'\n", i, args[i]);
-        // }
+        // Print out the parsed command line in args[]
+        for (int i = 0; args[i] != NULL; i++) {
+            printf("%d: '%s'\n", i, args[i]);
+        }
 
-        // #endif
+        #endif
         
         /* Add your code for implementing the shell's logic here */
         background_flag = 0;
