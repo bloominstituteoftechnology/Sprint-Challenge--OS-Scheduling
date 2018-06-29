@@ -106,7 +106,16 @@ int main(void)
             printf(stderr, "fork failed\n");
             exit(1);
         } else if (child == 0) {
-            execvp(args[0], args);
+            if (strcmp(args[0], "cd") == 0) {
+                if (args_count < 2) {
+                    printf("please entera a directory\n");
+                } else {
+                    chdir(args[1]);
+                    continue;
+                }
+            } else {
+                execvp(args[0], args);
+            }
         }
         
     }
