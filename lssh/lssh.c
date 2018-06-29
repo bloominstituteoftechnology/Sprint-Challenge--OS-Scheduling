@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include  <sys/types.h>
+#include <sys/wait.h>
+
 
 #define PROMPT "lambda-shell$ "
 
@@ -47,6 +50,31 @@ char **parse_commandline(char *str, char **args, int *args_count)
 
     return args;
 }
+
+ void execute(char **args)
+        {
+            pid_t pid;
+            pid = fork();
+            int status; 
+
+            if((pid == fork()) < 0) // fork the child process
+            {
+                // the process failed to fork
+                exit(1);
+            }
+            else if(pid == 0) 
+            {
+                // fork succeeded but execution failed.
+                if (execvp(*args, args) < 0)
+                {
+                    exit(1);
+                }
+            }
+            else
+            {
+                while (wait(&status) != pid); // wait for parent
+            }
+        }
 
 /**
  * Main
@@ -102,6 +130,7 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
+        execute(args);
     }
 
     return 0;
