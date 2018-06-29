@@ -77,6 +77,7 @@ int main(void)
     bool backgroundTask = 0;
     bool fileRedirection = 0;
     char *output;
+    char **pipeArgs;
 
         // Shell loops forever (until we tell it to exit)
         while (1)
@@ -146,6 +147,18 @@ int main(void)
             }
         }
 
+        // Pipe
+        pipeArgs = NULL;
+        for (int i = 1; args[i] != NULL; i++)
+        {
+            if (strcmp(args[i], "|") == 0)
+            {
+                pipeArgs = &(args[i + 1]);
+                args[i] = NULL;
+            }
+        }
+
+
     #if DEBUG
 
         // Some debugging output
@@ -170,12 +183,64 @@ int main(void)
             {
                 execvp(args[0], &args[0]);
             }
-            if (fileRedirection)
+            else if (fileRedirection)
             {
                 int fd = open(output, O_WRONLY | O_CREAT, S_IRUSR, S_IWUSR, S_IRGRP,  S_IROTH);
                 dup2(fd, 1);
                 close(fd);
                 execvp(args[0], &args[0]);
+            }
+            else if (pipeArgs != NULL)
+            {
+                int fd[2];
+
+                // Make the pipe for communication
+                pipe(fd);
+
+                // Fork a child process
+                pid_t pid = fork();
+
+                if (pid == -1)
+                {
+                    perror("fork");
+                    exit(1);
+                }
+
+                if (pid == 0)
+                {
+                    // Child process
+
+                    // Hook up standard input to the "read" end of the pipe
+                    dup2(fd[0], 0);
+
+                    // Close the "write" end of the pipe for the child.
+                    // Parent still has it open; child doesn't need it.
+                    close(fd[1]);
+
+                    execvp(pipeArgs[0], &pipeArgs[0]);
+
+                    // We only get here if exec() fails
+                    perror("exec");
+                    exit(1);
+                }
+                else
+                {
+                    // Parent process
+
+                    // Hook up standard output to the "write" end of the pipe
+                    dup2(fd[1], 1);
+
+                    // Close the "read" end of the pipe for the parent.
+                    // Child still has it open; parent doesn't need it.
+                    close(fd[0]);
+
+                    // Run "ls -la /"
+                    execvp(args[0], &args[0]);
+
+                    // We only get here if exec() fails
+                    perror("exec ls");
+                    exit(1);
+                }
             }
             else 
             {
