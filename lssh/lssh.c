@@ -89,6 +89,12 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0) {
+            chdir(args[1]);
+            perror("chdir");
+            continue;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -101,7 +107,10 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        int pid = fork();
+        if (pid == 0) {
+            execvp(args[0], args);
+        }
     }
 
     return 0;
