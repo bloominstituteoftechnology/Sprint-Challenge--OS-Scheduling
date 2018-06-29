@@ -101,6 +101,13 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int child = fork();
+        if (child < 0) {
+            printf(stderr, "fork failed\n");
+            exit(1);
+        } else if (child == 0) {
+            execvp(args[0], args);
+        }
         
     }
 
