@@ -101,7 +101,20 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        char *cmdir = "/bin/";
+        if (args[0] != "exit") {
+            char *comand[1024];
+            snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
+            //printf("the command entered:\n%s\n", comand);
+
+            int rc = fork();
+            if (rc == 0) {
+                execv(comand, NULL);
+                return 0;
+            } else if (rc != 0) {
+                waitpid(rc, NULL, 0);
+            }
+        }
     }
 
     return 0;
