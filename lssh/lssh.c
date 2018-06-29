@@ -89,6 +89,23 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count != 2) {
+                perror("cd should have 1 argument");
+                continue;
+            }
+
+            char path[100];
+            strcpy(path, args[1]);
+
+            char cwd[256];
+            getcwd(cwd,sizeof(cwd));
+
+            strcat(cwd,"/");
+            strcat(cwd, path);
+            chdir(cwd);
+            continue;
+        }
         #if DEBUG
 
         // Some debugging output
@@ -101,7 +118,12 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+       if (fork() == 0) {
+           execvp(args[0], args);
+           exit(0);
+       } 
+
+       wait(NULL);
     }
 
     return 0;
