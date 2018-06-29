@@ -127,13 +127,21 @@ int main(void)
             }
         else if (rc == 0)
         {
+            if(strcmp(args[args_count-1], "&") == 0) 
+            {
+                args[args_count-1] = NULL;
+                execvp(args[0], args);
+            }
+            else 
+            {
             execvp(args[0], args);
+            }
         }
         else 
         {
             waitpid(rc, NULL, 0);
         }
     }
-
+    while (waitpid(-1, NULL, WNOHANG) > 0);
     return 0;
 }
