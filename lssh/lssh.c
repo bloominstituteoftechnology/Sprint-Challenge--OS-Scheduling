@@ -131,6 +131,8 @@ int main(void)
             // Parent process waits for child
             else wait(NULL);
         }
+
+        while (waitpid(-1, NULL, WNOHANG) > 0);
     }
 
     return 0;
