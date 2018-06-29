@@ -6,7 +6,13 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+    Providing an interface through CLI or GUI.
+    Handling communication between user & machine.
+    Managing communication between pieces of hardware to execute given commands.
+
 2. Describe the job of the Scheduler in the OS in general.
+
+    
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
 
