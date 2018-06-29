@@ -101,7 +101,12 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+       if (fork() == 0) {
+           execvp(args[0], args);
+           exit(0);
+       } 
+
+       wait(NULL);
     }
 
     return 0;
