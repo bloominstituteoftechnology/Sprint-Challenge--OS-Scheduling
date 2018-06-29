@@ -9,7 +9,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1 // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0 // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
