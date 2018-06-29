@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "Vanilla-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -99,10 +99,10 @@ int main(void)
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++)
-        {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        //for (int i = 0; args[i] != NULL; i++)
+        //{
+        //    printf("%d: '%s'\n", i, args[i]);
+        //}
 
 #endif
 
@@ -114,36 +114,37 @@ int main(void)
             test = chdir(dir);
         }
         char *cmdir = "/bin/";
-        // if (args[0] != "exit") {
-
-        char *comand[1024];
-        //snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
-        //printf("the command entered:\n%s\n", comand);
-
-        int rc = fork();
-        if (rc == 0)
+        if (strcmp(args[0], "exit") != 0 && strcmp(args[0], "cd") != 0)
         {
-            if (args_count == 2)
+
+            char *comand[1024];
+            //snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
+            //printf("the command entered:\n%s\n", comand);
+
+            int rc = fork();
+            if (rc == 0)
             {
-                char *space = " ";
-                snprintf(comand, sizeof comand, "%s%s%s%s", cmdir, args[0], space, args[1]);
+                if (args_count == 2)
+                {
+                    char *space = " ";
+                    snprintf(comand, sizeof comand, "%s%s%s%s", cmdir, args[0], space, args[1]);
+                    //execv(comand, NULL);
+                    system(comand);
+                }
+                else if (args_count == 1)
+                {
+                    snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
+                    //execv(comand, NULL);
+                    system(comand);
+                }
                 //execv(comand, NULL);
-                system(comand);
+                return 0;
             }
-            else if (args_count == 1)
+            else if (rc != 0)
             {
-                snprintf(comand, sizeof comand, "%s%s", cmdir, args[0]);
-                //execv(comand, NULL);
-                system(comand);
+                waitpid(rc, NULL, 0);
             }
-            //execv(comand, NULL);
-            return 0;
         }
-        else if (rc != 0)
-        {
-            waitpid(rc, NULL, 0);
-        }
-        // }
     }
 
     return 0;
