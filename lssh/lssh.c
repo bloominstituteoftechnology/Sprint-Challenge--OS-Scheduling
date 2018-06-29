@@ -120,7 +120,7 @@ int main(void)
 
         // Last argument is '&'
         if (strcmp(args[args_count - 1], "&") == 0) {
-            // Strip '&'
+            // Remove '&' from args
             args[args_count - 1] = NULL;
             // Make fork that runs in the background
             if (fork() == 0) execvp(args[0], args);
