@@ -112,6 +112,11 @@ int main(void)
             if (strcmp(args[0], "cd") == 0) {
                 printf("handling cd\n\n");
 
-                        return 0;
+                // Check if 2 arguments entered if not prompt user
+                if (args_count != 2) {
+                    printf("Usage: cd [path]");
+                }
+
+        return 0;
     }
 }
