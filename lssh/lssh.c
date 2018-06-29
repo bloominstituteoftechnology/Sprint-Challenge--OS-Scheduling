@@ -104,12 +104,18 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        int pid = fork();
-        if (pid == 0) { //CHILD
+        // CD functionality
+        
+        int rc = fork();
+        if (rc < 0) {
+            fprintf(stderr, "Process Failed\n");
+            exit(1);
+        }
+        else if (rc == 0) { //CHILD
             execvp(args[0], args);
         }
-        else if (pid > 0) { //PARENT
-            waitpid(pid, NULL, 0);
+        else { //PARENT
+            waitpid(rc, NULL, 0);
         }
     }
 
