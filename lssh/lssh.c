@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -32,7 +33,7 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
@@ -99,9 +100,19 @@ int main(void)
         }
 
         #endif
-        
+
         /* Add your code for implementing the shell's logic here */
-        
+        int rc = fork();
+        if (rc < 0) {
+          printf("fork failed");
+          exit(1);
+        }
+        else if (rc == 0) {
+          execlp("ls", "ls", "-la", NULL);
+        }
+        else {
+          waitpid(rc, NULL, 0);
+        }
     }
 
     return 0;
