@@ -19,7 +19,7 @@ Add your answers inline, below, with your pull request.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
 
-            Round Robin method gives every process an equal amount of CPU power, which will give highly interactive (I/O-intenstive) processes will be scheduled no more frequently then the CPU-bound processes (less I/O-intensive).
+            Round Robin method gives every process an equal amount of CPU power, meaning that highly interactive (I/O-intenstive) processes will be scheduled no more frequently then the CPU-bound processes (less I/O-intensive).
             MLFQ addresses this issue by assigning levels of priorities to each process, thus those which are I/O-intenstive processes, can stay in high priority, so that the response will be more prompt, while keeping less I/O intensive ones lower in the priority list and letting them remain in queue, rather than terminating them entirely.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
