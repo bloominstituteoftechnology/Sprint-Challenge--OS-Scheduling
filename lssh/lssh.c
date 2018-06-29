@@ -109,14 +109,27 @@ int main(void)
 
         /* Add your code for implementing the shell's logic here */
         char *command = args[0];
-
-        if (!strcmp(command, "cd"))
+        if (!strcmp(command, "cd") && args_count == 2)
         {
-            if (args[2] == NULL)
+            if (chdir(args[1]) == -1)
             {
-                printf("Hey loser\n");
+                perror("chdir");
             }
+
+            continue;
         }
+
+        char *rest[3];
+        rest[0] = args[1];
+        rest[1] = args[2];
+        rest[2] = args[3];
+        if (execvp(command, rest) < 0)
+        {
+            perror("Error executing command");
+            exit(1);
+        }
+        else
+            continue;
     }
 
     return 0;
