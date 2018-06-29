@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -89,6 +91,17 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0) {
+            if(args[2] || args[1] == NULL) break;
+            
+            if(chdir(args[1]) == -1) {
+                perror("chdir");
+            } else {
+                chdir(args[1]);
+            }
+            continue;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -101,7 +114,21 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        int rc = fork();
+
+        if(rc<0) {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+        } else if (rc == 0) {
+            printf("child started\n");
+            //child code
+            execvp(args[0], args);
+            continue;
+            printf("this should not be seen\n");
+        } else {
+            int wc = wait(NULL);
+            printf("parent finished.\n");
+        }
     }
 
     return 0;
