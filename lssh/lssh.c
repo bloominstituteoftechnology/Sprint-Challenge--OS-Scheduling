@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -101,7 +103,25 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+	int rc = fork();
+	int sockets[2];
+	
+	if (pipe(sockets) == -1) {
+	  perror("pipe");
+	  exit(1);
+	}
+	
+	if (rc < 0) {
+	  perror("fork");
+	  exit(1);
+	} else if (rc == 0) {
+	  execvp(args[0], args);
+	  
+	  perror("execvp"); // Should be unreachable
+	  exit(1);
+	} else {
+       	  wait(0); // Clean up
+	}
     }
 
     return 0;
