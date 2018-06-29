@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -88,7 +89,7 @@ int main(void)
         if (strcmp(args[0], "exit") == 0) {
             break;
         }
-
+        
         #if DEBUG
 
         // Some debugging output
@@ -102,7 +103,69 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
-    }
+        //INSTRUCTOR SOLVE
+        // NOTE: add the ability to cd 
+        if (strcmp(args[0], "cd") == 0) { // NOTE: arg 0 = cd string
+            // NOTE: make sure that the user entered the expected number of args to the cd command
+            if (args_count != 2) {
+                fprintf(stderr, "usage: cd dirname\n");
+                continue; //NOTE: loop continues & accept new command
+            }
+            // NOTE: use 'chdir' to change to the specified directory
+            if (chdir(args[1]) < 0) { 
+                fprintf(stderr, "chdir failed\n"); //failed mssg
+                continue;
+            }
+
+            // NOTE: add a 'continue' here for good measure
+            continue;
+        }
+
+        // NOTE: use the fork-exec pattern
+        pid_t child_pid = fork();
+        // NOTE: error check on our fork call
+        if (child_pid == -1) {
+            fprintf(stderr, "fork failed\n");
+            continue;
+        }
+
+        // NOTE: check for the child's context
+        if (child_pid == 0) {
+            // NOTE: call the exec command
+            // NOTE: using whichever exec variant you prefer
+            execvp(args[0], args);
+            // NOTE: error check on exec
+            fprintf(stderr, "exec failed\n");
+            continue;
+        } else {
+            // NOTE: parent context 'wait's on the child
+            waitpid(child_pid, NULL, 0);
+        }
+    }    
 
     return 0;
 }
+
+        // step 1-------------------------------------
+//         int rc = fork();
+//         if (rc < 0) {
+//             fprintf(stderr, "Fork Failed\n");
+//             exit(1);
+//         } else if (rc == 0) {
+//         // step 2-------------------------------------
+//             if (strcmp(args[0], "cd") == 0) {
+//                 if (args_count < 2)
+//                 printf("Directory Needs To Be Specified\n");
+//                 else {
+//                     int change = chdir(args[1]);
+//                     if(change < 0)
+//                         perror("chdir");
+//                     continue;
+//                 }
+//             } else 
+//             execvp(args[0], args);
+//         }
+//     }
+
+//     return 0;
+// }
