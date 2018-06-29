@@ -13,27 +13,24 @@
 #define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 
-int ls_cd(char **args);
+// int ls_cd(char **args);
+// char *builtin_str[] = { "cd" };
+// int (*builtin_func[]) (char **) = { &ls_cd };
+// int num_builtins() {
+//   return sizeof(builtin_str) / sizeof(char *);
+// }
+//     int ls_cd(char **args)
+//     {
+//         if(args[1] == NULL) {
+//             fprintf(stderr, "Expected Arg to be \"cd\"\n");
+//         } else {
+//             if(chdir(args[1]) != 0) {
+//                 perror("ChangeDir");
+//             }
+//         }
+//         return 1;
+//     }
 
-char *builtin_str[] = { "cd" };
-
-int (*builtin_func[]) (char **) = { &ls_cd };
-
-int num_builtins() {
-  return sizeof(builtin_str) / sizeof(char *);
-}
-
-    int ls_cd(char **args)
-    {
-        if(args[1] == NULL) {
-            fprintf(stderr, "Expected Arg to be \"cd\"\n");
-        } else {
-            if(chdir(args[1]) != 0) {
-                perror("ChangeDir");
-            }
-        }
-        return 1;
-    }
 /**
  * Parse the command line.
  *
