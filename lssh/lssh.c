@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+
 
 #define PROMPT "lambda-shell$ "
 
@@ -75,7 +77,7 @@ int main(void)
         if (feof(stdin)) {
             break;
         }
-
+        
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
@@ -88,11 +90,18 @@ int main(void)
         if (strcmp(args[0], "exit") == 0) {
             break;
         }
-
+        if(strcmp(args[0], "cd") == 0){
+            if (args_count < 2) {
+                printf("Please enter a directory of your choosing");
+            }
+            else if (chdir(args[1])) {
+                perror("Error changing to file or directory\n");
+            }
+            continue;
+        }
         #if DEBUG
 
         // Some debugging output
-
         // Print out the parsed command line in args[]
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
@@ -101,8 +110,19 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
+    int ret = fork();
+        if (ret < 0) {
+            fprintf(stderr, "Failed to Fork :/ \n");
+            exit(1);
+        }
 
+        else if (ret == 0) {
+            execvp(args[0], args);
+        }
+
+        else if (ret > 0) {
+            waitpid(ret, NULL, 0);
+        }
+    }
     return 0;
 }

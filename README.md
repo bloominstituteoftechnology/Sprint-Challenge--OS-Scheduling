@@ -5,10 +5,13 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+    * booting, process management, security.
 
 2. Describe the job of the Scheduler in the OS in general.
+    * The scheduler determines which programs are added to the system for processing
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+    * Setting and executing priorities. Far more efficient than roundrobin
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
@@ -22,7 +25,7 @@ then
 ### Task 1: Implement the Ability to Execute Arbitrary Commands
 This program implements a new shell that you can use to run commands from in Unix, similar to bash!
 
-At the end of the day, you should be able to run your shell, then run commands within it like in the following example.
+ 
 
 **NOTE: you do not need to implement the `ls` or `head` commands! These already exist in Unix. Your goal is to write a program that runs them with `exec()` when
 the user types in their names. And also the shell should be able to run _any_ command, not just `ls` and `head`.**
