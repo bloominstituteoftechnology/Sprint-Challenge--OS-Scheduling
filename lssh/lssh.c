@@ -78,6 +78,7 @@ int launch(char **args) {
 char *func_str[] = {
   "cd",
   "help",
+  "open",
   // "exit"
 };
 
@@ -94,6 +95,48 @@ int term_cd (char **args) {
     }
   }
   return -1;
+}
+
+int term_open(char **args) {
+  if(args[1] == NULL) {
+    fprintf(stderr, "Shell: expected arguement to \"cd\"\n");
+  } else {
+    long int size = 0;
+    FILE* file = fopen(args[1], "r");
+    if(!file) {
+      fputs("file error.\n", stderr);
+      return 1;
+    }
+
+    fseek(file, 0, SEEK_END);
+    size = ftell(file);
+    rewind(file);
+
+    char* result = (char *) malloc(size);
+    if(!result) {
+      fprintf(stderr, "Memory error.\n");
+      free(result);
+      return 1;
+    }
+
+    if(fread(result, 1, size, file) != size) {
+      fprintf(stderr, "read error\n");
+      free(result);
+      return 1;
+    }
+
+    fclose(file);
+    if(!result) {
+      fprintf(stderr, "fread result error\n");
+      free(result);
+      return 1;
+    } else {
+      printf("  %s\n", result);
+      free(result);
+    }
+  }
+
+  return 1;
 }
 
 int term_help(char **args) {
@@ -114,6 +157,7 @@ int term_help(char **args) {
 int (*function[]) (char **) = {
   &term_cd,
   &term_help,
+  &term_open
   // &term_exit
 };
 
