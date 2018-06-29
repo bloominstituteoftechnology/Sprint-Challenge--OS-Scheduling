@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
+#include <stdbool.h> // header file for bool
+#include <signal.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -48,6 +55,11 @@ char **parse_commandline(char *str, char **args, int *args_count)
     return args;
 }
 
+void sigchld_hdl (int sig)
+{
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+}
+
 /**
  * Main
  */
@@ -62,8 +74,14 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
+    bool backgroundTask = 0;
+    bool fileRedirection = 0;
+    char *output;
+    char **pipeArgs;
+
     // Shell loops forever (until we tell it to exit)
-    while (1) {
+    while (1)
+    {
         // Print a prompt
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
@@ -89,6 +107,58 @@ int main(void)
             break;
         }
 
+        // Implement the ability to change directories with cd
+        if (strcmp(args[0], "cd") == 0) {
+            // check to ensure two arguments have been entered 
+            if (args_count != 2)
+            {
+                printf("Usage: cd path \n");
+            }
+            else
+            {
+                int result = chdir(args[1]);
+                if (result == -1)
+                {
+                    perror("chdir");
+                }
+            }
+            continue;
+        }
+
+        // Background Tasks
+        if (strcmp(args[args_count - 1], "&") == 0)
+        {
+            args[args_count - 1] = NULL;
+            backgroundTask = 1;
+        }
+
+        // File Redirection
+        for (int i = 1; args[i] != NULL; i++)
+        {
+            if (strcmp(args[i], ">") == 0)
+            {
+                fileRedirection = 1;
+                output = args[i + 1];
+            }
+
+            if (fileRedirection)
+            {
+                args[i] = NULL;
+            }
+        }
+
+        // Pipe
+        pipeArgs = NULL;
+        for (int i = 1; args[i] != NULL; i++)
+        {
+            if (strcmp(args[i], "|") == 0)
+            {
+                pipeArgs = &(args[i + 1]);
+                args[i] = NULL;
+            }
+        }
+
+
         #if DEBUG
 
         // Some debugging output
@@ -101,8 +171,102 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        int rc = fork();
+        if (rc < 0)
+        { // fork failed; exit
+            fprintf(stderr, "fork failed \n"); 
+            exit(1);
+        }
+        else if (rc == 0) 
+        { // child process satisfies this branch
+            if (backgroundTask)
+            {
+                execvp(args[0], &args[0]);
+            }
+            else if (fileRedirection)
+            {
+                int fd = open(output, O_WRONLY | O_CREAT, S_IRUSR, S_IWUSR, S_IRGRP,  S_IROTH);
+                dup2(fd, 1);
+                close(fd);
+                execvp(args[0], &args[0]);
+            }
+            else if (pipeArgs != NULL)
+            {
+                int fd[2];
+
+                // Make the pipe for communication
+                pipe(fd);
+
+                // Fork a child process
+                pid_t pid = fork();
+
+                if (pid == -1)
+                {
+                    perror("fork");
+                    exit(1);
+                }
+
+                if (pid == 0)
+                {
+                    // Child process
+
+                    // Hook up standard input to the "read" end of the pipe
+                    dup2(fd[0], 0);
+
+                    // Close the "write" end of the pipe for the child.
+                    // Parent still has it open; child doesn't need it.
+                    close(fd[1]);
+
+                    execvp(pipeArgs[0], &pipeArgs[0]);
+
+                    // We only get here if exec() fails
+                    perror("exec");
+                    exit(1);
+                }
+                else
+                {
+                    // Parent process
+
+                    // Hook up standard output to the "write" end of the pipe
+                    dup2(fd[1], 1);
+
+                    // Close the "read" end of the pipe for the parent.
+                    // Child still has it open; parent doesn't need it.
+                    close(fd[0]);
+
+                    // Run "ls -la /"
+                    execvp(args[0], &args[0]);
+
+                    // We only get here if exec() fails
+                    perror("exec ls");
+                    exit(1);
+                }
+            }
+            else 
+            {
+                execvp(args[0], &args[0]);
+            }
+        }
+        else
+        { // adult process
+            if (backgroundTask)
+            { // http://www.microhowto.info/howto/reap_zombie_processes_using_a_sigchld_handler.html
+                struct sigaction sa;
+                sa.sa_handler = &sigchld_hdl;
+                sigemptyset(&sa.sa_mask);
+                sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
+                if (sigaction(SIGCHLD, &sa, 0) == -1) 
+                {
+                    perror("sigaction \n");
+                    exit(1);
+                }
+            }
+            else{
+                waitpid(rc, NULL, 0);
+            }
+        }
     }
+    
 
     return 0;
 }
