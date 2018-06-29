@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "Yasin-shell$ "
 
@@ -118,31 +119,25 @@ int main(void)
             {
                 if (args_count < 2)
                 {
-                    printf("You Must Enter A Directory\n");
+                    printf("There's Rules To This Shit: You Must Enter A Directory To Chanfe To\n");
                 }
                 else
                 {
                     int cd = chdir(args[1]);
-                    if (cd < 0)
-                    {
-                        perror("lssh");
-                        continue;
-                    }
-                }
 
-                // execvp(args[0], args);
+                    if (cd == -1)
+                    {
+                        perror("chdir failed");
+                    }
+                    continue;
+                }
             }
-            else if (strcmp(args[args_count - 1], "&") == 0)
-            {
-                args[args_count - 1] = NULL;
-                execvp(args[0], args);
-                printf("%s", PROMPT);
-                fflush(stdout);
-            }
-            else
-            {
-                waitpid(pid, NULL, 0);
-            }
+            execvp(args[0], args);
+        }
+
+        else
+        {
+            waitpid(pid, NULL, 0);
         }
     }
     return 0;
