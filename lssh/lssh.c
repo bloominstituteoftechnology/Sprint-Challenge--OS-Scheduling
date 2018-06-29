@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -92,16 +93,43 @@ int main(void)
         #if DEBUG
 
         // Some debugging output
-
+        // printf("args count %d\n", args_count);
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
         #endif
         
         /* Add your code for implementing the shell's logic here */
         
+        int rc = fork();
+        
+        if (rc < 0) {
+            fprintf(stderr, "Fork failed\n");
+            exit(1);
+        } else if (rc == 0) {
+            // child process - run the new command here
+            if (strcmp(args[0], "cd") == 0) {
+              // user enters the correct number of args
+              if (args_count == 2) {
+                int changeDir = chdir(args[1]);
+                if (changeDir < 0) {
+                  perror("chdir");
+                }
+                continue;
+              } else {
+                // user did not enter the correct number of args
+                fprintf(stderr, "usage: cd dirname\n");
+                continue;
+              }
+            }
+            execvp(args[0], args);
+            printf("This should not be seen");
+        } else {
+            // parent process - wait for the child to complete
+            int wc = waitpid(rc, NULL, 0);
+        }
     }
 
     return 0;
