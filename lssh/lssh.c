@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+// #include <sys/types.h>
+// #include <sys/wait.h>
+// #include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -99,7 +102,7 @@ int main(void)
         if (feof(stdin)) {
             break;
         }
-
+        
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
@@ -112,7 +115,15 @@ int main(void)
         if (strcmp(args[0], "exit") == 0) {
             break;
         }
-
+        if(strcmp(args[0], "cd") == 0){
+            if (args_count < 2) {
+                printf("Please enter a directory of your choosing");
+            }
+            else if (chdir(args[1])) {
+                perror("Error changing to file or directory\n");
+            }
+            continue;
+        }
         #if DEBUG
 
         // Some debugging output
@@ -126,40 +137,32 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         int ret = fork();
-        
         if (ret < 0) 
         {
-            fprintf(stderr, "Failed to Fork\n");
+            fprintf(stderr, "Failed to Fork :/ \n");
             exit(1);
         }
 
-        else if (ret == 0) 
-        {
-            if(strcmp(args[0], "cd") == 0)
-            {
-                if (args_count < 2) {
-                printf("Please enter the directory of your choosing\n");
-                } 
-                else 
-                { 
-                   if (chdir(args[1] < 0)) { 
-                    printf("This file or directory does not exist\n");
-                    }
-                    continue;
-                }
-            }
-            else if (strcmp(args[args_count - 1], "&") == 0)
-            {
-                args[args_count - 1] = NULL;
-                execvp(args[0], args);
-                printf("%s", PROMPT);
-                fflush(stdout);
-            }
-
+        else if (ret == 0) {
+            execvp(args[0], args);
         }
-        else {
-        int wait = waitpid(ret, NULL, 0);
+
+        else if (ret > 0) {
+            waitpid(ret, NULL, 0);
         }
     }
     return 0;
 }
+
+            // if(strcmp(args[0], "cd") == 0)
+            // {
+            //     if (args_count < 2) {
+            //     printf("Please enter the directory of your choosing\n");
+            //     } 
+            //     else 
+            //     { 
+            //        if (chdir(args[1] < 0)) { 
+            //         printf("This file or directory does not exist\n");
+            //         }
+            //         continue;
+            //     }
