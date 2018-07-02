@@ -24,6 +24,14 @@ then
 
 2. Inventory the code and figure out what needs to be written where.
 
+Task Inventory:
+Top-level goal: Create a new bash shell (T1), and implement cd functionality (t2)
+lssh.c contains a commandline parser, and the main logic outlined in t1
+
+
+
+
+
 ### Task 1: Implement the Ability to Execute Arbitrary Commands
 This program implements a new shell that you can use to run commands from in Unix, similar to bash!
 
