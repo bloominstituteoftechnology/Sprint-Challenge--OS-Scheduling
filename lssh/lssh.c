@@ -102,7 +102,33 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
-    }
+        // fork
+        int f = fork();
 
+        // catch errors and print them to user
+        if (f < 0 ) {
+            fprintf(stderr, "Error with fork\n");
+            continue;
+        } else if (f == 0) {
+            if (strcmp(args[0], "cd") == 0) {
+                if (args_count != 2) {
+                fprintf(stderr, "Error with directory \n");
+                continue;
+                } 
+                // use chdir
+            if (chdir(args[1]) < 0) {
+                fprintf(stderr, "Error while changing directory\n");
+                continue;
+                }       
+            }
+            execvp(args[0], args); 
+            return 0;
+            } else {
+                waitpid(f, NULL, 0); 
+                }
     return 0;
+    }   
 }
+
+
+        
