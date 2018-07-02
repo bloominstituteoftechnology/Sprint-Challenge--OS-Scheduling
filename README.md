@@ -5,10 +5,15 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+(1) Executing Programs
+(2) Communicating between hardware components
+(3) Scheduling & memory allocation
 
 2. Describe the job of the Scheduler in the OS in general.
+It uses queues to work as a process manager and loads them to the CPU for further processing.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+MLFQ is more dynamic and works faster when the processes don't require the same resources. 
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
@@ -18,6 +23,14 @@ Important Safety Tip: Resist the urge to start coding until you:
 then
 
 2. Inventory the code and figure out what needs to be written where.
+
+Task Inventory:
+Top-level goal: Create a new bash shell (T1), and implement cd functionality (t2)
+lssh.c contains a commandline parser, and the main logic outlined in t1
+
+
+
+
 
 ### Task 1: Implement the Ability to Execute Arbitrary Commands
 This program implements a new shell that you can use to run commands from in Unix, similar to bash!
