@@ -113,7 +113,8 @@ int main(void)
        } else if (rc == 0) {
            if (strcmp(args[0], "cd") == 0) {
              if (args_count < 2) {
-               printf("enter directory to change to\n")};
+               printf("enter directory to change to\n");
+             }
                 else {
                     if (chdir(args[1]) < 0) perror("chdir");
                     continue;
@@ -122,16 +123,13 @@ int main(void)
             else if(strcmp(args[0], "exit") == 0){
               exit(1);
             }else if(strcmp(args[0], "mkdir") == 0){
-
+            
                 char folder_name[200] = "/home/jaivon/Documents/LambdaSchool/Sprint-Challenge--OS-Scheduling/lssh/%s", args[1];
                 mkdir(folder_name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
                 continue;
             }
            execvp(args[0], args);
-       } else {
-           int wc = waitpid(rc, NULL, 0);
        }
-    }
-
+}
     return 0;
 }
