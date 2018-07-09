@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -32,7 +35,7 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
@@ -99,9 +102,35 @@ int main(void)
         }
 
         #endif
-        
+
         /* Add your code for implementing the shell's logic here */
-        
+
+       int rc = fork();
+
+       if (rc < 0) {
+           fprintf(stderr, "Child process failed.\n");
+           exit(1);
+       } else if (rc == 0) {
+           if (strcmp(args[0], "cd") == 0) {
+             if (args_count < 2) {
+               printf("enter directory to change to\n")};
+                else {
+                    if (chdir(args[1]) < 0) perror("chdir");
+                    continue;
+                }
+            }
+            else if(strcmp(args[0], "exit") == 0){
+              exit(1);
+            }else if(strcmp(args[0], "mkdir") == 0){
+
+                char folder_name[200] = "/home/jaivon/Documents/LambdaSchool/Sprint-Challenge--OS-Scheduling/lssh/%s", args[1];
+                mkdir(folder_name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+                continue;
+            }
+           execvp(args[0], args);
+       } else {
+           int wc = waitpid(rc, NULL, 0);
+       }
     }
 
     return 0;
