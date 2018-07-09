@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define OUTPUT_BUFSIZE 1024
 
 /**
  * Parse the command line.
@@ -32,7 +34,7 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
@@ -77,7 +79,9 @@ int main(void)
         }
 
         // Parse input into individual arguments
-        parse_commandline(commandline, args, &args_count);
+		char* cmddup = strdup(commandline);
+        parse_commandline(cmddup, args, &args_count);
+		free(cmddup);
 
         if (args_count == 0) {
             // If the user entered no commands, do nothing
@@ -89,19 +93,57 @@ int main(void)
             break;
         }
 
-        #if DEBUG
+#if DEBUG
 
         // Some debugging output
+		printf("CMD: %s", commandline);
 
         // Print out the parsed command line in args[]
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
         }
 
-        #endif
-        
+#endif
+
         /* Add your code for implementing the shell's logic here */
-        
+
+		/* change directory */
+		if (strcmp(args[0], "cd") == 0) {
+			if(args_count != 2) {
+				perror("cd needs exactly 2 total arguments.\n");
+				continue;
+			}
+
+			int ret = chdir(args[1]);
+			if(ret == -1) {
+				perror("chdir");
+				continue;
+			}
+
+			continue;
+		}
+
+		/* Any other command */
+		FILE *fp;
+		int status;
+		char output[OUTPUT_BUFSIZE];
+
+		fp = popen(commandline, "r");
+		if (fp == NULL) {
+			printf("Error Occurred...");
+			continue;
+		}
+
+		while (fgets(output, OUTPUT_BUFSIZE, fp) != NULL) {
+			printf("%s", output);
+		}
+
+
+		status = pclose(fp);
+		if (status == -1) {
+			printf("Error Occurred...");
+			continue;
+		}
     }
 
     return 0;
