@@ -59,6 +59,7 @@ int main(void)
 
     // Holds the parsed version of the command line
     char *args[MAX_TOKENS];
+    
 
     // How many command line args the user typed
     int args_count;
@@ -99,16 +100,17 @@ int main(void)
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++)
-        {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        // for (int i = 0; args[i] != NULL; i++)
+        // {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
 #endif
 
         /* Add your code for implementing the shell's logic here */
 
-        printf("Parent started, I don't exec.\n");
+       
+        // printf("Parent started, I don't exec.\n");
         int rc = fork();
 
         if (rc < 0)
@@ -118,8 +120,18 @@ int main(void)
         }
         else if (rc == 0)
         {
-            printf("Child started, I'm going to exec `ls`\n");
+             // ===========`cd` ==========
+            if (strcmp(args[0], "cd") == 0) 
+            {
+               if (args_count == 2) {
+                   if (chdir(args[1]) == -1) {
+                       perror("chdir");
+                   }
+               }
+                continue;
+            }
 
+            // ===========`ls` ==========
             for (int i = 0; i < args_count; i++)
             {
                 execvp(args[0], args);
@@ -128,7 +140,7 @@ int main(void)
         else
         {
             wait(NULL);
-            printf("parent here\n");
+            // printf("parent here\n");
         }
     }
 
