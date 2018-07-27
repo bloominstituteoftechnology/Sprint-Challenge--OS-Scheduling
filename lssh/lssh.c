@@ -101,6 +101,12 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+	if (execvp(args[0], args) == 0){
+		continue;
+	}
+	else{
+		printf("An error occured with execvp function");
+	}
         
     }
 
