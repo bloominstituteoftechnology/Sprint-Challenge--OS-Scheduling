@@ -137,7 +137,6 @@ int main(void)
         } else {
             waitpid(rc, NULL, 0);
         }
-
-        return 0;
     }
+    return 0;
 }
