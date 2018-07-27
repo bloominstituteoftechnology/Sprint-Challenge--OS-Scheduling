@@ -75,6 +75,7 @@ int main(void)
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
+	    printf("\n");
             break;
         }
 
@@ -88,6 +89,7 @@ int main(void)
 
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
+	    printf("\n");
             break;
         }
 
@@ -103,19 +105,26 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-	pid_t child = fork();
-	if( child == 0){
-		if (execvp(args[0], args)){
-			printf("An error occured with execvp function");
-			exit(1);
-		}else{
-			exit(0);
+	if(strcmp(args[0], "cd") == 0){
+		if(args[1] != NULL){
+			chdir(args[1]);
+			continue;
 		}
 	}else{
-		int wstatus;
-		wait(&wstatus);
-	}
+		pid_t child = fork();
+		if( child == 0){
+			if (execvp(args[0], args)){
+				printf("An error occured with execvp function");
+				exit(1);
+			}else{
+				exit(0);
+			}
+		}else{
+			int wstatus;
+			wait(&wstatus);
+		}
         
+    	}
     }
 
     return 0;
