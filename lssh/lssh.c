@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -107,18 +108,19 @@ int main(void)
         /* Add your code for implementing the shell's logic here */
 	if(strcmp(args[0], "cd") == 0){
 		if(args[1] != NULL){
-			chdir(args[1]);
-			continue;
+			if(chdir(args[1]) != 0)
+				perror("chdir");
+			else
+				continue;
 		}
 	}else{
 		pid_t child = fork();
 		if( child == 0){
 			if (execvp(args[0], args)){
-				printf("An error occured with execvp function");
+				perror("An error occured with execvp function");
 				exit(1);
-			}else{
+			}else
 				exit(0);
-			}
 		}else{
 			int wstatus;
 			wait(&wstatus);
