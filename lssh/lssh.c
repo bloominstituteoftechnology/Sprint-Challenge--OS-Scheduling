@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -73,6 +76,7 @@ int main(void)
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
+	    printf("\n");
             break;
         }
 
@@ -86,6 +90,7 @@ int main(void)
 
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
+	    printf("\n");
             break;
         }
 
@@ -101,7 +106,27 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+	if(strcmp(args[0], "cd") == 0){
+		if(args[1] != NULL){
+			if(chdir(args[1]) != 0)
+				perror("chdir");
+			else
+				continue;
+		}
+	}else{
+		pid_t child = fork();
+		if( child == 0){
+			if (execvp(args[0], args)){
+				perror("An error occured with execvp function");
+				exit(1);
+			}else
+				exit(0);
+		}else{
+			int wstatus;
+			wait(&wstatus);
+		}
         
+    	}
     }
 
     return 0;
