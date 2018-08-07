@@ -101,6 +101,22 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int child = fork();
+        if (child < 0) {
+            printf(stderr, "fork failed\n");
+            exit(1);
+        } else if (child == 0) {
+            if (strcmp(args[0], "cd") == 0) {
+                if (args_count < 2) {
+                    printf("please enter a directory\n");
+                } else {
+                    chdir(args[1]);
+                    continue;
+                }
+            } else {
+                execvp(args[0], args);
+            }
+        }
         
     }
 
