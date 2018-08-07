@@ -108,7 +108,7 @@ int main(void)
         } else if (child == 0) {
             if (strcmp(args[0], "cd") == 0) {
                 if (args_count < 2) {
-                    printf("please entera a directory\n");
+                    printf("please enter a directory\n");
                 } else {
                     chdir(args[1]);
                     continue;
