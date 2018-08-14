@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -105,14 +106,26 @@ int main(void)
         if (strcmp(args[0], "cd") == 0)  // if args[0] is cd
         {
             // make sure they entered 2 arguments
-            if (args_count != 2)
+            if (args_count < 2)
             {
                 fprintf(stderr, "usage: cd [directory name]\n");
                 continue;
             }
             // run chdir() on 2nd argument to change directories
             // if chdir returns -1 print error message
+            if (chdir(args[1]) < 0) 
+            {
+                perror("chdir");
+                continue;
+            }
+            else
+            {
+                chdir(args[1]);
+            }
+
             // continue
+            continue;
+        }
 
         int rc = fork();
         if (rc < 0)
