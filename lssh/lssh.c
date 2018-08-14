@@ -101,6 +101,19 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        if (strcmp(args[0], "cd") == 0)  // if args[0] is cd
+        {
+            // make sure they entered 2 arguments
+            if (args_count != 2)
+            {
+                fprintf(stderr, "usage: cd [directory name]\n");
+                continue;
+            }
+            // run chdir() on 2nd argument to change directories
+            // if chdir returns -1 print error message
+            // continue
+
         int rc = fork();
         if (rc < 0)
         {
@@ -110,7 +123,7 @@ int main(void)
         else if (rc == 0)
         {
             execvp(args[0], args);
-            fprintf(stderr, "oops! try again\n");
+            fprintf(stderr, "oops! try again\n"); // the whole thing crashes if you don't do this
             continue;
         }
         else
