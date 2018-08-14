@@ -112,7 +112,13 @@ int main(void)
         }
         else if (rc == 0)
         {
-            
+            for (int i=0; i < args_count - 1; i++)
+            {
+                if (strcmp(args[i], ">") == 0)
+                {
+                    printf("is this working?\n");
+                }
+            }
             if (strcmp(args[0], "cd") == 0)  // if args[0] is cd
             {
             // make sure they entered at least 2 arguments
