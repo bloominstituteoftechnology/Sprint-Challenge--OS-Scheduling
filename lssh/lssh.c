@@ -116,7 +116,8 @@ int main(void)
             {
                 if (strcmp(args[i], ">") == 0)
                 {
-                    printf("is this working?\n");
+                    sscanf("%s", args[i+1]);
+                    printf(args[i+1]);
                 }
             }
             if (strcmp(args[0], "cd") == 0)  // if args[0] is cd
