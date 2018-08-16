@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -101,6 +103,30 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int rc = fork();
+
+        if (rc < 0) {
+            fprintf(stderr, "Fork unsuccessful. Perhaps try using a knife?\n");
+            exit(1);
+        }
+        else if (rc == 0) {
+            // If the command is `cd`, we'll take care of it instead of exec()
+            if (strcmp(args[0], "cd") == 0) {
+                if (args_count != 2) {
+                    fprintf(stderr, "usage: cd <directory>\n");
+                }
+                else {
+                   if (chdir(args[1]) == -1) {
+                       perror("chdir");
+                   }
+                }
+                continue;
+            }
+            execvp(args[0], args);
+        }
+        else {
+            waitpid(rc, NULL, 0);
+        }
         
     }
 
