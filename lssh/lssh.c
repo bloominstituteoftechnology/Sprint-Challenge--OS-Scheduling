@@ -17,9 +17,12 @@ int main(void)
   int child;
   int wait_for_child;
   int redirect_to_file;
+  int pipe_output;
 
   while (1)
   {
+    int pipefd[2];
+    pipe_output = 0;
     wait_for_child = 1;
     redirect_to_file = 0;
     print_prompt(PROMPT);
@@ -35,18 +38,27 @@ int main(void)
       continue;
     if (exit_shell(args))
       break;
+    if (file_redirect(args, args_count))
+      redirect_to_file = 1;
+
     if (change_directory(args, args_count))
     {
       if (chdir(args[1]) == -1)
         print_prompt(CD_ERROR);
       continue;
     }
-    if (background_task(args, args_count)){
+
+    if (background_task(args, args_count))
+    {
       wait_for_child = 0;
       args[args_count - 1] = NULL;
     }
-    if (file_redirect(args, args_count))
-      redirect_to_file = 1;
+
+    if (pipe_command(args))
+    {
+      pipe_output = 1;
+      pipe(pipefd);
+    }
 
     child = fork();
     if (child == 0)
@@ -58,8 +70,10 @@ int main(void)
         int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
         dup2(fd, 1);
       }
+
       if (execvp(args[0], args) == -1)
         print_prompt(COMMAND_NOT_FOUND);
+        
       exit(0);
     } else {
       if (wait_for_child)
