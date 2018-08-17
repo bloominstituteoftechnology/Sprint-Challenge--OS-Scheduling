@@ -96,6 +96,32 @@ int main(void)
             break;
         }
 
+        // ========== Task 2: cd ========== //
+        // compare args[0] == cd
+        if (strcmp(args[0], "cd") == 0)
+        {
+            if (args_count < 2)
+            {
+                fprintf(stderr, "need directory - cd dirname\n");
+                continue; 
+            }
+            // int chdir(const char *path)
+            // chdir() changes the current dir of the calling process to the dir specified in path.
+            // On success, 0 is returned. On error, -1 is returned
+            if (chdir(args[1]) < 0)
+            {
+                fprintf(stderr, "No such file or directory\n");
+                continue;
+            }
+            continue; 
+        }
+
+        /**
+         * #if is a preprocessor command, which gets evaluated before the actual compilation step. 
+         * The code inside that block doesn't appear in the compiled binary.
+         * It's often used for temporarily removing segments of code 
+         * with the intention of turning them back on later.
+        */
         #if DEBUG
 
         // Some debugging output
@@ -105,11 +131,14 @@ int main(void)
             printf("%d: '%s'\n", i, args[i]);
         }
 
-        #endif
+        #endif   // close #if
         
         /* Add your code for implementing the shell's logic here */
+
+        // ========== Task 1: lambda-shell$ ========== //
+
         // fork a child process to run the new command
-        printf("Initial Process (pid: %d)\n", (int) getpid());
+        // printf("Initial Process (pid: %d)\n", (int) getpid());
         int rc = fork();
 
         if (rc < 0)
@@ -118,7 +147,7 @@ int main(void)
             continue;   // continue the loop
         }
         if ( rc == 0) {
-            printf("Child Process (pid: %d)\n", (int) getpid());
+            // printf("Child Process (pid: %d)\n", (int) getpid());
             // exec the command in the child process
             execvp(args[0], args);
             fprintf(stderr,"execvp failed!\n");
@@ -128,7 +157,7 @@ int main(void)
         {
             // parent process waits for child to complete
             waitpid(rc, NULL, 0);
-            printf("Parent Process (pid: %d)\n", (int) getpid());
+            // printf("Parent Process (pid: %d)\n", (int) getpid());
         }
     }
 
