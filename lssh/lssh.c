@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -60,6 +62,14 @@ char **parse_commandline(char *str, char **args, int *args_count)
     return args;
 }
 
+static void sigchld_hdl (int sig)
+{
+    (void)sig;
+    int saved_errno = errno;
+    while (waitpid(-1, NULL, WNOHANG) > 0){}
+    errno = saved_errno;
+}
+
 /**
  * Main
  */
@@ -73,9 +83,17 @@ int main(void)
 
     // How many command line args the user typed
     int args_count;
+    struct sigaction bg;
 
     // Shell loops forever (until we tell it to exit)
     while (1) {
+        bg.sa_handler = sigchld_hdl;
+        sigemptyset(&bg.sa_mask);
+        bg.sa_flags = SA_RESTART;
+        if (sigaction(SIGCHLD, &bg, NULL) == -1) {
+            perror("sigaction");
+            exit(3);
+        }
         // Print a prompt
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
@@ -124,20 +142,35 @@ int main(void)
                     perror("chdir");
                 }            
             }
-        else {
+        else if (strcmp(args[(args_count - 1)], "&") != 0) {
             int rc = fork();
             if (rc < 0) {
                 fprintf(stderr, "Fork failed. \n");
                 exit(1);
                 }
             else if (rc == 0) {
+                printf("This is the regular forked process");
                 if (execvp(args[0], args) == -1){
                     fprintf(stderr, "Child command failed to execute.");
                 }
             }
             else {
-                waitpid(rc, NULL, 0);
+                wait(NULL);
             }
+        }
+        else {
+            args[(args_count - 1)] = NULL;
+            int background = fork();
+            if (background < 0){
+                fprintf(stderr, "Background fork failed. \n");
+                exit(2);
+            }
+            else if (background == 0){
+                if (execvp(args[0], args) == -1){
+                    fprintf(stderr, "Background process failed to execute.");
+                }
+            }
+            continue;
         }   
     }
 
