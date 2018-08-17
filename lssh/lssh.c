@@ -160,57 +160,55 @@ int main(void)
         }
         if (strcmp(args[(args_count-1)], "&") == 0) {
             args[args_count-1] = NULL;
-            if (redir_outfile) {
-                int fd = open(redir_outfile, O_CREAT|O_WRONLY, 0644);
-
-                if (fd < 0){
-                    fprintf(stderr, "Failed to open file: %s", redir_outfile);
-                    continue;
-                }
-                else {
-                    dup2(fd, 1);
-                }
-            }
+            
             pid_t background = fork();
             if (background < 0){
                 fprintf(stderr, "Background fork failed. \n");
                 exit(2);
             }
             else if (background == 0){
+                if (redir_outfile) {
+                int fd = open(redir_outfile, O_CREAT|O_WRONLY, 0644);
+
+                    if (fd < 0){
+                        fprintf(stderr, "Failed to open file: %s", redir_outfile);
+                        continue;
+                        }
+                    else {
+                        dup2(fd, 1);
+                        }
+                    }
                 if (execvp(args[0], args) == -1){
                     fprintf(stderr, "Background process failed to execute.");
                 }
             }
         }   
         else {
-            if (redir_outfile) {
-                int fd = open(redir_outfile, O_CREAT|O_WRONLY);
-
-                if (fd < 0){
-                    fprintf(stderr, "Failed to open file: %s", redir_outfile);
-                    continue;
-                }
-                else {
-                    dup2(fd, 1);
-                }
-            }
             pid_t rc = fork();
             if (rc < 0) {
                 fprintf(stderr, "Fork failed. \n");
                 exit(1);
                 }
             else if (rc == 0) {
-                printf("This is the regular forked process");
+                if (redir_outfile) {
+                    int fd = open(redir_outfile, O_CREAT|O_WRONLY, 0644);
+                    if (fd < 0){
+                        fprintf(stderr, "Failed to open file: %s", redir_outfile);
+                        continue;
+                        }
+                    else {
+                        dup2(fd, 1);
+                    }
+                }
                 if (execvp(args[0], args) == -1){
                     fprintf(stderr, "Child command failed to execute.");
+                    }
                 }
-            }
             else {
                 wait(NULL);
+                }
             }
         }
-
-    }
 
     return 0;
 }
