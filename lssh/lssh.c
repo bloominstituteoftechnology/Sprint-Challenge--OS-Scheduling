@@ -27,7 +27,7 @@
  * @param args {char **} Pointer to an array of strings. This will hold the result.
  * @param args_count {int *} Pointer to an int that will hold the final args count.
  *
- * @returns A copy of args for convenience.
+ * @returns A copy of args (the array of strings) for convenience.
  */
 char **parse_commandline(char *str, char **args, int *args_count)
 {
@@ -35,15 +35,17 @@ char **parse_commandline(char *str, char **args, int *args_count)
     
     *args_count = 0;
 
-    token = strtok(str, " \t\n\r");
-
-    while (token != NULL && *args_count < MAX_TOKENS - 1) {
+    token = strtok(str, " \t\n\r"); 
+    //looks for spaces, tabs, newlines, or carriage returns
+    while (token != NULL && *args_count < MAX_TOKENS - 1) { 
+        // while token is not NULL and the args count is less than 99
         args[(*args_count)++] = token;
-
-        token = strtok(NULL, " \t\n\r");
+        //each args index increases the args count and returns it
+        token = strtok(NULL, " \t\n\r"); 
+        //token becomes NULL but doesn't break loop because of && condition
     }
 
-    args[*args_count] = NULL;
+    args[*args_count] = NULL; 
 
     return args;
 }
@@ -54,22 +56,23 @@ char **parse_commandline(char *str, char **args, int *args_count)
 int main(void)
 {
     // Holds the command line the user types in
-    char commandline[COMMANDLINE_BUFSIZE];
+    char commandline[COMMANDLINE_BUFSIZE]; //1024
 
     // Holds the parsed version of the command line
-    char *args[MAX_TOKENS];
+    char *args[MAX_TOKENS]; //100
 
     // How many command line args the user typed
-    int args_count;
+    int args_count; // a number
 
-    // Shell loops forever (until we tell it to exit)
+    // Shell loops forever (until we tell it to exit) FOR-Ev-ER
     while (1) {
         // Print a prompt
-        printf("%s", PROMPT);
+        printf("%s", PROMPT); //"lambda-shell$ "
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
-        fgets(commandline, sizeof commandline, stdin);
+        fgets(commandline, sizeof commandline, stdin); 
+            //stdin when user inputs...it's stdout when we fprint to it
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
@@ -87,6 +90,8 @@ int main(void)
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
             break;
+        } else if(strcmp(args[0], "quit") == 0) {
+            break;
         }
 
         #if DEBUG
@@ -101,6 +106,18 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        //fork a child process to run the new command
+        int rc = fork();
+
+        if(rc < 0) {
+            fprintf(stderr, "fork has failed");
+            exit(1);
+        } else if(rc == 0) {
+            fprintf(stdout, "I'm the child\n");
+        } else {
+            fprintf(stdout, "I'm the parent\n");
+        }
         
     }
 
