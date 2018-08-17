@@ -15,6 +15,7 @@ Add your answers inline, below, with your pull request.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
 - The MLFQ "learns" what processes take a longer amount of time to complete, so processes that take longer than the allotted time for a given queue are pushed down to a lower priority queue where they will be granted more CPU time to complete their tasks, this eventually ensures that faster executing processes are in the highest priority queue (which is important as the faster processes tend to be interactive).
+- The Round-Robin scheduler allocates the same amount of time to every process, in contrast.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
