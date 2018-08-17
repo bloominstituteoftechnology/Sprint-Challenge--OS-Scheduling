@@ -4,7 +4,7 @@
 #include <string.h>
 #include <errno.h>
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "lambda-school-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -40,7 +40,7 @@ char **parse_commandline(char *str, char **args, int *args_count)
 
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
         args[(*args_count)++] = token;
-
+        
         token = strtok(NULL, " \t\n\r");
     }
 
@@ -87,7 +87,7 @@ int main(void)
 
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
-            break;
+            exit(1);
         }
 
         #if DEBUG
@@ -108,10 +108,12 @@ int main(void)
         // The "pwd" command stands for "print working directory" and prints the full pathname of the current directory.
         if (strcmp(args[0], "cd") == 0)
         {
+            // These if statements will catch the errors.
             if (args_count != 2)
             {
+                // You can use the pwd or "print working directory" command to see the full path of the diretory.
                 fprintf(stderr, "Error. Please provide name of directory and follow correct format: cd <name_of_directory>\n");
-                continue; // The 'continue' statement continues the loop.
+                continue; // The 'continue' statement continues the loop/ iteration.
             }
             // The chdir() function causes the directory named by the pathname pointed to by the path argument to become the current working directory.
             if (chdir(args[1]) < 0)
@@ -124,8 +126,13 @@ int main(void)
         }
 
         // Enables user to execute arbitrary commands.
+        
+        // WE use pid_t to indicate the type of data held by the variable.
         // pid_t is a data type which is capable of representing a process ID.
+        // We initialize the child_pid variable and set it to equal the fork() system call.
         pid_t child_pid = fork();
+
+        // Catches the error.
         if (child_pid == -1)
         {
             fprintf(stderr, "Error. Failed to fork.\n");
@@ -139,13 +146,15 @@ int main(void)
         // https://www.geeksforgeeks.org/exec-family-of-functions-in-c/
         if (child_pid == 0)
         {
+            // Child process.
             // Calls the exec function.
+            // The exec type system call allows a process to run any program file.
             execvp(args[0], args);
             fprintf(stderr, "Error. Exec function failed.\n");
             continue;
         } else {
             // Parent process waits on the child process.
-            waitpid(child_pid, NULL, 0);
+            wait(child_pid, NULL, 0);
         }
     }
 
