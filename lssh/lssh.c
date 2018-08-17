@@ -112,6 +112,19 @@ int main(void)
 
         /* Add your code for implementing the shell's logic here */
 
+        if (strcmp(args[0], "cd") == 0)
+        {
+            if (chdir(args[1]) < 0)
+            {
+                fprintf(stderr, "invalid directory or error: %s\n", strerror(chdir(args[1])));
+            }
+            else
+            {
+                chdir(args[1]);
+            }
+            continue;
+        }
+
         int rc = fork();
 
         if (rc < 0)
