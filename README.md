@@ -2,6 +2,8 @@
 
 ## Short Answer Questions
 
+Start here!
+
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
