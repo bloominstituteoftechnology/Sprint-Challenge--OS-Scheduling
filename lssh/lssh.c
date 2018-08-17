@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -130,6 +131,23 @@ int main(void)
             args[args_count - 1] = NULL;
         }
 
+        // Stretch Goal 2:
+        int i, file_redirection = 0;
+        char file_name[124];
+        for (i = 0; args[i] != NULL; i++)
+        {
+            if (strcmp(args[i], ">") == 0)
+            {
+                file_redirection = 1;
+                args[i] = NULL;
+                strcpy(file_name, args[i + 1]);
+            }
+            if (file_redirection == 1)
+            {
+                args[i] = NULL;
+            }
+        }
+
         if (forked_p < 0)
         {
             printf("PARENT FORK failed.\n");
@@ -137,7 +155,15 @@ int main(void)
         else if (forked_p == 0)
         {
             printf("=== %d CHILD_START fork1 ===\n", (int)getpid());
-            // We are going to get the     execl("whereis", "", ">", "whereis.txt", (char *)0);path to the binaries via the 'whereis' command.
+
+            // Strech Goal 2:
+            if (file_redirection == 1)
+            {
+                printf("FILE REDIRECT == 1\n\n");
+                int file_to_output = open(file_name, O_WRONLY | O_CREAT, 0644);
+                dup2(file_to_output, 1); // close 'fd' number 1. and points this 'number (1)' to the 'file_to_output'.
+            }
+
             execvp(args[0], args);
             printf("=== CHILD_ERROR caling 'execvp' ===\n");
             exit(1);
