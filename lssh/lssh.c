@@ -70,6 +70,8 @@ int main(void)
     // Shell loops forever (until we tell it to exit)
     while (1)
     {
+        while (waitpid(-1, NULL, WNOHANG) > 0)
+            ;
         // Print a prompt
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
@@ -110,7 +112,7 @@ int main(void)
 
 #endif
 
-        /* Add your code for implementing the shell's logic here */
+        /* === Add your code for implementing the shell's logic here === */
 
         if (strcmp(args[0], "cd") == 0)
         {
@@ -132,6 +134,12 @@ int main(void)
 
         int rc = fork();
 
+        int background_task = strcmp(args[args_count - 1], "&");
+        if (background_task == 0)
+        {
+            args[args_count - 1] = NULL;
+        }
+
         if (rc < 0)
         {
             printf("fork failed");
@@ -139,15 +147,18 @@ int main(void)
         }
         else if (rc == 0)
         {
-            // I am child
+            // === I am child ===
             execvp(args[0], args);
-            fprintf(stderr, "Command not found please try again\n");
+            fprintf(stderr, "Command: %s not found please try again\n", args[0]);
             continue;
         }
         else
         {
-            //I am parent
-            waitpid(rc, NULL, 0);
+            //=== I am parent ===
+            if (background_task != 0)
+            {
+                waitpid(rc, NULL, 0);
+            }
         }
     }
 
