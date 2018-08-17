@@ -90,6 +90,21 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count == 2) {
+                int chdir_result = chdir(args[1]);
+
+                if (chdir_result == -1) {
+                    perror("chdir");
+                }
+            }
+            else {
+                printf("cd requires exactly one argument.\n");
+            }
+
+            continue;
+        }
+
         #if DEBUG
 
         // Some debugging output
