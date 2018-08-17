@@ -25,10 +25,10 @@ int main(void)
 
     parse_commandline(commandline, args, &args_count);
 
-    if (strcmp(args[0], "exit") == 0)
-      break;
     if (args_count == 0)
       continue;
+    if (strcmp(args[0], "exit") == 0)
+      break;
 
     #if DEBUG
       for (int i = 0; args[i] != NULL; i++)
