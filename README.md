@@ -5,10 +5,18 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+-manages memory allocation
+-creates processes
+-schedules the processes using given algorithm (MLFQ - Multi Level Feedback Queue)
+-manages all the system programs
 
 2. Describe the job of the Scheduler in the OS in general.
+-schedules the processes
+-controls time sharing
+-selects which processes will receive priority
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+-Round-Robin reduces response time but is not an optimal option when it comes to turnaround time. Conversely, MLFQ learns the characteristics of the jobs it is running and thus able to make better scheduling decisions since it assigs priority levels to processes(it learns from the past to predict the future). Consequently, it's a more efficient scheduler. 
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
@@ -202,3 +210,4 @@ This uses the `pipe()` system call.
 Use a process similar to the above extra credit challenges, along with [this
 description of how to implement pipes in
 C](https://github.com/LambdaSchool/CS-Wiki/wiki/How-Unix-Pipes-are-Implemented) to get pipes implemented in `lssh`.
+.

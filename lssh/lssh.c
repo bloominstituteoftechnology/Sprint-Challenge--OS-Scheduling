@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -35,11 +36,16 @@ char **parse_commandline(char *str, char **args, int *args_count)
     
     *args_count = 0;
 
+    /* \t is the horizontal tab character,it moves the cursor a tab width
+     \r is carriage return 
+     strtok is splitting user input string into tokens separated by any delimiter you specify (in this case: tab & carriage return)
+     */
     token = strtok(str, " \t\n\r");
 
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
         args[(*args_count)++] = token;
 
+        // When there are no tokens left to retrieve, strtok returns NULL, meaning that the string has been fully tokenized.
         token = strtok(NULL, " \t\n\r");
     }
 
@@ -101,7 +107,38 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+
+
+        int rc = fork();
+
+        if(rc < 0) // //fork failed; exit
+        {
+            fprintf(stderr, "Fork Failed\n");
+            exit(1);
+        }
+        else if (rc == 0) 
+        {   
+            if (strcmp(args[0], "cd") == 0) {
+                if(args_count == 2) {
+                    if(chdir(args[1]) == -1) {
+                        perror("chdir");
+                    }
+                    else {
+                        continue; // continue statement short-circuits the rest of the main loop
+                    }
+                }
+        }
+            // printf("Hello Child Here\n");
+            // printf("ARG: %s\n", args[1]);
+            execvp(args[0], args);  // argv[0] is, by convention, the name of the program source: http://comp.unix.programmer.narkive.com/xInAa1CH/execvp-with-no-arguments
+            // printf("This should not be seen!");
+        }
+        else
+        { 
+            waitpid(rc, NULL, 0);
+            // printf("Hello I am the parent\n");
+        }
+ 
     }
 
     return 0;
