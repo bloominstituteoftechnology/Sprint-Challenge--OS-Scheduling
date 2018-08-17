@@ -111,6 +111,13 @@ int main(void)
     /* Add your code for implementing the shell's logic here */
     // pid_t parentID;
     int result;
+    int p[2];
+
+    if (pipe(p) < 0)
+    {
+      fprintf(stderr, "pipe failed\n");
+    }
+
     int childProcess = fork();
 
     if (childProcess < 0)
@@ -123,6 +130,7 @@ int main(void)
       // {
       //   continue;
       // }
+      // printf("Child process\n");
 
       if (strcmp(args[0], "cd") == 0 && args_count == 2)
       {
@@ -139,6 +147,7 @@ int main(void)
     else
     {
       int waitProcessID = waitpid(childProcess, NULL, 0);
+      printf("Parent Process \n");
     }
 
     return 0;
