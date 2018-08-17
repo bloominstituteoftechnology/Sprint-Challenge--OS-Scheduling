@@ -3,6 +3,10 @@
 #include <unistd.h>
 #include <string.h>
 
+//Headers for wait
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
@@ -118,10 +122,14 @@ int main(void)
         else if (rc == 0)
         {
             // I am child
+            execvp(args[0], args);
+            fprintf(stderr, "Command not found please try again\n");
+            continue;
         }
         else
         {
             //I am parent
+            int wc = waitpid(rc, NULL, 0);
         }
     }
 
