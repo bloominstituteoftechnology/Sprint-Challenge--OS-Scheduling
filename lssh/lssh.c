@@ -35,10 +35,11 @@ char **parse_commandline(char *str, char **args, int *args_count)
     
     *args_count = 0;
 
-    // strtok() breaks str into a series of tokens
+    // strtok() breaks str into a series of tokens or break it into smaller sub-string.
     // \t\n\r = tab, new line, return
+    // grab the first token
     token = strtok(str, " \t\n\r"); 
-
+    // then do the loop grab token until NULL
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
         args[(*args_count)++] = token;
 
@@ -151,12 +152,12 @@ int main(void)
             // exec the command in the child process
             execvp(args[0], args);
             fprintf(stderr,"execvp failed!\n");
-            continue;
+            exit(1);    // as it's a child so dont need to keep alive.
         }
         else
         {
             // parent process waits for child to complete
-            waitpid(rc, NULL, 0);
+            waitpid(rc, NULL, 0);   // can use wait(NULL) too
             // printf("Parent Process (pid: %d)\n", (int) getpid());
         }
     }
