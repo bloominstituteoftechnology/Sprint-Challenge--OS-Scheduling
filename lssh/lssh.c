@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.h> 
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -35,15 +35,24 @@ char **parse_commandline(char *str, char **args, int *args_count)
     
     *args_count = 0;
 
-    token = strtok(str, " \t\n\r");
+    token = strtok(str, " \t\n\r"); 
+    // takes entire string: delimeters are tab, new line, return
+    // token is a pointer to the first token found in the string if token found
+    // token is a null pointer if no tokens found
 
-    while (token != NULL && *args_count < MAX_TOKENS - 1) {
-        args[(*args_count)++] = token;
+    while (token != NULL && *args_count < MAX_TOKENS - 1) { 
+        // if null pointer, does not do while loop
+        // if args_count is greater than or equal to MAX_TOKENS - 1, does not do while loop
+        args[(*args_count)++] = token; 
+        // the element in args at index args_count + 1 is now the token pointer
 
-        token = strtok(NULL, " \t\n\r");
+        token = strtok(NULL, " \t\n\r"); 
+        // loops through the string token is pointing to (of tokens)
+        // and if it finds a delimiter, replaces it with a null byte to terminate the current token
+        // strtok then saves the following byte which will be the pointer to start searching for next token
     }
 
-    args[*args_count] = NULL;
+    args[*args_count] = NULL; // sets the element at args_count to null in args
 
     return args;
 }
@@ -57,7 +66,7 @@ int main(void)
     char commandline[COMMANDLINE_BUFSIZE];
 
     // Holds the parsed version of the command line
-    char *args[MAX_TOKENS];
+    char *args[MAX_TOKENS]; // char *args[100]
 
     // How many command line args the user typed
     int args_count;
@@ -70,8 +79,10 @@ int main(void)
 
         // Read input from keyboard
         fgets(commandline, sizeof commandline, stdin);
+        // reads from stdin and stores it in commandline to the maximum of 1024
 
         // Exit the shell on End-Of-File (CRTL-D)
+        // CTRL-D is translated as end of standard input
         if (feof(stdin)) {
             break;
         }
