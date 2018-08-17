@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -101,8 +102,75 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
 
+
+        int rc = fork();
+        if (rc < 0)
+        {
+            fprintf(stderr, "fork failure alert!\n");
+            exit(1);
+        }
+        else if (rc == 0)
+        {
+            for (int i=0; i < args_count - 1; i++)
+            {
+                if (strcmp(args[i], ">") == 0)
+                {
+                    sscanf("%s", args[i+1]);
+                    printf(args[i+1]);
+                }
+            }
+            if (strcmp(args[0], "cd") == 0)  // if args[0] is cd
+            {
+            // make sure they entered at least 2 arguments
+                if (args_count < 2)
+                {
+                    fprintf(stderr, "usage: cd [directory name]\n");
+                    continue;
+                }
+            // run chdir() on 2nd argument to change directories
+            // if chdir returns -1 print error message
+                if (chdir(args[1]) < 0) 
+                {
+                    perror("chdir");
+                    continue;
+                }
+                else
+                {
+                    chdir(args[1]);
+                } 
+
+            // continue
+                continue;
+            }
+            else if (strcmp(args[args_count-1], "&") == 0) // if the last argument is &
+// I originally had strcmp(args[2]), which I assure you is a bad idea
+// since args is an array you can use the length (in this case args_count)
+// -1 to get to the last item in the array
+            {
+                args[args_count-1] = NULL; // set & to NULL
+                execvp(args[0], args); // run command as usual
+                printf("%s", PROMPT); // create prompt - from lines 69-70 above
+                fflush(stdout); // Force the prompt to print
+// Note: I had trouble testing this, as every bash command I tried ran so
+// quickly I got a prompt immediately anyway.
+
+            }
+            else 
+            {
+                execvp(args[0], args);
+                fprintf(stderr, "oops! try again\n"); // the whole thing crashes if you don't do this
+                continue;
+            }
+        }
+        else
+        {
+            int wc = waitpid(rc, NULL, 0);
+        }   
+
+     
+    }
+    while (waitpid(-1, NULL, WNOHANG > 0)); // as per instructions in README
+ 
     return 0;
 }
