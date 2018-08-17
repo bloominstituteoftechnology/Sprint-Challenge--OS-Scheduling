@@ -5,10 +5,13 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+Ans: Memory Management, Processor Management, Time Sharing, File Management, and Security Management.
 
 2. Describe the job of the Scheduler in the OS in general.
+Ans: The scheduler is an operating system module that selects the next jobs to be admitted into the system and the next process to run. Jobs are typically collected and ordered in some sort of queue, which we think of as being a first-in-first-out (FIFO) arrangement.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+Ans: 
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
