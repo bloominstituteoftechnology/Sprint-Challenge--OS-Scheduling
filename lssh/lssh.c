@@ -109,6 +109,13 @@ int main(void)
                 if (result == -1) {
                     perror("chdir");
                 }
+            } else if (args_count == 1) {
+                int result = chdir(getenv("HOME"));
+                if (result == -1) {
+                    perror("chdir");
+                }
+            } else {
+                fprintf(stderr, "too many arguments\n");
             }
             continue;
         }
