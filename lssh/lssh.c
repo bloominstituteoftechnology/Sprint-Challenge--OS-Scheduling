@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include <string.h>
+#include <errno.h>
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "[ FIREINJUN ]\n[!] \n#: "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -101,8 +103,30 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
+        int rc = fork();
+
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count != 2) {
+                printf("USE <cd dirname> or <cd path/dirname>\n");
+            } else {
+                int status = chdir(args[1]);
+                if (status == -1) {
+                    perror("chdir");
+                }
+            }
+            continue;
+        }
+
+        if (rc < 0) {
+            fprintf(stderr, "Process Malfunction -- Fork Failure, closing program\n");
+            exit(1);
+        } else if (rc == 0){
+            execvp(args[0], args); 
+            } else {
+
+            waitpid(rc, NULL, 0);
+            }
+        }
 
     return 0;
 }
