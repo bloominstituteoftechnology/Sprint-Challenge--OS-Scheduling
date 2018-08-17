@@ -124,8 +124,8 @@ int main(void)
         int forked_p = fork();
 
         // Stretch Goal 1:
-        int background_task = strcmp(args[args_count - 1], "&");
-        if (background_task == 0)
+        int last_argument = strcmp(args[args_count - 1], "&");
+        if (last_argument == 0)
         {
             args[args_count - 1] = NULL;
         }
@@ -145,7 +145,7 @@ int main(void)
         else
         {
             printf("=== %d PARENT_START ===\n", (int)getpid());
-            if (background_task != 0) // if the program is not needed to run in the background call 'waitpid'
+            if (last_argument != 0) // if the program is not needed to run in the background call 'waitpid'
             {
                 printf("=== PARENT_WAITING FOR CHILD ===\n");
                 waitpid(forked_p, NULL, 0);
