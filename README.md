@@ -5,10 +5,26 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+- Handling Input and Output (I/O)
+- Scheduling and handling tasks
+- Managing hardware resources (processors, memory, data and I/O devices)
 
 2. Describe the job of the Scheduler in the OS in general.
+> The Scheduler's job is to fairly handle each task, `process`, in a way that each process has X amount of time
+> to run. When a process has completed it's allotted time on the CPU the scheduler then checks if the process
+> has completed. If the process has not completed it is then pushed into a lower priority queue where it will wait
+> it's turn until again it can run it's process. This is done many times until each process has been completed and
+> the scheduler can finally go idle. The scheduler is also responsible for handling `blocking` process's. A blocking
+> process is put into a special queue where all of these blocking process's will be ran with the highest priority until
+> each of these processes have completed before the scheduler returns to the non-blocking queue's.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+> The benefits of a MLFQ over a Round-Robin scheduler is that the MLFQ gives priorty to short, faster processes that
+> will be completed quickly before moving onto larger tasks that may take a long amount of time to complete. Instead,
+> the Round-Robing scheduler will give each process the same amount of time no matter how large the process is. Something
+> as simple as a keyboard input will get the same amount of time as say trying to connect to an HTTP Server located on the
+> other side of the world. This can cause a "lag" from I/O devices because they will be waiting for a turn instead of
+> gaining priority like they would in a MLFQ.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
