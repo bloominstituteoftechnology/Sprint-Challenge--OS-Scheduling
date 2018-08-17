@@ -102,21 +102,27 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        // Enables user to change directories with the "cd" command.
+        // The strcmp() function compares the string from the first argument and the string from the second argument.
         if (strcmp(args[0], "cd") == 0)
         {
             if (args_count != 2)
             {
-                fprintf(stderr, "Error: Please provide name of directory.\n");
-                continue;
+                fprintf(stderr, "Error. Please provide name of directory and follow correct format: cd <name_of_directory>\n");
+                continue; // The 'continue' statement continues the loop.
             }
+            // The chdir() function causes the directory named by the pathname pointed to by the path argument to become the current working directory.
             if (chdir(args[1]) < 0)
             {
-                fprintf(stderr, "Error: No such directory.\n");
+                fprintf(stderr, "Error. No such directory.\n");
                 continue;
             }
             continue;
         }
 
+        // Enables user to execute arbitrary commands.
+        // pid_t is a data type which is capable of representing a process ID.
         pid_t child_pid = fork();
         if (child_pid == -1)
         {
@@ -124,12 +130,19 @@ int main(void)
             continue;
         }
 
+        // The exec() function is a C library function that allows the child process to run a program different from that of the parent process.
+        // The execvp() function is a varient of exec().
+        // The exec family of functions replaces the current running process with a new process.
+        // Using this command, the created child process does not have to run the same program as the parent process does. 
+        // https://www.geeksforgeeks.org/exec-family-of-functions-in-c/
         if (child_pid == 0)
         {
+            // Calls the exec function.
             execvp(args[0], args);
-            fprintf(stderr, "Exec function failed.\n");
+            fprintf(stderr, "Error. Exec function failed.\n");
             continue;
         } else {
+            // Parent process waits on the child process.
             waitpid(child_pid, NULL, 0);
         }
     }
