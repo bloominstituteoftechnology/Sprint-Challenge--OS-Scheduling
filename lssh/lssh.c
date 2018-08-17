@@ -96,6 +96,20 @@ int main(void)
       break;
     }
 
+     if (strcmp(args[0], "cd") == 0)
+    {
+      if(args_count != 2) {
+          printf("usage: de dirname\n");
+          continue;
+      }
+
+      if (chdir(args[1]) < 0) {
+          printf(stderr, "Unable to switch directory to %s\n", args[1]);
+          continue
+      }
+      continue;
+    }
+
 #if DEBUG
 
     // Some debugging output
