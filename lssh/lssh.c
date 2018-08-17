@@ -14,9 +14,11 @@ int main(void)
   char *args[MAX_TOKENS];
   int args_count;
   int child;
+  int wait_for_child;
 
   while (1)
   {
+    wait_for_child = 1;
     print_prompt(PROMPT);
     fgets(commandline, sizeof commandline, stdin);
 
@@ -36,6 +38,10 @@ int main(void)
         print_prompt(CD_ERROR);
       continue;
     }
+    if (background_task(args, args_count)){
+      wait_for_child = 0;
+      args[args_count - 1] = NULL;
+    }
 
     child = fork();
     if (child == 0)
@@ -44,8 +50,12 @@ int main(void)
         print_prompt(COMMAND_NOT_FOUND);
       exit(0);
     } else {
-      waitpid(child, NULL, 0);
+      if (wait_for_child)
+        waitpid(child, NULL, 0);
     }
+
+    while (waitpid(-1, NULL, WNOHANG) > 0)
+      ;
   }
 
   return 0;
