@@ -111,7 +111,7 @@ int main(void)
         //if fork fails
         if(rc < 0) {
             fprintf(stderr, "fork has failed\n");
-            exit(1);
+            continue;
         } 
         //child process
         else if(rc == 0) {
