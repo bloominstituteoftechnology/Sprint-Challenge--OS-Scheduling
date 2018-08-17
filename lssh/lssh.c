@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
-
+#define errno (*__error())
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -88,9 +89,7 @@ int main(void)
         }
 
         // Exit the shell if args[0] is the built-in "exit" command
-        if (strcmp(args[0], "exit") == 0) {
-            break;
-        } else if(strcmp(args[0], "quit") == 0) {
+        if (strcmp(args[0], "exit") == 0 || strcmp(args[0], "quit") == 0) {
             break;
         }
 
@@ -109,17 +108,36 @@ int main(void)
 
         //fork a child process to run the new command
         int rc = fork();
-
+        //if fork fails
         if(rc < 0) {
-            fprintf(stderr, "fork has failed");
+            fprintf(stderr, "fork has failed\n");
             exit(1);
-        } else if(rc == 0) {
-            fprintf(stdout, "I'm the child\n");
-        } else {
-            fprintf(stdout, "I'm the parent\n");
+        } 
+        //child process
+        else if(rc == 0) {
+            //if the string is cd
+            if(strcmp(args[0], "cd") == 0) {
+                //but comes with no args after
+                if(args_count < 2) {
+                    //throw an error!
+                    fprintf(stdout, "usage: cd + <DIR>\n");
+                    continue;
+                } 
+                else {
+                    //instantiate chdir to be the directory you want to change to
+                    int cd = chdir(args[1]);
+                    if (cd == - 1) {
+                        perror("chdir");
+                        continue;
+                    }
+                continue;
+                }
+            }
+            execvp(args[0], args);
         }
-        
+        else {
+            waitpid(rc, NULL, 0);
+        }
     }
-
     return 0;
 }
