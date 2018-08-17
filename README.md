@@ -1,5 +1,7 @@
 # Sprint Challenge: Operating Systems and Scheduling
 
+https://github.com/udykas/Sprint-Challenge--OS-Scheduling
+
 ## Short Answer Questions
 
 Add your answers inline, below, with your pull request.
