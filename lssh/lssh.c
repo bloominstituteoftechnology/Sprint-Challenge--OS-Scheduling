@@ -101,6 +101,19 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        int rc = fork();
+        if(rc < 0) {
+            fprintf(stderr, "fork failure alert!\n");
+            exit(1);
+        } else if (rc == 0) {
+            for (int i = 0; i < args_count -1; i++) {
+                if (strcmp(args[i], ">") == 0) {
+                    sscanf("%s\n", args[i+1]);
+                    printf(args[i+1]);
+                }
+            }
+        }
         
     }
 

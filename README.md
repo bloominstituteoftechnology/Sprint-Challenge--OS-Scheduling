@@ -1,14 +1,24 @@
 # Sprint Challenge: Operating Systems and Scheduling
 
+https://github.com/udykas/Sprint-Challenge--OS-Scheduling
+
 ## Short Answer Questions
 
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+* Manage Hardware and Software
+* Memory Allocation
+* Manage Processes
+
 2. Describe the job of the Scheduler in the OS in general.
 
+* It schedules tasks (processes) in order of priority in order to make efficient use of the computers resources.
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+* MLFQ is more efficient because it prioritizes important processes by completing them first, this way it can maximize the use of the computers resources.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
