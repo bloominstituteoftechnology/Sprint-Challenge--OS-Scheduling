@@ -65,8 +65,13 @@ char **parse_commandline(char *str, char **args, int *args_count)
 static void sigchld_hdl (int sig)
 {
     (void)sig;
-    int saved_errno = errno;
-    while (waitpid(-1, NULL, WNOHANG) > 0){}
+    int saved_errno = errno; 
+    // waitpid() might overright errno, so this saves and restores it
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+    // wait for any child process
+    // do not store information
+    // WNOHANG specifies that it should return immediately if there are 
+    // no child processes exited
     errno = saved_errno;
 }
 
@@ -87,10 +92,12 @@ int main(void)
 
     // Shell loops forever (until we tell it to exit)
     while (1) {
-        bg.sa_handler = sigchld_hdl;
-        sigemptyset(&bg.sa_mask);
-        bg.sa_flags = SA_RESTART;
+        bg.sa_handler = sigchld_hdl; // action associated with SIGCHLD
+        sigemptyset(&bg.sa_mask); // this blocks other terminal-generated signals while this handler runs
+        bg.sa_flags = SA_RESTART; // restarts the signal handler if it is interrupted
         if (sigaction(SIGCHLD, &bg, NULL) == -1) {
+            // sigaction system call changes the action taken by process 
+            // on receipt of specific signal (this case SIGCHLD)
             perror("sigaction");
             exit(3);
         }
