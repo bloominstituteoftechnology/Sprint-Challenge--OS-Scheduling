@@ -4,6 +4,9 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -119,6 +122,16 @@ int main(void)
             args[args_count-1] = '\0';
         }
 
+        int output_to_file = 0;
+        char* filename;
+        for (int i = 0; args[i] != NULL; i++) {
+            if (strcmp(args[i], ">") == 0) {
+                filename = args[i+1];
+                args[i] = '\0';
+                output_to_file = 1;
+                break;
+            }
+        }
         
         /* Add your code for implementing the shell's logic here */
         int rc = fork();
@@ -126,6 +139,10 @@ int main(void)
             fprintf(stderr, "fork failed\n");
             exit(1);
         } else if (rc == 0) {
+            if (output_to_file == 1) {
+                int fd = open(filename, O_RDWR);
+                dup2(fd, 1);
+            }
             execvp(args[0], args);
         } else {
             if (run_in_background == 0) waitpid(rc, NULL, 0);
