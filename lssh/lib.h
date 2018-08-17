@@ -50,6 +50,31 @@ void print_prompt(char *str)
 }
 
 /**
+ * Checks if requested command is exit
+ *
+ * @param args {char **} Pointer to parsed command line arguments
+ *
+ * @returns true(1) or false(0)
+ */
+int exit_shell(char **args)
+{
+  return strcmp(args[0], "exit") == 0;
+}
+
+/**
+ * Checks if requested command is change directory
+ *
+ * @param args {char **} Pointer to parsed command line arguments
+ * @param args_count {int} Number of command line arguments
+ *
+ * @returns true(1) or false(0)
+ */
+int change_directory(char **args, int args_count)
+{
+  return strcmp(args[0], "cd") == 0 && args_count == 2;
+}
+
+/**
  * Prints out the parsed command line for debuggin
  *
  * @param args {char **} Pointer to an array of strings.
