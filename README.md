@@ -5,10 +5,17 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+    -The os is responsible for managing the computer's resources, such as central processing and memory.
+    -establish a user interface
+    -excute and provide services for application software
 
 2. Describe the job of the Scheduler in the OS in general.
+    -The main task is to select the jobs to be submitted into the system and to decide which process to run.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+    -The Robin Challeng biggest advantage is that robin scheduling improves average respone times. By limiting each task to a certain amont of time, the os can ensure that it can cycle through all ready tasks, giving each one a chance to run.
+    
+    -MLFQ biggest advantage is that the algorithm that is used in scenarios where the processes can be classified can be classifieds into groups based on property like processes type, CPU time, IO access, and memory size
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
