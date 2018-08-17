@@ -72,6 +72,8 @@ int main(void)
 
         // Read input from keyboard
         fgets(commandline, sizeof commandline, stdin);
+        while (waitpid(-1, NULL, WNOHANG) > 0)
+
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
@@ -112,18 +114,30 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         int rc = fork();
+
+        int background_task = strcmp(args[args_count - 1], "&");
+        if (background_task == 0)
+        {
+            args[args_count - 1] = NULL;
+        }
+
         if (rc < 0){
             fprintf(stderr, "Fork Failed\n");
             exit(1);
         } else if (rc==0) {
             //child
             // printf("Hello Child Here\n");
+            sleep(3);
             execvp(args[0], args);
             printf("Command not found: %s!\n", args[0]);
             exit(1);
         } else {
             //parent
-            waitpid(rc, NULL, 0);
+            if (background_task != 0) // if the program is not needed to run in the background call 'waitpid'
+            {
+                printf("=== PARENT WAITING FOR CHILD ===\n");
+                waitpid(rc, NULL, 0);
+            }
             // printf("Hello I am the parent\n");
 
         }
