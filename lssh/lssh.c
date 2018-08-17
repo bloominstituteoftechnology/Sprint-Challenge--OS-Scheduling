@@ -24,6 +24,7 @@ int main(void)
       break;
 
     parse_commandline(commandline, args, &args_count);
+    debug_commandline_args(args);
 
     if (args_count == 0)
       continue;
@@ -35,11 +36,6 @@ int main(void)
         print_prompt(CD_ERROR);
       continue;
     }
-
-    #if DEBUG
-      for (int i = 0; args[i] != NULL; i++)
-        printf("%d: '%s'\n", i, args[i]);
-    #endif
 
     child = fork();
     if (child == 0)
