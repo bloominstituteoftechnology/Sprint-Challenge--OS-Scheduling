@@ -102,11 +102,6 @@ int main(void)
         
         
         /* Add your code for implementing the shell's logic here */
-        int rc = fork();
-        if (rc < 0) {
-            printf("Fork failed\n");
-            exit(1);
-        } else if (rc == 0){
             if (strcmp(args[0], "cd") == 0) {
                 if (args_count != 2) {
                     printf("Incorrect args input\n");
@@ -119,8 +114,17 @@ int main(void)
                         chdir(args[1]);
                     }
                     continue;
+                }
             }
-        }
+
+        int rc = fork();
+
+        if (rc < 0) {
+            printf("Fork failed\n");
+            exit(1);
+        } else if (rc == 0){
+            execvp(args[0], args);
+            printf("This should not be seen!");
     }
 }
     return 0;
