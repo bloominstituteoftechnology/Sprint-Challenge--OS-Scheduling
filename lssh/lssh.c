@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -32,7 +33,7 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
@@ -89,6 +90,21 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count == 2) {
+                int chdir_result = chdir(args[1]);
+
+                if (chdir_result == -1) {
+                    perror("chdir");
+                }
+            }
+            else {
+                printf("cd requires exactly one argument.\n");
+            }
+
+            continue;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -99,9 +115,21 @@ int main(void)
         }
 
         #endif
-        
+
         /* Add your code for implementing the shell's logic here */
-        
+        int forked = fork();
+        if (forked < 0) {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+        } else if (forked == 0) {    // child process
+            execvp(args[0],args);
+            exit(1);
+        } else {  //parent process
+            waitpid(forked, NULL, 0);
+            continue;
+        }
+
+
     }
 
     return 0;
