@@ -126,7 +126,7 @@ int main(void)
                 else {
                     //instantiate chdir to be the directory you want to change to
                     int cd = chdir(args[1]);
-                    if (cd == - 1) {
+                    if (cd < 0) {
                         perror("chdir");
                         continue;
                     }
