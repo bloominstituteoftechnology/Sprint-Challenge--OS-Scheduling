@@ -49,4 +49,17 @@ void print_prompt(char *str)
   fflush(stdout);
 }
 
+/**
+ * Prints out the parsed command line for debuggin
+ *
+ * @param args {char **} Pointer to an array of strings.
+ */
+void debug_commandline_args(char **args)
+{
+  #if DEBUG
+    for (int i = 0; args[i] != NULL; i++)
+      printf("%d: '%s'\n", i, args[i]);
+  #endif
+}
+
 #endif
