@@ -1,6 +1,7 @@
 #ifndef lib_h
 #define lib_h
 
+#include <stdio.h>
 #include <string.h>
 #include "constants.h"
 
@@ -35,6 +36,17 @@ char **parse_commandline(char *str, char **args, int *args_count)
 
   args[*args_count] = NULL;
   return args;
+}
+
+/**
+ * Prints shell prompt
+ *
+ * @param str {char *} Pointer to the string to print.
+ */
+void print_prompt(char *str)
+{
+  printf("%s", str);
+  fflush(stdout);
 }
 
 #endif
