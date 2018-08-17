@@ -4,7 +4,7 @@
 #include <string.h>
 #include <errno.h>
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "lambda-shell_bg$ "
 #define errno (*__error())
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -93,6 +93,17 @@ int main(void)
             break;
         }
 
+        int bg = 0;
+
+        if (strcmp(args[args_count-1], "&") == 0) {
+            bg = 1;
+            args[args_count-1] = NULL;
+        }
+
+        while(wait(NULL) > 0) {
+            ;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -138,7 +149,12 @@ int main(void)
             exit(1);
         }
         else { //parent
+        //check to see if the bg boolean was flipped to true;
+            if (!bg) {
             waitpid(rc, NULL, 0);
+            } else {
+                continue;
+            }
         }
     }
     return 0;
