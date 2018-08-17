@@ -94,6 +94,12 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0)
+        {
+            chdir(args[1]);
+            continue;
+        }
+
 #if DEBUG
 
         // Some debugging output
