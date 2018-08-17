@@ -29,6 +29,12 @@ int main(void)
       continue;
     if (strcmp(args[0], "exit") == 0)
       break;
+    if (strcmp(args[0], "cd") == 0 && args_count == 2)
+    {
+      if (chdir(args[1]) == -1)
+        print_prompt(CD_ERROR);
+      continue;
+    }
 
     #if DEBUG
       for (int i = 0; args[i] != NULL; i++)
