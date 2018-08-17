@@ -73,6 +73,9 @@ int main(void)
         // Read input from keyboard
         fgets(commandline, sizeof commandline, stdin);
 
+        while (waitpid(-1, NULL, WNOHANG) > 0)
+            ;
+
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
             break;
@@ -100,6 +103,8 @@ int main(void)
             printf("%d: '%s'\n", i, args[i]);
         }
 
+        #endif
+        
         if (strcmp(args[0], "cd") == 0) {
             if (args_count == 2) {
                 int dirchanged = chdir(args[1]);
@@ -108,7 +113,12 @@ int main(void)
             continue;
         }
 
-        #endif
+        int run_in_background = 0;
+        if (strcmp(args[args_count-1], "&") == 0) {
+            run_in_background = 1;
+            args[args_count-1] = '\0';
+        }
+
         
         /* Add your code for implementing the shell's logic here */
         int rc = fork();
@@ -118,7 +128,8 @@ int main(void)
         } else if (rc == 0) {
             execvp(args[0], args);
         } else {
-            waitpid(rc, NULL, 0);
+            if (run_in_background == 0) waitpid(rc, NULL, 0);
+            else continue;
         }
     }
 
