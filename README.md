@@ -5,10 +5,14 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+* Operating system handles the CPU, RAM, and I/O Devices.
 
 2. Describe the job of the Scheduler in the OS in general.
+* A Scheduler basically handles which process gets handle by the CPU and how much time to spend by the CPU.  
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+* MLFQ handles priority instead of just go straight from first in first out.
+That is one of the biggest reason why it is more beneficial.  One example is lets say if you type in a key from a keyboard, and then put that all the way to the back of the queue to get some cpu time.  The problem is that it still have to wait for all the other processes before it to run before your input process to show up which then can delay your output of a key press.  Imagine typing t on the keyboard and 2 seconds later it shows up.  That is way to long of a delay especially if you type in 50 characters and have to wait for 100 seconds for all of the characters to show up.   
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
