@@ -103,15 +103,15 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-                    int rc = fork();
+        int rc = fork();
         if (rc < 0) {
             fprintf(stderr, "Failed to fork.\n");
             exit(1);
         } else if (rc == 0) {
-            for (int i=0; i < args_count - 1; i++) {
+            for (int i = 0; i < args_count - 1; i++) {
                 if (strcmp(args[i], ">") == 0) {
-                    sscanf("%s", args[i+1]);
-                    printf(args[i+1]);
+                    sscanf("%s", args[i + 1]);
+                    printf(args[i + 1]);
                 }
             }
 
@@ -130,7 +130,7 @@ int main(void)
                 } 
                 continue;
             } else if (strcmp(args[args_count-1], "&") == 0) {
-                args[args_count-1] = NULL; 
+                args[args_count - 1] = NULL; 
                 execvp(args[0], args); 
                 printf("%s", PROMPT); 
                 fflush(stdout); 
