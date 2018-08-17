@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -110,7 +111,16 @@ int main(void)
         }
         else if (child == 0)
         {
-            execvp(args[0], args);
+            if (strcmp(args[0], "cd") == 0) {
+                if (chdir(args[1]) == -1)
+                {
+                    perror("chdir() Error\n");
+                }
+
+                continue;
+            }
+            else
+                execvp(args[0], args);
         }
         else
         {
