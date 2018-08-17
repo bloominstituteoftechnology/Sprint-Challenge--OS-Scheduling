@@ -6,9 +6,20 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+    The kernel is responsible for managing a system's resources including:
+    - Handling input/output requests
+    - Allocating memory to various processes
+    - Allocating CPU time to each active process
+
 2. Describe the job of the Scheduler in the OS in general.
 
+    The scheduler is responsible for allocating CPU time to all pending processes in a way that is fair, minimizes turnaround and response time, and efficiently handles processes which have gone into a blocking state.
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+    While the Round Robin Scheduler introduced time slicing and is the most fair system, its downside is its turnaround time. Though every proces is guaranteed at least some CPU time, processes overall, take more time to complete and resources can be wasted if a process goes into a blocking state during its time slice.
+
+    A MLFQ addresses the turnaround time by utilizing multiple queues and priority levels. It "learns" about each process and adjusts its priority level and time slice accordingly. All processes begin as high priority. If they go into a blocking state they are transferred to a different queue to await state change allowing the scheduler to continue with other processes in the meantime. If a process does not finish within its time slice, it is moved to a lower priority queue which will begin processing when the higher queues are empty. Fairness is preserved by giving lower priority processes more CPU time and possibly implementing a priority boost which moves all low priority processes back to the high priority queue after a certain amount of time. When blocking processes become unblocked, they are transferred back to the high prority queue and exhibit the same behaviour as other processes.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
