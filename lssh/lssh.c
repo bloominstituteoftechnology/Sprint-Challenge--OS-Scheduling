@@ -101,7 +101,17 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+       
+        if (args_count > 0) {
+            int rc = fork();
+            if (rc < 0) {    
+                fprintf(stderr, "fork failed\n");
+            } else if (rc == 0) {
+                execvp(args[0], args);
+            } else {
+                int wc = waitpid(rc, NULL, 0);    
+            }      
+        } 
     }
 
     return 0;
