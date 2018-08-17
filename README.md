@@ -5,10 +5,21 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+Memory Management, Processor Management, Device Management, File Management, Security, Control Over System Performance, Coordination Between Other Software and Users
 
 2. Describe the job of the Scheduler in the OS in general.
 
+the scheduler decides which process gets time on the CPU when and for how much time. Allocates the CPU to a process and de-a;;ocates it when iot's no longer required. 
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+The problem with a Round Robin scheduler is that it excludes the notion of priority. It uses the concept of time-sharing and distributes time fairly, but in doing so, there's a lag in turnaround time. 
+
+In a MLFQ, you get the best of turnaround time, priority and fairness. 
+
+We want fairness, which is why it's still a queue. We will have multiple queues though that have different priority levels that have a time quantum associated with them. Once a process hits that time quantum, it will be moved to the next priority level queue if it's not finished with its process. It will get its turn again when the first queue is empty. 
+
+Shorter processes get higher priorities...longer processes get lower priority BUT!! they get more time on the CPU when it's their turn. This makes it a little more fair but not forsaking time. 
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
