@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 #include "constants.h"
 #include "lib.h"
 
@@ -15,10 +16,12 @@ int main(void)
   int args_count;
   int child;
   int wait_for_child;
+  int redirect_to_file;
 
   while (1)
   {
     wait_for_child = 1;
+    redirect_to_file = 0;
     print_prompt(PROMPT);
     fgets(commandline, sizeof commandline, stdin);
 
@@ -42,10 +45,19 @@ int main(void)
       wait_for_child = 0;
       args[args_count - 1] = NULL;
     }
+    if (file_redirect(args, args_count))
+      redirect_to_file = 1;
 
     child = fork();
     if (child == 0)
     {
+      if (redirect_to_file){
+        char *filename = args[args_count - 1];
+        args[args_count - 2] = NULL;
+        args[args_count - 1] = NULL;
+        int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        dup2(fd, 1);
+      }
       if (execvp(args[0], args) == -1)
         print_prompt(COMMAND_NOT_FOUND);
       exit(0);
