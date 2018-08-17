@@ -114,6 +114,11 @@ int main(void)
 
         if (strcmp(args[0], "cd") == 0)
         {
+            if (args_count != 2)
+            {
+                fprintf(stderr, "Please enter exactly 2 arguments to change directory\n");
+                continue;
+            }
             if (chdir(args[1]) < 0)
             {
                 fprintf(stderr, "invalid directory or error: %s\n", strerror(chdir(args[1])));
@@ -142,7 +147,7 @@ int main(void)
         else
         {
             //I am parent
-            int wc = waitpid(rc, NULL, 0);
+            waitpid(rc, NULL, 0);
         }
     }
 
