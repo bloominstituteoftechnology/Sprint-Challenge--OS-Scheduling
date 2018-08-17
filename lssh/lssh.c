@@ -28,9 +28,9 @@ int main(void)
 
     if (args_count == 0)
       continue;
-    if (strcmp(args[0], "exit") == 0)
+    if (exit_shell(args))
       break;
-    if (strcmp(args[0], "cd") == 0 && args_count == 2)
+    if (change_directory(args, args_count))
     {
       if (chdir(args[1]) == -1)
         print_prompt(CD_ERROR);
