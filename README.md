@@ -1,4 +1,4 @@
-# Sprint Challenge: Operating Systems and Scheduling
+# Sprint Challenge: Operating Systems and Scheduling 
 
 ## Short Answer Questions
 
