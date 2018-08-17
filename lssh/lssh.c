@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -96,12 +97,47 @@ int main(void)
         // Print out the parsed command line in args[]
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
+            continue;
         }
 
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        // creating a child fork
+        int rc = fork(); 
+        // testing if the fork was created
+        if (rc < 0) 
+        {    
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+        // everything in thie else if will be the child
+        } else if(rc == 0)
+        {   //testing if first arg was a cd
+            if(strcmp(args[0], "cd") == 0)
+            {
+                // per readme, checking for 2 args
+                if(args_count < 1)
+                {
+                    fprintf(stderr, "cd in this bash requires a 2 args\n");
+                }else
+                {
+                    if(chdir(args[1]) == -1){
+                        perror("chdir"); // #include <errno.h> to use this
+                    }else
+                    {
+                        chdir(args[1]);
+                        continue;
+                    }
+                    
+                }
+            }else
+            {
+                execvp(args[0], args);
+            }
+            
+        } else{
+            waitpid(rc, NULL, 0);
+        }
     }
 
     return 0;
