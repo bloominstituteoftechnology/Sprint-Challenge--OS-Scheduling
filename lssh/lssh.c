@@ -48,6 +48,15 @@ char **parse_commandline(char *str, char **args, int *args_count)
     return args;
 }
 
+char* concat(const char *s1, const char *s2)
+{
+    char *result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
+    // in real code you would check for errors in malloc here
+    strcpy(result, s1);
+    strcat(result, s2);
+    return result;
+}
+
 /**
  * Main
  */
@@ -94,14 +103,75 @@ int main(void)
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
         #endif
         
         /* Add your code for implementing the shell's logic here */
         
+        pid_t childPid;  // the child process that the execution will soon run inside of. 
+        childPid = fork();
+
+        if(childPid == 0)  // fork succeeded 
+        {   
+            if(strncmp (args[0] , "cd", 2) == 0){
+                if(args_count > 1){
+                    char cwd[1024];
+                    getcwd(cwd, sizeof(cwd));
+                    char* s1 = concat("/", args[1]);
+                    char* s = concat(cwd, s1);
+                    int xh = chdir(s);
+                    if(xh == -1){
+                        printf("error in ch");
+                    }
+                    else{
+                        printf("%d\n",xh);
+                        continue;
+                    }
+                    printf("%s",s);
+                    exit(0); 
+                }
+                else{
+                    printf("brav you need 2 args for cd\n");
+                }
+            }
+            else{
+                char *cmd = args[0];
+                char *argv[5];
+                argv[0] = args[0];
+                argv[1] = args[1];
+                argv[2] = args[2];
+                argv[3] = args[3];
+                argv[4] = NULL;
+                printf("\n");
+                execvp(cmd, argv);   
+                exit(0); 
+            }
+            
+        }
+        else if(childPid < 0)  // fork failed 
+        {    
+            printf("something went terribally wrong \n");
+        }
+
+        else  // Main (parent) process after fork succeeds 
+        {    
+            int returnStatus;    
+            waitpid(childPid, &returnStatus, 0);  // Parent process waits here for child to terminate.
+
+            if (returnStatus == 0)  // Verify child process terminated without error.  
+            {
+            printf("\n");    
+            }
+
+            if (returnStatus == 1)      
+            {
+            printf("The child process terminated with an error!.");    
+            }
+        }        
+            
     }
 
     return 0;
