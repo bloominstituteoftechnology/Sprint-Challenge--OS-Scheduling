@@ -6,9 +6,13 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+(1) Manage the computers resources, such as the CPU, disk drives, memory, and printers. (2) Establish a user interface and (3) execute and provide services for applications software.
+
 2. Describe the job of the Scheduler in the OS in general.
+Schedulers handle the processes coming in and assign them to the system based on some decision making process. There are long term, short term, and medium term schedulers.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+MLFW is really useful because as new processes come in, they are all assumed to be high priority, so the scheduler learns over tim which processes are long running, short running, etc and can assign them to the appropriate queue.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
@@ -202,3 +206,4 @@ This uses the `pipe()` system call.
 Use a process similar to the above extra credit challenges, along with [this
 description of how to implement pipes in
 C](https://github.com/LambdaSchool/CS-Wiki/wiki/How-Unix-Pipes-are-Implemented) to get pipes implemented in `lssh`.
+initial commit
