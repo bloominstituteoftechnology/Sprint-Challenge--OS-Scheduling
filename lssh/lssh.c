@@ -197,8 +197,8 @@ void flagSpecialArgs(char* args[], int args_count, int *background, char redirec
         args[backgroundIndex] = NULL;
     }
     if (redirectIndex > -1) {
-        strcpy(redirection, args[redirectIndex - 1]);
-        args[redirectIndex - 1] = NULL; 
+        strcpy(redirection, args[redirectIndex + 1]);
+        args[redirectIndex + 1] = NULL; 
         args[redirectIndex] = NULL;
     }
 }
