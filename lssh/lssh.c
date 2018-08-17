@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
+#include <stdio.h> //me: gives access to printf()
+#include <stdlib.h> //me: functions involved in memory allocation like malloc()
+#include <unistd.h> //me: access to NULL pointer
+#include <string.h> //me: access to str functions like strlen()
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "lambda-shell$ " //me: everytime PROMPT is used it is replaced by "lambda-shell$" in prporcessing before compilation
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -33,17 +33,17 @@ char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
     
-    *args_count = 0;
+    *args_count = 0; //me: pointer to string that is currently set to 0
 
-    token = strtok(str, " \t\n\r");
+    token = strtok(str, " \t\n\r"); // me: strtok() splits a string with delimenna \n is the new line character ,it moves the cursor to starting of next line \t is the horizontal tab character,it moves the cursor a tab width \r = carriage return
 
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
         args[(*args_count)++] = token;
 
-        token = strtok(NULL, " \t\n\r");
+        token = strtok(NULL, " \t\n\r"); //me: token = split string
     }
 
-    args[*args_count] = NULL;
+    args[*args_count] = NULL; //me: 
 
     return args;
 }
