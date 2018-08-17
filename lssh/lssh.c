@@ -95,20 +95,20 @@ int main(void)
     {
       break;
     }
-    // Sean's solution
-    //  if (strcmp(args[0], "cd") == 0)
-    // {
-    //   if(args_count != 2) {
-    //       printf("usage: de dirname\n");
-    //       continue;
-    //   }
+   
+     if (strcmp(args[0], "cd") == 0)
+    {
+      if(args_count != 2) {
+          printf("usage: cd dirname\n");
+          continue;
+      }
 
-    //   if (chdir(args[1]) < 0) {
-    //       printf(stderr, "Unable to switch directory to %s\n", args[1]);
-    //       continue
-    //   }
-    //   continue;
-    // }
+      if (chdir(args[1]) < 0) {
+          fprintf(stderr, "Unable to switch directory to %s\n", args[1]);
+          continue;
+      }
+      continue;
+    }
 
 #if DEBUG
 
@@ -123,38 +123,21 @@ int main(void)
 #endif
 
    /* Add your code for implementing the shell's logic here */
-    // pid_t parentID;
-    int result;
-    int childProcess = fork();
+  pid_t childProcess = fork();
 
-    if (childProcess < 0)
-    {
-      fprintf(stderr, "fork failed \n");
-    }
-    else if (childProcess == 0)
-    {
-      // if (strcmp(args[0], "cd") == 0)
-      // {
-      //   continue;
-      // }
-
-      if (strcmp(args[0], "cd") == 0 && args_count == 2)
-      {
-        result = chdir(args[1]);
-        if (result == -1)
-        {
-          perror("chdir");
-        }
-      }
-
-      execvp(args[0], args);
+    if (childProcess < 0) {
+      fprintf(stderr, "Fork failed\n");
       continue;
     }
-    else
-    {
+
+    if(childProcess == 0) {
+      execvp(args[0], args);
+      fprintf(stderr, "Execution failed\n");
+      exit(1);
+    } else {
       int waitProcessID = waitpid(childProcess, NULL, 0);
     }
-
-    return 0;
   }
+    return 0;
+  
 }
