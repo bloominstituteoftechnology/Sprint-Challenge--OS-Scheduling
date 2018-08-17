@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -107,6 +108,7 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
 
+
         int rc = fork();
 
         if(rc < 0) // //fork failed; exit
@@ -116,6 +118,16 @@ int main(void)
         }
         else if (rc == 0) 
         {   
+            if (strcmp(args[0], "cd") == 0) {
+                if(args_count == 2) {
+                    if(chdir(args[1]) == -1) {
+                        perror("chdir");
+                    }
+                    else {
+                        continue; // continue statement short-circuits the rest of the main loop
+                    }
+                }
+        }
             // printf("Hello Child Here\n");
             // printf("ARG: %s\n", args[1]);
             execvp(args[0], args);  // argv[0] is, by convention, the name of the program source: http://comp.unix.programmer.narkive.com/xInAa1CH/execvp-with-no-arguments
@@ -123,7 +135,7 @@ int main(void)
         }
         else
         { 
-            int wc = waitpid(rc, NULL, 0);
+            waitpid(rc, NULL, 0);
             // printf("Hello I am the parent\n");
         }
  
