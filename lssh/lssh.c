@@ -35,8 +35,11 @@ char **parse_commandline(char *str, char **args, int *args_count)
     
     *args_count = 0;
 
-    token = strtok(str, " \t\n\r");
-
+    // strtok() breaks str into a series of tokens or break it into smaller sub-string.
+    // \t\n\r = tab, new line, return
+    // grab the first token
+    token = strtok(str, " \t\n\r"); 
+    // then do the loop grab token until NULL
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
         args[(*args_count)++] = token;
 
@@ -66,12 +69,17 @@ int main(void)
     while (1) {
         // Print a prompt
         printf("%s", PROMPT);
+        // fflush() used for output stream only
+        // its purpose is to clear the output buffer and move the buffered data to console (stdout)
+        // or disk (file output stream)
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
+        // fgets() reads a line from the specified stream and stores it into the string pointed to by str. 
         fgets(commandline, sizeof commandline, stdin);
 
         // Exit the shell on End-Of-File (CRTL-D)
+        // feof () tests the end-of-file indicator for the given stream.
         if (feof(stdin)) {
             break;
         }
@@ -89,6 +97,32 @@ int main(void)
             break;
         }
 
+        // ========== Task 2: cd ========== //
+        // compare args[0] == cd
+        if (strcmp(args[0], "cd") == 0)
+        {
+            if (args_count < 2)
+            {
+                fprintf(stderr, "need directory - cd dirname\n");
+                continue; 
+            }
+            // int chdir(const char *path)
+            // chdir() changes the current dir of the calling process to the dir specified in path.
+            // On success, 0 is returned. On error, -1 is returned
+            if (chdir(args[1]) < 0)
+            {
+                fprintf(stderr, "No such file or directory\n");
+                continue;
+            }
+            continue; 
+        }
+
+        /**
+         * #if is a preprocessor command, which gets evaluated before the actual compilation step. 
+         * The code inside that block doesn't appear in the compiled binary.
+         * It's often used for temporarily removing segments of code 
+         * with the intention of turning them back on later.
+        */
         #if DEBUG
 
         // Some debugging output
@@ -98,10 +132,34 @@ int main(void)
             printf("%d: '%s'\n", i, args[i]);
         }
 
-        #endif
+        #endif   // close #if
         
         /* Add your code for implementing the shell's logic here */
-        
+
+        // ========== Task 1: lambda-shell$ ========== //
+
+        // fork a child process to run the new command
+        // printf("Initial Process (pid: %d)\n", (int) getpid());
+        int rc = fork();
+
+        if (rc < 0)
+        {
+            fprintf(stderr, "fork failed!\n");
+            continue;   // continue the loop
+        }
+        if ( rc == 0) {
+            // printf("Child Process (pid: %d)\n", (int) getpid());
+            // exec the command in the child process
+            execvp(args[0], args);
+            fprintf(stderr,"execvp failed!\n");
+            exit(1);    // as it's a child so dont need to keep alive.
+        }
+        else
+        {
+            // parent process waits for child to complete
+            waitpid(rc, NULL, 0);   // can use wait(NULL) too
+            // printf("Parent Process (pid: %d)\n", (int) getpid());
+        }
     }
 
     return 0;
