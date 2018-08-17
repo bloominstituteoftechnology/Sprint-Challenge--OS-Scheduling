@@ -96,8 +96,16 @@ int main(void)
 
         if (strcmp(args[0], "cd") == 0)
         {
-            chdir(args[1]);
-            continue;
+            if (args_count == 1)
+            {
+                perror("Missing path, please pass a path.\n");
+                continue;
+            }
+            else
+            {
+                chdir(args[1]);
+                continue;
+            }
         }
 
 #if DEBUG
@@ -115,6 +123,13 @@ int main(void)
         /* Add your code for implementing the shell's logic here */
         int forked_p = fork();
 
+        // Stretch Goal 1:
+        int background_task = strcmp(args[args_count - 1], "&");
+        if (background_task == 0)
+        {
+            args[args_count - 1] = NULL;
+        }
+
         if (forked_p < 0)
         {
             printf("PARENT FORK failed.\n");
@@ -130,7 +145,11 @@ int main(void)
         else
         {
             printf("=== %d PARENT_START ===\n", (int)getpid());
-            waitpid(forked_p, NULL, 0);
+            if (background_task != 0) // if the program is not needed to run in the background call 'waitpid'
+            {
+                printf("=== PARENT_WAITING FOR CHILD ===\n");
+                waitpid(forked_p, NULL, 0);
+            }
             printf("=== PARENT_END ===\n");
         }
     }
