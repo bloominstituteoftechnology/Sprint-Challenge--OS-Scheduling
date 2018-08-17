@@ -10,7 +10,6 @@
 #define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 
-
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
@@ -72,6 +71,15 @@ int main(void)
         if (args_count == 0) {
             continue;
         }
+        
+        // if user entered cd
+        if (args_count == 2 && strcmp(args[0], "cd") == 0) {
+        int cd = chdir(args[1]);
+        continue;
+        if (cd == -1){
+            perror("chdir");
+        }            
+    }
 
         // Exit the shell 
         if (strcmp(args[0], "exit") == 0) {
