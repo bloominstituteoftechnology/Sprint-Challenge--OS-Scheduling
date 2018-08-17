@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -101,6 +102,23 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int rc = fork();
+        if (rc < 0){
+            fprintf(stderr, "Fork Failed\n");
+            exit(1);
+        } else if (rc==0) {
+            //child
+            // printf("Hello Child Here\n");
+            execvp(args[0], args);
+            printf("Command not found: %s!\n", args[0]);
+            exit(1);
+        } else {
+            //parent
+            waitpid(rc, NULL, 0);
+            // printf("Hello I am the parent\n");
+
+        }
+        // sleep(5);
         
     }
 
