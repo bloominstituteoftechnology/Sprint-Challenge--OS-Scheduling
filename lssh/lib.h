@@ -75,6 +75,19 @@ int change_directory(char **args, int args_count)
 }
 
 /**
+ * Checks background task was requested
+ *
+ * @param args {char **} Pointer to parsed command line arguments
+ * @param args_count {int} Number of command line arguments
+ *
+ * @returns true(1) or false(0)
+ */
+int background_task(char **args, int args_count)
+{
+  return strcmp(args[args_count - 1], "&") == 0;
+}
+
+/**
  * Prints out the parsed command line for debuggin
  *
  * @param args {char **} Pointer to an array of strings.
