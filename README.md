@@ -15,7 +15,7 @@ Add your answers inline, below, with your pull request.
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
     -The Robin Challeng biggest advantage is that robin scheduling improves average respone times. By limiting each task to a certain amont of time, the os can ensure that it can cycle through all ready tasks, giving each one a chance to run.
     
-    -MLFQ biggest advantage is that the algorithm that is used in scenarios where the processes can be classified can be classifieds into groups based on property like processes type, CPU time, IO access, and memory size
+    -MLFQ biggest advantage is that the algorithm that is used in scenarios where the processes can be classified into groups based on property like processes type, CPU time, IO access, and memory size
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
