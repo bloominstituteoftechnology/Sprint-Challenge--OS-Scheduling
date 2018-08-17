@@ -90,6 +90,12 @@ int main(void)
             break;
         }
 
+        // Executes the built-in "cd" command
+        if (strcmp(args[0], "cd") == 0) {
+            chdir(args[1]);
+            continue;
+        }
+
         #if DEBUG
 
         // Some debugging output
