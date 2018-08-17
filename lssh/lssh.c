@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -92,7 +93,9 @@ int main(void)
 
         // Executes the built-in "cd" command
         if (strcmp(args[0], "cd") == 0) {
-            chdir(args[1]);
+            if(chdir(args[1]) == -1) {
+              perror("cd");
+            }
             continue;
         }
 
