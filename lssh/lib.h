@@ -88,6 +88,22 @@ int background_task(char **args, int args_count)
 }
 
 /**
+ * Checks if command output should be sent to a file
+ *
+ * @param args {char **} Pointer to parsed command line arguments
+ * @param args_count {int} Number of command line arguments
+ *
+ * @returns true(1) or false(0)
+ */
+int file_redirect(char **args, int args_count)
+{
+  if(args_count >= 3)
+    return strcmp(args[args_count - 2], ">") == 0;
+  
+  return 0;
+}
+
+/**
  * Prints out the parsed command line for debuggin
  *
  * @param args {char **} Pointer to an array of strings.
