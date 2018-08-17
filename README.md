@@ -5,15 +5,16 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
-  The three things general-purpose operating system responsible for are: 
-    1. managing resources like CPU, divers, keyboard, RAM ... 
+  The three things general-purpose operating system responsible for are:
+    1. managing resources like CPU, divers, keyboard, RAM ...
     2. Establishing Userinterace
     3. Execute and provinding services for application softwares.
 
-    
 2. Describe the job of the Scheduler in the OS in general.
+  The job scheduler is responsible for managing jobs, the scheduler determines which process has access to the cpu at what time and how long so that all processes have a equal chance to run. Jobs that have priority are stored in the priority queue has faster access to the cpu and regular jobs also need to get access to the cpu, so the scheduler takes all of these into consideration and runs processes so that all get a fair chance to run. 
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+  The benfit of Multi Level Feedback Queue(MLFQ) over Round-Robin(RR) scheduler is RR runs jobs in time slice which is good for response time but bad for turnaround time. The MLFQ solves the RR issue by optimizing the turnaround time by learning when the process run. This is done by introdicing queues that have different priority level, if the process is not done within the given slice time, it priority will be reduced and will be given more time, this way the length of the processes will be determined and short processes will run faster and longer processes will run too.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
