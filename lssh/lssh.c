@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -149,7 +150,50 @@ int main(void)
                     perror("chdir");
                 }            
             }
-        else if (strcmp(args[(args_count - 1)], "&") != 0) {
+
+        char *redir_outfile = NULL;
+        for (int i = 0; i < args_count; i++) {
+            if (strcmp(args[i], ">") == 0){
+                redir_outfile = args[i+1];
+                args[i] = NULL;
+            }
+        }
+        if (strcmp(args[(args_count-1)], "&") == 0) {
+            args[args_count-1] = NULL;
+            if (redir_outfile) {
+                int fd = open(redir_outfile, O_CREAT|O_WRONLY, 0644);
+
+                if (fd < 0){
+                    fprintf(stderr, "Failed to open file: %s", redir_outfile);
+                    continue;
+                }
+                else {
+                    dup2(fd, 1);
+                }
+            }
+            pid_t background = fork();
+            if (background < 0){
+                fprintf(stderr, "Background fork failed. \n");
+                exit(2);
+            }
+            else if (background == 0){
+                if (execvp(args[0], args) == -1){
+                    fprintf(stderr, "Background process failed to execute.");
+                }
+            }
+        }   
+        else {
+            if (redir_outfile) {
+                int fd = open(redir_outfile, O_CREAT|O_WRONLY);
+
+                if (fd < 0){
+                    fprintf(stderr, "Failed to open file: %s", redir_outfile);
+                    continue;
+                }
+                else {
+                    dup2(fd, 1);
+                }
+            }
             pid_t rc = fork();
             if (rc < 0) {
                 fprintf(stderr, "Fork failed. \n");
@@ -165,20 +209,7 @@ int main(void)
                 wait(NULL);
             }
         }
-        else {
-            args[(args_count - 1)] = NULL;
-            pid_t background = fork();
-            if (background < 0){
-                fprintf(stderr, "Background fork failed. \n");
-                exit(2);
-            }
-            else if (background == 0){
-                if (execvp(args[0], args) == -1){
-                    fprintf(stderr, "Background process failed to execute.");
-                }
-            }
-            continue;
-        }   
+
     }
 
     return 0;

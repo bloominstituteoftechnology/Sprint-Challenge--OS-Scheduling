@@ -1,0 +1,9 @@
+lambda-shell$ total 64
+drwxr-xr-x  7 amyshackles  staff   224 Aug 17 13:08 .
+drwxr-xr-x  5 amyshackles  staff   160 Aug 17 07:57 ..
+-rw-r--r--  1 amyshackles  staff    13 Aug 17 07:57 .gitignore
+-rw-r--r--  1 amyshackles  staff    40 Aug 17 07:57 Makefile
+-rw-r--r--  1 amyshackles  staff    14 Aug 17 13:08 foo.txt
+-rwxr-xr-x  1 amyshackles  staff  9560 Aug 17 13:07 lssh
+-rw-r--r--  1 amyshackles  staff  6783 Aug 17 13:07 lssh.c
+lambda-shell$ 
