@@ -7,7 +7,7 @@ Add your answers inline, below, with your pull request.
 1. Name at least three things that a general-purpose operating system is responsible for handling.
    > Security, ensuring that different processes/programs and users do not step (interfer) on each other.
    > Security, ensure that unauthorized process/users do not access the system, and keeping the resources/RAM needed by each process safe apart from other processes.
-   > Expose an manage an API. This process to access to system tools/periferals such as I/O, network, Hard Disk, etc.
+   > Expose an manage an API. This allow a process to access to system tools/periferals such as I/O, network, Hard Disk, etc.
 
 2) Describe the job of the Scheduler in the OS in general.
 
