@@ -42,9 +42,11 @@ char **parse_commandline(char *str, char **args, int *args_count)
 
     while (token != NULL && *args_count < MAX_TOKENS - 1) { 
         // if null pointer, does not do while loop
-        // if args_count is greater than or equal to MAX_TOKENS - 1, does not do while loop
+        // stop while loop if args_count gets larger than or equal to MAX_TOKENS - 1
         args[(*args_count)++] = token; 
-        // the element in args at index args_count + 1 is now the token pointer
+        // the element in args at index args_count is now the token pointer
+        // increment args_count
+        // args_count started at 0
 
         token = strtok(NULL, " \t\n\r"); 
         // loops through the string token is pointing to (of tokens)
