@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -105,15 +106,31 @@ int main(void)
         {
             if (args_count != 2)
             {
-                fprintf(stderr, "Error. Correct: cd <name_of_directory>\n");
+                fprintf(stderr, "Error: Please provide name of directory.\n");
                 continue;
             }
             if (chdir(args[1]) < 0)
             {
-                fprintf(stderr, "Error. chdir failed\n");
+                fprintf(stderr, "Error: No such directory.\n");
                 continue;
             }
             continue;
+        }
+
+        pid_t child_pid = fork();
+        if (child_pid == -1)
+        {
+            fprintf(stderr, "Error. Failed to fork.\n");
+            continue;
+        }
+
+        if (child_pid == 0)
+        {
+            execvp(args[0], args);
+            fprintf(stderr, "Exec function failed.\n");
+            continue;
+        } else {
+            waitpid(child_pid, NULL, 0);
         }
     }
 
