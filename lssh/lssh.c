@@ -105,13 +105,19 @@ int main(void)
         
         if (pid == 0) {
             // printf("Child process\n");
-            execvp(args[0],args);
+            //check for 'cd' in command
+            if (strcmp(args[0], "cd") == 0)
+            {
+                chdir(args[1]);
+            } else {
+                execvp(args[0],args);
+            }
         } else {
             wait(NULL);
             // printf("Parent process\n");
         }
         
-        
+
     }
 
     return 0;
