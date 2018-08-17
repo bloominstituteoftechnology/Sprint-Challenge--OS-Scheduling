@@ -150,7 +150,7 @@ int main(void)
                 }            
             }
         else if (strcmp(args[(args_count - 1)], "&") != 0) {
-            int rc = fork();
+            pid_t rc = fork();
             if (rc < 0) {
                 fprintf(stderr, "Fork failed. \n");
                 exit(1);
@@ -167,7 +167,7 @@ int main(void)
         }
         else {
             args[(args_count - 1)] = NULL;
-            int background = fork();
+            pid_t background = fork();
             if (background < 0){
                 fprintf(stderr, "Background fork failed. \n");
                 exit(2);
