@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -99,9 +100,22 @@ int main(void)
         }
 
         #endif
-        
-        /* Add your code for implementing the shell's logic here */
-        
+
+        int child = fork();
+
+        if (child < 0)
+        {
+            printf("Error while creating fork/child process");
+            exit(1);
+        }
+        else if (child == 0)
+        {
+            execvp(args[0], args);
+        }
+        else
+        {
+            waitpid(child, NULL, 0);
+        }
     }
 
     return 0;
