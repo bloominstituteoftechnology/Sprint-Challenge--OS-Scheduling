@@ -10,39 +10,12 @@
 #define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 
-/**
- * Parse the command line.
- *
- * YOU DON'T NEED TO MODIFY THIS!
- * (But you should study it to see how it works)
- *
- * Takes a string like "ls -la .." and breaks it down into an array of pointers
- * to strings like this:
- *
- *   args[0] ---> "ls"
- *   args[1] ---> "-la"
- *   args[2] ---> ".."
- *   args[3] ---> NULL (NULL is a pointer to address 0)
- *
- * @param str {char *} Pointer to the complete command line string.
- * @param args {char **} Pointer to an array of strings. This will hold the result.
- * @param args_count {int *} Pointer to an int that will hold the final args count.
- *
- * @returns A copy of args for convenience.
- */
-
 
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
     
     *args_count = 0;
-
-    // Splits str[] according to given delimiters.
-    // and returns next token. It needs to be called
-    // in a loop to get all tokens. It returns NULL
-    // when there are no more tokens.
-    // char * strtok(char str[], const char *delims);
 
     token = strtok(str, " \t\n\r");
     // \t = tab
@@ -65,10 +38,10 @@ char **parse_commandline(char *str, char **args, int *args_count)
  */
 int main(void)
 {
-    // Holds the command line the user types in
+    // Holds the command line the user inputs
     char commandline[COMMANDLINE_BUFSIZE];// 1024
 
-    // Holds the parsed version of the command line
+    //the parsed version of the command line
     char *args[MAX_TOKENS];//100
 
     // How many command line args the user typed
@@ -78,52 +51,37 @@ int main(void)
     while (1) {
         // Print a prompt
         printf("%s", PROMPT);
-        // fflush() is typically used for output stream only.
-        // Its purpose is to clear (or flush) the output buffer and move the buffered 
-        // data to console (in case of stdout) 
 
         //fflush(FILE *ostream);
         fflush(stdout); // Force the line above to print
         
-        // It reads a line from the specified stream and stores it into the string pointed to by str. 
-        // It stops when either (n-1) characters are read, the newline character is read, 
-        // or the end-of-file is reached, whichever comes first.
 
         //char *fgets(char *str, int n, FILE *stream)
         fgets(commandline, sizeof commandline, stdin);// Read input from keyboard
-        
 
 
-
-        // C provides feof() which returns non-zero value only 
-        // if end of file has reached, otherwise it returns 0.
-
-        // Exit the shell on End-Of-File (CRTL-D)
+        // Exiting from the shell 
         if (feof(stdin)) {
             break;
         }
 
-        // Parse input into individual arguments
+        // Parsing input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
+        // If the user entered no commands, do nothing
         if (args_count == 0) {
-            // If the user entered no commands, do nothing
             continue;
         }
 
-        // Exit the shell if args[0] is the built-in "exit" command
+        // Exit the shell 
         if (strcmp(args[0], "exit") == 0) {
             break;
         }
 
 
-        
-
         #if DEBUG
 
-        // Some debugging output
-
-        // Print out the parsed command line in args[]
+        // Print out the parsed command line 
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
         }
@@ -141,22 +99,7 @@ int main(void)
             exit(1);
         }
         else if (rc == 0) {
-            /*
-            check to see if the user entered `cd` in `args[0]` _before_ running the command. 
-            And if they did, you should short-circuit the rest of the main loop with a `continue` 
-            statement.
-            If the user entered `cd` as the first argument:
-            1. Check to make sure they've entered 2 total arguments
-            2. Run the system call `chdir()` on the second argument to change directories
-            3. Error check the result of `chdir()`. If it returns `-1`, meaning an error
-            occurred, you can print out an error message with:
-            ```
-            perror("chdir"); // #include <errno.h> to use this
-            ```
-            4. Execute a `continue` statement to short-circuit the rest of the main loop.
-            Note that `.` and `..` are actual directories. You don't need to write any special case code
-             to handle them.
-            */
+
             if(strcmp(args[0], "cd") == 0) //if the user entered `cd` in `args[0]`
             {
                 if(args_count == 2)
@@ -170,19 +113,7 @@ int main(void)
             }
            
             execvp(args[0], args);
-            /*
-            The first argument is the file you wish to execute, 
-            and the second argument is an array of null-terminated strings that represent 
-            the appropriate arguments to the file as specified in the man page.
-            
-            For example:
-            char *cmd = "ls";
-            char *argv[3];
-            argv[0] = "ls";
-            argv[1] = "-la";
-            argv[2] = NULL;
-            execvp(cmd, argv); //This will run "ls -la" as if it were a command
-            */
+       
             perror("execvp");
             exit(2);
         
