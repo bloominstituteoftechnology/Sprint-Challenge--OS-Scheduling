@@ -117,7 +117,7 @@ int main(void)
         if(childPid == 0)  // fork succeeded 
         {   
             if(strncmp (args[0] , "cd", 2) == 0){
-                if(args_count > 1){
+                if(args_count == 2){
                     char cwd[1024];
                     getcwd(cwd, sizeof(cwd));
                     char* s1 = concat("/", args[1]);
@@ -127,7 +127,7 @@ int main(void)
                         printf("error in ch");
                     }
                     else{
-                        printf("%d\n",xh);
+                        //printf("%d\n",xh);
                         continue;
                     }
                     printf("%s",s);
