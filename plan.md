@@ -1,62 +1,8 @@
-#Wladimir Fraga CS10
+# Plan
 
-# Sprint Challenge: Operating Systems and Scheduling
+At the end of the day, you should be able to run your shell.
 
-## Short Answer Questions
-
-Add your answers inline, below, with your pull request.
-
-1. Name at least three things that a general-purpose operating system is responsible for handling.
-
-      memory allocation
-      hardware interface
-      scheduling
-
-2. Describe the job of the Scheduler in the OS in general.
-
-      The OS schedduler is responsible to execute all processes in the most efficient way to ensure all processes get executed at some point.
-
-3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
-
-     MLFQ improves turnaround time since it prioritizes tasks without automatically assign equal resources for each task.
-
-## Programming Exercise: The Lambda School Shell (`lssh`)
-
-Important Safety Tip: Resist the urge to start coding until you:
-1. Read this complete challenge
-
-then
-
-2. Inventory the code and figure out what needs to be written where.
-
-### Task 1: Implement the Ability to Execute Arbitrary Commands
-This program implements a new shell that you can use to run commands from in Unix, similar to bash!
-
-At the end of the day, you should be able to run your shell, then run commands within it like in the following example.
-
-**NOTE: you do not need to implement the `ls` or `head` commands! These already exist in Unix. Your goal is to write a program that runs them with `exec()` when
-the user types in their names. And also the shell should be able to run _any_ command, not just `ls` and `head`.**
-
-```
-[bash]$ ./lssh 
-lambda-shell$ ls -l
-total 32
--rwxr-xr-x  1 beej  staff  9108 Mar 15 13:28 lssh
--rw-r--r--  1 beej  staff  2772 Mar 15 13:27 lssh.c
-lambda-shell$ head lssh.c
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
-#define PROMPT "lambda-shell$ "
-
-#define MAX_TOKENS 100
-#define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 0  // Set to 1 to turn on some debugging output
-lambda-shell$ exit
-[bash]$ 
-```
+**NOTE: you do not need to implement the `ls` or `head` commands! These already exist in Unix. Your goal is to write a program that runs them with `exec()the shell should be able to run _any_ command, not just `ls` and `head`.**
 
 General plan of attack is to:
 

@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -70,6 +72,8 @@ int main(void)
 
         // Read input from keyboard
         fgets(commandline, sizeof commandline, stdin);
+        while (waitpid(-1, NULL, WNOHANG) > 0)
+
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
@@ -89,6 +93,14 @@ int main(void)
             break;
         }
 
+        // Executes the built-in "cd" command
+        if (strcmp(args[0], "cd") == 0) {
+            if(chdir(args[1]) == -1) {
+              perror("cd");
+            }
+            continue;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -101,6 +113,35 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        int rc = fork();
+
+        int background_task = strcmp(args[args_count - 1], "&");
+        if (background_task == 0)
+        {
+            args[args_count - 1] = NULL;
+        }
+
+        if (rc < 0){
+            fprintf(stderr, "Fork Failed\n");
+            exit(1);
+        } else if (rc==0) {
+            //child
+            // printf("Hello Child Here\n");
+            sleep(3);
+            execvp(args[0], args);
+            printf("Command not found: %s!\n", args[0]);
+            exit(1);
+        } else {
+            //parent
+            if (background_task != 0) // if the program is not needed to run in the background call 'waitpid'
+            {
+                printf("=== PARENT WAITING FOR CHILD ===\n");
+                waitpid(rc, NULL, 0);
+            }
+            // printf("Hello I am the parent\n");
+
+        }
+        // sleep(5);
         
     }
 
