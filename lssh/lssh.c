@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -63,6 +64,7 @@ int main(void)
     int args_count;
 
     // Shell loops forever (until we tell it to exit)
+    
     while (1) {
         // Print a prompt
         // scanf("")
@@ -85,6 +87,8 @@ int main(void)
             continue;
         }
 
+        printf("testing: %s\n", args[1]);
+
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
             break;
@@ -102,13 +106,23 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-
+        
         pid_t childPID = fork();
         if(childPID < 0) {
             printf("Error forking\n");
             exit(1);
         }
         if(childPID == 0) {
+            // printf("testing: %s\n", args[1]);
+            // printf("This is strcompare test: %d /n", strncmp(commandline, "cd", 2));
+            if(strncmp(commandline, "cd", 2) >= 0) {
+                if(args_count != 2) {
+                    perror("chdir");
+                } else {
+                    printf("testing: %s", args[1]);
+                    chdir(args[1]);
+                }
+            }
             execvp(commandline, args);
         } else {
             wait(0);
