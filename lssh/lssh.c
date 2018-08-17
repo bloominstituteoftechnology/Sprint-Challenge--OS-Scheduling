@@ -12,7 +12,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 // My little baby functions. Aww, so cute.
 char **parse_commandline(char *str, char **args, int *args_count);
@@ -28,8 +28,9 @@ int main(void)
     // Holds the command line the user types in
     char commandline[COMMANDLINE_BUFSIZE];
 
-    // Holds file name for text file output
-    char redirection[256];
+    // Special Command Flags
+    int background;
+    char redirection[256]; // Doubles as flag and holder for filename
 
     // Holds the parsed version of the command line
     char *args[MAX_TOKENS];
@@ -39,9 +40,8 @@ int main(void)
 
     // Shell loops forever (until we tell it to exit)
     while (1) {
-        // Command modifier flags
-        int background = 0;
-  
+        // Reset Flags
+        background = 0;
         redirection[0] = 0;
 
         // Clear out the zombies
@@ -84,6 +84,8 @@ int main(void)
 
         #endif
         
+        // Look for special argument characters (i.e. '&' and '>')
+        // Set flags accordingly
         flagSpecialArgs(args, args_count, &background, redirection);
 
         /* Add your code for implementing the shell's logic here */
@@ -99,22 +101,23 @@ int main(void)
                 doCD(args, args_count);
                 continue;
             }
-            // If redirection isn't null, output execution to file
-            // The default execution of the program
-
-            printf("redirection[0]: %d\n", redirection[0]);
+            // If redirection[0] isn't 0 (i.e. overwritten by file name), print to file
             if (redirection[0] != 0) {
                 writeToFile(args, redirection);
                 continue;
             }
+            // The default execution of the program
             execvp(args[0], args);
         }
         else {
-            printf("PARENT background %d\n", background);
-            
             if (background == 0) {
                 waitpid(rc, NULL, 0);
             }
+            # if DEBUG
+            else {
+                printf("Parent went to get some cigarretes at the store.\n");
+            }
+            #endif
         }
     }
 
@@ -141,39 +144,63 @@ void writeToFile(char* args[], char redirection[])
     // STRETCH: Variable to save default stdout
     // Source: https://stackoverflow.com/a/11042581
     int saved_stdout = dup(1);
+    // Now point stdout (aka '1') to fd
     dup2(fd, 1);
-
+    // Do that thang
     execvp(args[0], args);
-
-    dup2(saved_stdout, 1);
+    // Then clean up the mess
+    dup2(saved_stdout, 1); // puts stdout to back to what it was
     close(saved_stdout);
     close(fd);
 }
 
 void flagSpecialArgs(char* args[], int args_count, int *background, char redirection[])
 {
-    printf("START\n");
-    int lastCharInd = args_count - 1;
-    printf("args_count: %d lastCharind: %d\n", args_count, lastCharInd);
-    printf("args[lastCharInd]: %s \n", args[lastCharInd]);
-    printf("args[lastCharInd][0]: %d\n", args[lastCharInd][0]);
+    // Previous work for reference
+    // int lastCharInd = args_count - 1;
+    // printf("args_count: %d lastCharind: %d\n", args_count, lastCharInd);
+    // printf("args[lastCharInd]: %s \n", args[lastCharInd]);
+    // printf("args[lastCharInd][0]: %d\n", args[lastCharInd][0]);
 
-    if ((char) args[lastCharInd][0] == '&') {
-        printf("FIRST CONDITION\n");
-        *background = 1;
-        args[lastCharInd] = NULL;
-        printf("FIRST CONDITION OK\n");
-    }
-    else if (args_count > 2) {
-        if ((char) args[lastCharInd - 1][0] == '>') {
-            printf("SECOND CONDITION\n");
-            strcpy(redirection, args[lastCharInd]);
-            args[lastCharInd - 1] = NULL;
-            args[lastCharInd] = NULL;
-            printf("SECOND CONDITION OK\n");
+    // if ((char) args[lastCharInd][0] == '&') {
+    //     printf("FIRST CONDITION\n");
+    //     *background = 1;
+    //     args[lastCharInd] = NULL;
+    //     printf("FIRST CONDITION OK\n");
+    // }
+    // else if (args_count > 2) {
+    //     if ((char) args[lastCharInd - 1][0] == '>') {
+    //         printf("SECOND CONDITION\n");
+    //         strcpy(redirection, args[lastCharInd]);
+    //         args[lastCharInd - 1] = NULL;
+    //         args[lastCharInd] = NULL;
+    //         printf("SECOND CONDITION OK\n");
+    //     }
+    // }
+
+    int backgroundIndex = -1;
+    int redirectIndex = -1; 
+
+    for (int i = 0; i < args_count; i++) {
+        if ((char) args[i][0] == '&') {
+            backgroundIndex = i;
+        }
+        else if ((char) args[i][0] == '>') {
+            redirectIndex = i;
         }
     }
-    
+
+    // Not a lot of syntax parsing or error handling unfortunately. Just the basics.
+    // This approach allows '>' and '&' to be used together. My previous approach did not.
+    if (backgroundIndex > -1) {
+        *background = 1;
+        args[backgroundIndex] = NULL;
+    }
+    if (redirectIndex > -1) {
+        strcpy(redirection, args[redirectIndex - 1]);
+        args[redirectIndex - 1] = NULL; 
+        args[redirectIndex] = NULL;
+    }
 }
 
 /**
