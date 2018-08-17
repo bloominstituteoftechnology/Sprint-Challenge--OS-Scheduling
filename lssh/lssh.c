@@ -73,6 +73,7 @@ int main(void)
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
+            printf("\n");
             break;
         }
 
@@ -101,7 +102,26 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        if (args_count == 2 && strcmp(args[0], "cd") == 0) {
+            int cd = chdir(args[1]);
+            continue;
+
+            if (cd == -1) {
+                perror("chdir");
+            }
+        } else {
+            int rc = fork();
+            if (rc < 0) {
+                fprintf(stderr, "Failure to fork. \n");
+                exit(1);
+            } else if (rc == 0) {
+                if (execvp(args[0], args) == -1) {
+                    fprintf(stderr, "Command did not run, try again.");
+                }
+            } else {
+                waitpid(rc, NULL, 0);
+            }
+        }
     }
 
     return 0;
