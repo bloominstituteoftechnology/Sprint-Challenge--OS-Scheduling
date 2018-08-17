@@ -6,9 +6,16 @@
 
 #define PROMPT "lambda-shell$ "
 
+// char PROMPT[] = "lambda-shell$ "; 
+
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
 #define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+
+#define MSGSIZE 16
+
+int in_child = 0; 
+char *exitpro = "exit program"; 
 
 /**
  * Parse the command line.
@@ -56,6 +63,15 @@ char **parse_commandline(char *str, char **args, int *args_count)
 
 int main(void)
 {
+
+    char buf[MSGSIZE]; // a buffer that will hold the incoming dta that is being written
+    int p[2]; // a two-element array to hold the read and write file descriptors that are used by the pipe
+
+    if (pipe(p) < 0) {
+        fprintf(stderr, "Pipe Failed\n");
+        exit(1); 
+    }
+        
     // Holds the command line the user types in
     char commandline[COMMANDLINE_BUFSIZE];
 
@@ -76,6 +92,9 @@ int main(void)
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
+            if (in_child == 1) {
+                write(p[1], exitpro, MSGSIZE); 
+            }
             break;
         }
 
@@ -89,6 +108,9 @@ int main(void)
 
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
+           if (in_child == 1) {
+                write(p[1], exitpro, MSGSIZE); 
+            } 
             break;
         }
 
@@ -104,7 +126,7 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+
         int rc = fork(); 
 
         if (rc < 0) {
@@ -112,6 +134,7 @@ int main(void)
             exit(1); 
         }
         else if (rc == 0) {
+            in_child = 1; 
             int result = strcmp(args[0], "cd"); 
             if (result == 0) {
                 if (args[1] && !args[2]) {
@@ -131,7 +154,13 @@ int main(void)
         }
         else {
             waitpid(rc, NULL, 0); 
-            continue; 
+            read(p[0], buf, MSGSIZE); 
+            if (buf) {
+                exit(1); 
+            }            
+            else {
+                continue; 
+            }
         }
     }
 
