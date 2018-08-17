@@ -134,6 +134,7 @@ int main(void)
                 }
             }
             execvp(args[0], args);
+            fprintf(stderr, "If you see this, exec failed");
         }
         else {
             waitpid(rc, NULL, 0);
