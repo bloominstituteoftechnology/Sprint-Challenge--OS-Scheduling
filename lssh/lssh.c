@@ -39,11 +39,10 @@ char **parse_commandline(char *str, char **args, int *args_count)
 
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
         args[(*args_count)++] = token;
-
         token = strtok(NULL, " \t\n\r"); //me: token = split string
     }
 
-    args[*args_count] = NULL; //me: 
+    args[*args_count] = NULL; //me: NULL terminator in a string
 
     return args;
 }
@@ -89,6 +88,23 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "exit") == 0) {
+            break;
+        }
+
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count !=2) {
+                printf("usage: cd dirname\n");
+                continue;
+            }
+
+            if (chdir(args[1]) < 0) {
+                fprintf(stderr, "failed to switch directory to %s\n", args[1]);
+                continue;
+            }
+
+            continue;
+        }
         #if DEBUG
 
         // Some debugging output
@@ -101,7 +117,23 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        pid_t child_pid = fork();
+
+        if (child_pid < 0) {
+            fprintf(stderr, "Fork failed\n");
+            continue;
+        }
+
+        if (child_pid == 0) {
+            //in child process's context
+            execvp(args[0], args);
+
+            fprintf(stderr, "Exec failed\n");
+            exit(1);
+        } else {
+            // in the parent's context
+            wait(NULL);
+        }
     }
 
     return 0;
