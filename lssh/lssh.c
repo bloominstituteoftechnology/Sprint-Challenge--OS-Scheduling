@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -97,6 +98,14 @@ int main(void)
         // Print out the parsed command line in args[]
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
+        }
+
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count == 2) {
+                int dirchanged = chdir(args[1]);
+                if (dirchanged < 0) perror("chdir");
+            }
+            continue;
         }
 
         #endif
