@@ -2,12 +2,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h> 
 
 #define PROMPT "lambda-shell$ "
+
+// char PROMPT[] = "lambda-shell$ "; 
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
 #define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+
+#define MSGSIZE 16
+
+int in_child = 0; 
+char *exitpro = "exit program"; 
 
 /**
  * Parse the command line.
@@ -29,6 +37,7 @@
  *
  * @returns A copy of args for convenience.
  */
+
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
@@ -51,8 +60,18 @@ char **parse_commandline(char *str, char **args, int *args_count)
 /**
  * Main
  */
+
 int main(void)
 {
+
+    char buf[MSGSIZE]; // a buffer that will hold the incoming dta that is being written
+    int p[2]; // a two-element array to hold the read and write file descriptors that are used by the pipe
+
+    if (pipe(p) < 0) {
+        fprintf(stderr, "Pipe Failed\n");
+        exit(1); 
+    }
+        
     // Holds the command line the user types in
     char commandline[COMMANDLINE_BUFSIZE];
 
@@ -73,6 +92,9 @@ int main(void)
 
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
+            if (in_child == 1) {
+                write(p[1], exitpro, MSGSIZE); 
+            }
             break;
         }
 
@@ -86,6 +108,9 @@ int main(void)
 
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
+           if (in_child == 1) {
+                write(p[1], exitpro, MSGSIZE); 
+            } 
             break;
         }
 
@@ -94,14 +119,49 @@ int main(void)
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+
+        int rc = fork(); 
+
+        if (rc < 0) {
+            fprintf(stderr, "Fork Failed"); 
+            exit(1); 
+        }
+        else if (rc == 0) {
+            in_child = 1; 
+            int result = strcmp(args[0], "cd"); 
+            if (result == 0) {
+                if (args[1] && !args[2]) {
+                    int check_path = chdir(args[1]); 
+                    if (check_path < 0) {
+                        printf("bash: cd %s: No such file or directory\n", args[1]); 
+                    }
+                }
+                else if (args[2]) {
+                    printf("bash: cd: too many arguments\n"); 
+                }
+            }
+            else {
+                execvp(args[0], args); 
+                printf("bash: %s: command not found.\n", args[0]); 
+            }
+        }
+        else {
+            waitpid(rc, NULL, 0); 
+            read(p[0], buf, MSGSIZE); 
+            if (buf) {
+                exit(1); 
+            }            
+            else {
+                continue; 
+            }
+        }
     }
 
     return 0;

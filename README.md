@@ -6,9 +6,27 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+Many of the things that a general purpose operating system is responsible for handling include: 
+
+I. Recognizing input from the keyboard. 
+II. Sending output to the display. 
+III. Keep track, read and create files and folders on storage devices.
+IV. Controlling hardware peripherals connected to the computer such as connected printers and webcams. 
+V. Ensures different programs and users running at the same time do not interfere with each other. 
+
 2. Describe the job of the Scheduler in the OS in general.
 
+A Job Scheduler is an Operating System program that allocates resources for processes that are waiting for CPU time. It is able to prioritize queues as well as determine which processes get executed first from each queue and the amount of CPU time it should allocate for each process.
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+These are some of the benefits of MLFQ over a plain Round-Robin: 
+
+I. MLFQ scheduler prioritizes queues and has set quantum times for each queue while a Round-Robin scheduler executes processes on a first come first serve basis. Therefore, a Round-Robin scheduler does not give special priority to more important tasks. 
+
+II. MFLQ scheduler can quickly finish smaller important processes first in a higher priority queue before working on processes in lower priority queues. If an important process has not finished during the quantum time then it will be moved to a lower priority queue for completion. However, a Round-Robin scheduler will send any process that has not finished during the set amount of time to the back of the line. If they are an enormous amount of processes with unequal lengths in line it may take a long time before a process can be executed by the CPU again. 
+
+III. Because priority does not exist in a Round-Robin scheduler computing resources and time can be wasted if a process is waiting for information or data from another process. 
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
