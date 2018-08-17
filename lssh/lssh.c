@@ -140,7 +140,7 @@ int main(void)
             exit(1);
         } else if (rc == 0) {
             if (output_to_file == 1) {
-                int fd = open(filename, O_RDWR);
+                int fd = open(filename, O_CREAT|O_WRONLY);
                 dup2(fd, 1);
             }
             execvp(args[0], args);
