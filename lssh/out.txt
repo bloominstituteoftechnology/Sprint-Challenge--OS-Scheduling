@@ -1,0 +1,11 @@
+total 49
+drwxrwxrwx 1 mister-corn mister-corn   512 Aug 16 18:38 .
+drwxrwxrwx 1 mister-corn mister-corn   512 Aug 16 12:01 ..
+-rwxrwxrwx 1 mister-corn mister-corn    13 Aug 16 11:54 .gitignore
+-rwxrwxrwx 1 mister-corn mister-corn    40 Aug 16 11:54 Makefile
+-rwxrwxrwx 1 mister-corn mister-corn  8416 Aug 16 15:47 a.out
+-rwxrwxrwx 1 mister-corn mister-corn  8416 Aug 16 13:48 ex3
+-rwxrwxrwx 1 mister-corn mister-corn   599 Aug  8 15:42 ex3.c
+-rwxrwxrwx 1 mister-corn mister-corn 13496 Aug 16 18:38 lssh
+-rwxrwxrwx 1 mister-corn mister-corn  5809 Aug 16 18:38 lssh.c
+-rwxrwxrwx 1 mister-corn mister-corn     0 Aug 16 18:38 out.txt

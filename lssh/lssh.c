@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
 
@@ -13,8 +16,9 @@
 
 // My little baby functions. Aww, so cute.
 char **parse_commandline(char *str, char **args, int *args_count);
+void flagSpecialArgs(char** args, int args_count, int *background, char *redirection);
 void doCD(char** args, int args_count);
-void flagSpecialArgs(char** args, int args_count, int *background, int *redirection);
+void writeToFile(char* args[], char redirection[]);
 
 /**
  * Main
@@ -23,6 +27,9 @@ int main(void)
 {
     // Holds the command line the user types in
     char commandline[COMMANDLINE_BUFSIZE];
+
+    // Holds file name for text file output
+    char redirection[256];
 
     // Holds the parsed version of the command line
     char *args[MAX_TOKENS];
@@ -34,7 +41,8 @@ int main(void)
     while (1) {
         // Command modifier flags
         int background = 0;
-        int redirection = 0;
+  
+        redirection[0] = 0;
 
         // Clear out the zombies
         while (waitpid(-1, NULL, WNOHANG) > 0)
@@ -76,7 +84,7 @@ int main(void)
 
         #endif
         
-        flagSpecialArgs(args, args_count, &background, &redirection);
+        flagSpecialArgs(args, args_count, &background, redirection);
 
         /* Add your code for implementing the shell's logic here */
         int rc = fork();
@@ -91,14 +99,20 @@ int main(void)
                 doCD(args, args_count);
                 continue;
             }
-            //
-            // The actual execution of the program
+            // If redirection isn't null, output execution to file
+            // The default execution of the program
+
+            printf("redirection[0]: %d\n", redirection[0]);
+            if (redirection[0] != 0) {
+                writeToFile(args, redirection);
+                continue;
+            }
             execvp(args[0], args);
         }
         else {
             printf("PARENT background %d\n", background);
-            if (!background) {
-                printf("BOO!\n");
+            
+            if (background == 0) {
                 waitpid(rc, NULL, 0);
             }
         }
@@ -121,18 +135,44 @@ void doCD(char** args, int args_count)
     }
 }
 
-void flagSpecialArgs(char* args[], int args_count, int *background, int *redirection)
+void writeToFile(char* args[], char redirection[])
 {
-    int lastCharInd = args_count - 1;
+    int fd = open(redirection, O_CREAT|O_RDWR, 0644);
+    // STRETCH: Variable to save default stdout
+    // Source: https://stackoverflow.com/a/11042581
+    int saved_stdout = dup(1);
+    dup2(fd, 1);
 
-    if (args[lastCharInd][0] == '&') {
+    execvp(args[0], args);
+
+    dup2(saved_stdout, 1);
+    close(saved_stdout);
+    close(fd);
+}
+
+void flagSpecialArgs(char* args[], int args_count, int *background, char redirection[])
+{
+    printf("START\n");
+    int lastCharInd = args_count - 1;
+    printf("args_count: %d lastCharind: %d\n", args_count, lastCharInd);
+    printf("args[lastCharInd]: %s \n", args[lastCharInd]);
+    printf("args[lastCharInd][0]: %d\n", args[lastCharInd][0]);
+
+    if ((char) args[lastCharInd][0] == '&') {
+        printf("FIRST CONDITION\n");
         *background = 1;
         args[lastCharInd] = NULL;
+        printf("FIRST CONDITION OK\n");
     }
-    // if (args[lastCharInd][0] == '>') {
-    //     *redirection = 1;
-    //     args[lastCharInd] = NULL;
-    // }
+    else if (args_count > 2) {
+        if ((char) args[lastCharInd - 1][0] == '>') {
+            printf("SECOND CONDITION\n");
+            strcpy(redirection, args[lastCharInd]);
+            args[lastCharInd - 1] = NULL;
+            args[lastCharInd] = NULL;
+            printf("SECOND CONDITION OK\n");
+        }
+    }
     
 }
 
