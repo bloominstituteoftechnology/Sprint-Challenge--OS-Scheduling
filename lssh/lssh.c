@@ -108,8 +108,9 @@ int main(void)
 
 #endif
 
-    /* Add your code for implementing the shell's logic here */
+   /* Add your code for implementing the shell's logic here */
     // pid_t parentID;
+    int result;
     int childProcess = fork();
 
     if (childProcess < 0)
@@ -118,6 +119,20 @@ int main(void)
     }
     else if (childProcess == 0)
     {
+      // if (strcmp(args[0], "cd") == 0)
+      // {
+      //   continue;
+      // }
+
+      if (strcmp(args[0], "cd") == 0 && args_count == 2)
+      {
+        result = chdir(args[1]);
+        if (result == -1)
+        {
+          perror("chdir");
+        }
+      }
+
       execvp(args[0], args);
       continue;
     }
