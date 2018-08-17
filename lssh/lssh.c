@@ -62,6 +62,12 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
+    // Background process 
+    int background = 0;
+
+    // zombie process reaping
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
@@ -89,6 +95,18 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0)
+        {
+            chdir(args[1]);
+            continue;
+        }
+
+        if (strcmp(args[args_count - 1], "&") == 0)
+        {
+            args[args_count - 1] = NULL;
+            background = 1;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -105,14 +123,8 @@ int main(void)
         
         if (pid == 0) {
             // printf("Child process\n");
-            //check for 'cd' in command
-            if (strcmp(args[0], "cd") == 0)
-            {
-                chdir(args[1]);
-            } else {
-                execvp(args[0],args);
-            }
-        } else {
+            execvp(args[0],args);
+        } else if (!background) {
             wait(NULL);
             // printf("Parent process\n");
         }
