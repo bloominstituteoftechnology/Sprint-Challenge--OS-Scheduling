@@ -100,7 +100,17 @@ int main(void)
 
         #endif
         
-        /* Add your code for implementing the shell's logic here */
+        int pid = fork();
+
+        
+        if (pid == 0) {
+            // printf("Child process\n");
+            execvp(args[0],args);
+        } else {
+            wait(NULL);
+            // printf("Parent process\n");
+        }
+        
         
     }
 
