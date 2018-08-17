@@ -13,11 +13,11 @@ int main(void)
   char commandline[COMMANDLINE_BUFSIZE];
   char *args[MAX_TOKENS];
   int args_count;
+  int child;
 
   while (1)
   {
-    printf("%s", PROMPT);
-    fflush(stdout);
+    print_prompt(PROMPT);
     fgets(commandline, sizeof commandline, stdin);
 
     if (feof(stdin))
@@ -35,7 +35,15 @@ int main(void)
         printf("%d: '%s'\n", i, args[i]);
     #endif
 
-    /* Add your code for implementing the shell's logic here */
+    child = fork();
+    if (child == 0)
+    {
+      if (execvp(args[0], args) == -1)
+        print_prompt(COMMAND_NOT_FOUND);
+      exit(0);
+    } else {
+      waitpid(child, NULL, 0);
+    }
   }
 
   return 0;
