@@ -95,20 +95,20 @@ int main(void)
     {
       break;
     }
+    // Sean's solution
+    //  if (strcmp(args[0], "cd") == 0)
+    // {
+    //   if(args_count != 2) {
+    //       printf("usage: de dirname\n");
+    //       continue;
+    //   }
 
-     if (strcmp(args[0], "cd") == 0)
-    {
-      if(args_count != 2) {
-          printf("usage: de dirname\n");
-          continue;
-      }
-
-      if (chdir(args[1]) < 0) {
-          printf(stderr, "Unable to switch directory to %s\n", args[1]);
-          continue
-      }
-      continue;
-    }
+    //   if (chdir(args[1]) < 0) {
+    //       printf(stderr, "Unable to switch directory to %s\n", args[1]);
+    //       continue
+    //   }
+    //   continue;
+    // }
 
 #if DEBUG
 
