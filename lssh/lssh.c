@@ -161,6 +161,12 @@ int main(void)
             {
                 printf("FILE REDIRECT == 1\n\n");
                 int file_to_output = open(file_name, O_WRONLY | O_CREAT, 0644);
+                if (file_to_output < 0)
+                {
+                    perror("Error writing to lutput_file ( command > output_file ).");
+                    exit(1);
+                }
+
                 dup2(file_to_output, 1); // close 'fd' number 1. and points this 'number (1)' to the 'file_to_output'.
             }
 
