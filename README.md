@@ -1,4 +1,4 @@
-# Sprint Challenge: Operating Systems and Scheduling
+# Sprint Challenge: Operating Systems and Scheduling 
 
 ## Short Answer Questions
 
@@ -6,9 +6,15 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+    Maintaining a file system, a GUI, scheduling processes.
+
 2. Describe the job of the Scheduler in the OS in general.
 
+    The Scheduler handles the processes according to their priority level. 
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+    MLFQ is able to process tasks in a way that increases the perceived speed of the machine to the end user.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 

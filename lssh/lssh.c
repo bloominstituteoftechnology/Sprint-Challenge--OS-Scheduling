@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -62,6 +65,15 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
+    // Background process 
+    int background = 0;
+
+    // Filename
+    char *filename = NULL;
+
+    // zombie process reaping
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
@@ -89,6 +101,18 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0)
+        {
+            chdir(args[1]);
+            continue;
+        }
+
+        if (strcmp(args[args_count - 1], "&") == 0)
+        {
+            args[args_count - 1] = NULL;
+            background = 1;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -96,12 +120,34 @@ int main(void)
         // Print out the parsed command line in args[]
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
+            
+            if (strcmp(args[i], ">") == 0) {
+                filename = args[i+1];
+                args[i] = NULL;
+                continue;
+            }
+            
         }
 
         #endif
         
-        /* Add your code for implementing the shell's logic here */
+        int pid = fork();
+
         
+        if (pid == 0) {
+            // printf("Child process\n");
+            
+            if (filename != NULL) {
+                int fd = open(filename, O_CREAT);
+                dup2(fd, 1);
+            }
+            execvp(args[0],args);
+        } else if (!background) {
+            wait(NULL);
+            // printf("Parent process\n");
+        }
+        
+
     }
 
     return 0;
