@@ -2,12 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-
-#define PROMPT "lambda-shell$ "
-
-#define MAX_TOKENS 100
-#define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#include "constants.h"
 
 /**
  * Parse the command line.
