@@ -7,9 +7,19 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+file management, memory management, process management, handling input and output
+
 2. Describe the job of the Scheduler in the OS in general.
 
+Job scheduling is the process of allocating system resources to many different tasks by an operating system (OS). The system handles prioritized job queues that are awaiting CPU time and it should determine which job to be taken from which queue and the amount of time to be allocated for the job.
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+in round robin- Giving every process an equal share of the CPU is not always a good idea. For instance, highly interactive processes will get scheduled no more frequently than CPU-bound processes.
+
+in MLFQ - a process with long CPU bursts will use its entire time slice, get preempted and get placed in a lower-priority queue. A highly interactive process will not use up its quantum and will remain at a high priority level.
+
+this leads to better utilisation of resources
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
