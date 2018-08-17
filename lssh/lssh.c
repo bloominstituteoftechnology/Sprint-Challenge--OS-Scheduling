@@ -35,7 +35,9 @@ char **parse_commandline(char *str, char **args, int *args_count)
     
     *args_count = 0;
 
-    token = strtok(str, " \t\n\r");
+    // strtok() breaks str into a series of tokens
+    // \t\n\r = tab, new line, return
+    token = strtok(str, " \t\n\r"); 
 
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
         args[(*args_count)++] = token;
@@ -66,12 +68,17 @@ int main(void)
     while (1) {
         // Print a prompt
         printf("%s", PROMPT);
+        // fflush() used for output stream only
+        // its purpose is to clear the output buffer and move the buffered data to console (stdout)
+        // or disk (file output stream)
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
+        // fgets() reads a line from the specified stream and stores it into the string pointed to by str. 
         fgets(commandline, sizeof commandline, stdin);
 
         // Exit the shell on End-Of-File (CRTL-D)
+        // feof () tests the end-of-file indicator for the given stream.
         if (feof(stdin)) {
             break;
         }
@@ -101,7 +108,28 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        // fork a child process to run the new command
+        printf("Initial Process (pid: %d)\n", (int) getpid());
+        int rc = fork();
+
+        if (rc < 0)
+        {
+            fprintf(stderr, "fork failed!\n");
+            continue;   // continue the loop
+        }
+        if ( rc == 0) {
+            printf("Child Process (pid: %d)\n", (int) getpid());
+            // exec the command in the child process
+            execvp(args[0], args);
+            fprintf(stderr,"execvp failed!\n");
+            continue;
+        }
+        else
+        {
+            // parent process waits for child to complete
+            waitpid(rc, NULL, 0);
+            printf("Parent Process (pid: %d)\n", (int) getpid());
+        }
     }
 
     return 0;
