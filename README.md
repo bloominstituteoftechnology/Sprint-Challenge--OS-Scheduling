@@ -6,9 +6,18 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+- scheduling, memory allocation, hardware interface
+
 2. Describe the job of the Scheduler in the OS in general.
 
+- Process scheduling is an essential part of a Multiprogramming operating systems. Such operating systems allow more than one process to be loaded into the executable memory at a time and the loaded process shares the CPU using time multiplexing.
+
+The OS maintains a separate queue for each of the process states and PCBs of all processes in the same execution state are placed in the same queue. When the state of a process is changed, its PCB is unlinked from its current queue and moved to its new state queue.
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+- MLFQ can provide better time on tasks because unlike the Round-Robin because it prioritizes the tasks and does not automatically give equal resources to every task.
+
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
