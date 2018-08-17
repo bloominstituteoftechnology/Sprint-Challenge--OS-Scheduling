@@ -26,7 +26,7 @@ The OS creates and maintains a file system so data that needs to be stored on lo
 
 The job of the scheduler is to manage process usage of the CPU. This seems pretty mundane, but it is in fact pretty amazing, for it allows the sensation of "multi-tasking". 
 
-Remember, a CPU can generally run only one thing at a time. Yet our devices appear to be running multiple processes simultaneously, often many more processes than there are CPU's. This is possible the scheduler rapidly switches between processes to be executed by the CPU. 
+Remember, a CPU can generally run only one thing at a time. Yet our devices appear to be running multiple processes simultaneously, often many more processes than there are CPU's. This is possible because the scheduler rapidly switches between processes to be executed by the CPU. 
 
 So, in a simple example, if there are three processes running "simultaneously", the scheduler will let the CPU execute one process for some time, then swap it with the second one, and have the CPU execute that for some time, then swap it with the third one and have the CPU execute it for some time. The scheduler will continue this process rotation until the processes are complete.
 
@@ -42,7 +42,7 @@ MLFQ addresses that by putting processes in different priority queues. This allo
 
 * Maintains Fairness
 
-The "Round-Robin" is more fair than the MLFQ, but the MLFQ uses some neat tricks to strike a balance between fairness and wait-times. To ensure fairness (and prevent the inverse of the above happening; that is longer processes just sitting around forever as short processes get continuously picked and executed), several techniques are employed, such as allowing more execution time for lower priority queues, and shaking up the whole priority queue every now and then and have all the processes have a chance to execute before reprioritizing them. 
+The "Round-Robin" is more fair than the MLFQ, but the MLFQ uses some neat tricks to strike a balance between fairness and wait-times. To ensure fairness (and prevent the inverse of the above happening; that is, longer processes just sitting around forever as short processes get continuously picked and executed), several techniques are employed, such as allowing more execution time for lower priority queues, and shaking up the whole priority queue every now and then and have all the processes have a chance to execute before reprioritizing them. 
 
 Another technique is to gradually increase priority for processes that have been waiting to be executed so that these processes do not become "*CPU-starved*", a state which a process does not ever receive the CPU execution time it needs to complete.
 
