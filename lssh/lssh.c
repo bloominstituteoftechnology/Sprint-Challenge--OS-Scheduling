@@ -65,6 +65,7 @@ int main(void)
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
+        // scanf("")
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
 
@@ -101,6 +102,17 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        pid_t childPID = fork();
+        if(childPID < 0) {
+            printf("Error forking\n");
+            exit(1);
+        }
+        if(childPID == 0) {
+            execvp(commandline, args);
+        } else {
+            wait(0);
+        }
         
     }
 
