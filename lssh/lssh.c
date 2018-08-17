@@ -101,8 +101,43 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
-
+          if (strcmp(args[0], "cd") == 0)
+        {
+            if (args[1] == NULL)
+            {
+                fprintf(stderr, "expected argument to \"cd\"\n");
+            }
+            else
+            {
+                if (chdir(args[1]) != 0)
+                {
+                    perror("cannot find");
+                }
+            }
+        }
+         if (strcmp(args[0], "cd") != 0)
+        {
+            /* Execute Arbitrary Commands */
+            int rc = fork();
+             if (rc < 0)
+            {
+                fprintf(stderr, "fork failed\n"); // failed fork
+            }
+            else if (rc == 0)
+            {
+                // child process
+                if (execvp(args[0], args) == -1)
+                {
+                    perror("cannot execute"); // throw error if execution fails
+                }
+                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                // parent process
+                wait();
+            }
+        }  
+    }   
     return 0;
 }
