@@ -4,11 +4,50 @@
 
 Add your answers inline, below, with your pull request.
 
-1. Name at least three things that a general-purpose operating system is responsible for handling.
+> 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
-2. Describe the job of the Scheduler in the OS in general.
+* Manage access and usage of computer resources.
 
-3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+That is, the OS manages access and usage of the CPU, Memory, and I/O. The OS kernel handles this responsibility. The kernel uses scheduling to manage CPU, allocation & paging to manage memory, and drivers to handle I/O.
+
+* Provide a GUI.
+
+When a user watches a YouTube video, or opens a word processor to work on a paper, that user does not necessarily write machine code to access where the program is stored and queue it for execution by the CPU. The operating system does all this nitty gritty for the user, and all these crazy nitty gritty is abstracted away through a *Graphical User Interface*. The OS translates inputs received in the GUI to appropriate commands and calls to be executed by the computer, and the outputs of the commands and calls are translated by the OS, through the GUI, to something the user can understand.
+
+* Creates and maintains a file system.
+
+The OS creates and maintains a file system so data that needs to be stored on long-term storage (*e.g. hard disk*) can accessed and manipulated efficiently.
+
+<u>*Sources Used*</u><br/>
+[Operating Systems: Role of the operating system](https://en.wikibooks.org/wiki/A-level_Computing/AQA/Problem_Solving,_Programming,_Operating_Systems,_Databases_and_Networking/Operating_Systems/Role_of_the_operating_system)
+[Operating System Roles & Responsibilities](https://thetechnicaltutorial.wordpress.com/2016/04/21/operating-system-roles-responsibilities/)
+
+> 2. Describe the job of the Scheduler in the OS in general.
+
+The job of the scheduler is to manage process usage of the CPU. This seems pretty mundane, but it is in fact pretty amazing, for it allows the sensation of "multi-tasking". 
+
+Remember, a CPU can generally run only one thing at a time. Yet our devices appear to be running multiple processes simultaneously, often many more processes than there are CPU's. This is possible because the scheduler rapidly switches between processes to be executed by the CPU. 
+
+So, in a simple example, if there are three processes running "simultaneously", the scheduler will let the CPU execute one process for some time, then swap it with the second one, and have the CPU execute that for some time, then swap it with the third one and have the CPU execute it for some time. The scheduler will continue this process rotation until the processes are complete.
+
+> 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+The example I detailed in question 2 is an example of a plain "Round-Robin scheduler". This gets the job done, but has a few shortcomings. The MLFQ addresses these with these benefits:
+
+* Priority
+
+There is no clear way to denote priority in a "Round-Robin" configuration; all processes are in the same queue and are rapidly switched between them in FIFO order. This is fair, but in an environment in which new processes are added to to the queue all the time, shorter processing time processes may have to wait longer and longer for their turn as the queue gets bigger and bigger. This will often mean an action the user expectes to take little time to execute may end up taking a long time to execute as it waits in the queue to be executed, leading to a feeling of "sluggishness" the user experiences.
+
+MLFQ addresses that by putting processes in different priority queues. This allows quick processes to execute quickly and reduces average waiting time.
+
+* Maintains Fairness
+
+The "Round-Robin" is more fair than the MLFQ, but the MLFQ uses some neat tricks to strike a balance between fairness and wait-times. To ensure fairness (and prevent the inverse of the above happening; that is, longer processes just sitting around forever as short processes get continuously picked and executed), several techniques are employed, such as allowing more execution time for lower priority queues, and shaking up the whole priority queue every now and then and have all the processes have a chance to execute before reprioritizing them. 
+
+Another technique is to gradually increase priority for processes that have been waiting to be executed so that these processes do not become "*CPU-starved*", a state which a process does not ever receive the CPU execution time it needs to complete.
+
+<u>*Sources Used*</u><br/>
+[MLFQ Scheduling](https://intro2operatingsystems.wordpress.com/tag/mlfq-scheduling/)
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
