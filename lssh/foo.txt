@@ -1,0 +1,5 @@
+total 20
+-rwxrwxrwx 1 bradiowave bradiowave     0 Aug 17 13:01 foo.txt
+-rwxrwxrwx 1 bradiowave bradiowave 13648 Aug 17 13:00 lssh
+-rwxrwxrwx 1 bradiowave bradiowave  3914 Aug 17 13:00 lssh.c
+-rwxrwxrwx 1 bradiowave bradiowave    40 Aug 17 07:58 Makefile

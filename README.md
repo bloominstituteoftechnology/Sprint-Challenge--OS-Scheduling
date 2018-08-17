@@ -5,10 +5,13 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+    Operating systems keep track of the process that owns each piece of memory in a memory table, and also handle how that memory gets swapped between the RAM and the hard drive with paging. They also keep track of file systems, provide a GUI for the end user, and handle security and login features.
 
 2. Describe the job of the Scheduler in the OS in general.
+    The scheduler manages all of the processes running on a machine to make it seem like all are running simultaneously. Without a scheduler, some programs would take a long time to respond since they would have to wait for all other programs before them to finish.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+    While a Round-Robin scheduler is absolutely fair in that it gives all processes an equal amount of computing time, this isn't the most efective scheduler because it lacks priority. MLFQ is a great solution to this problem by automatically assigning priority as it runs. If a program can run quickly, it takes priority for a short amount of time and is able to finish. If a program can not run quickly, it takes priority at first and runs for a short amount of time, but then gets moved down the priority list to make room for faster processes. All processes are treated equally at first and are automatically filtered, making MLFQ a superior scheduling algorithm.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 

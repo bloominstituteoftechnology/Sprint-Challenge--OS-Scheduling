@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -71,6 +76,9 @@ int main(void)
         // Read input from keyboard
         fgets(commandline, sizeof commandline, stdin);
 
+        while (waitpid(-1, NULL, WNOHANG) > 0)
+            ;
+
         // Exit the shell on End-Of-File (CRTL-D)
         if (feof(stdin)) {
             break;
@@ -100,8 +108,46 @@ int main(void)
 
         #endif
         
-        /* Add your code for implementing the shell's logic here */
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count == 2) {
+                int dirchanged = chdir(args[1]);
+                if (dirchanged < 0) perror("chdir");
+            }
+            continue;
+        }
+
+        int run_in_background = 0;
+        if (strcmp(args[args_count-1], "&") == 0) {
+            run_in_background = 1;
+            args[args_count-1] = '\0';
+        }
+
+        int output_to_file = 0;
+        char* filename;
+        for (int i = 0; args[i] != NULL; i++) {
+            if (strcmp(args[i], ">") == 0) {
+                filename = args[i+1];
+                args[i] = '\0';
+                output_to_file = 1;
+                break;
+            }
+        }
         
+        /* Add your code for implementing the shell's logic here */
+        int rc = fork();
+        if (rc < 0) {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+        } else if (rc == 0) {
+            if (output_to_file == 1) {
+                int fd = open(filename, O_CREAT|O_WRONLY);
+                dup2(fd, 1);
+            }
+            execvp(args[0], args);
+        } else {
+            if (run_in_background == 0) waitpid(rc, NULL, 0);
+            else continue;
+        }
     }
 
     return 0;
