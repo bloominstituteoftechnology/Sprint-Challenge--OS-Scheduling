@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -86,6 +87,7 @@ int main(void)
         // Exit the shell on End-Of-File (CRTL-D)
         // CTRL-D is translated as end of standard input
         if (feof(stdin)) {
+            printf("\n");
             break;
         }
 
@@ -110,11 +112,33 @@ int main(void)
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
         }
+        printf("Number of args: %d\n", args_count);
 
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        if (args_count == 2 && strcmp(args[0], "cd") == 0) {
+                int cd = chdir(args[1]);
+                continue;
+                if (cd == -1){
+                    perror("chdir");
+                }            
+            }
+        else {
+            int rc = fork();
+            if (rc < 0) {
+                fprintf(stderr, "Fork failed. \n");
+                exit(1);
+                }
+            else if (rc == 0) {
+                if (execvp(args[0], args) == -1){
+                    fprintf(stderr, "Child command failed to execute.");
+                }
+            }
+            else {
+                waitpid(rc, NULL, 0);
+            }
+        }   
     }
 
     return 0;
