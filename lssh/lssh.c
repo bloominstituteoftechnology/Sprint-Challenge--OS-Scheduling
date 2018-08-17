@@ -121,14 +121,11 @@ int main(void)
                     fprintf(stderr, "cd in this bash requires a 2 args\n");
                 }else
                 {
-                    if(chdir(args[1]) == -1){
+                    int cded =chdir(args[1]);
+                    if(cded == -1){
                         perror("chdir"); // #include <errno.h> to use this
-                    }else
-                    {
-                        chdir(args[1]);
-                        continue;
                     }
-                    
+                    continue;
                 }
             }else
             {
@@ -136,7 +133,7 @@ int main(void)
             }
             
         } else{
-            waitpid(rc, NULL, 0);
+            waitpid(rc, NULL, 0); 
         }
     }
 
