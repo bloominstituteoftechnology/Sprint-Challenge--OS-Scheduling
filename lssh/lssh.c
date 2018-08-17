@@ -105,6 +105,7 @@ int main(void)
 
         // Enables user to change directories with the "cd" command.
         // The strcmp() function compares the string from the first argument and the string from the second argument.
+        // The "pwd" command stands for "print working directory" and prints the full pathname of the current directory.
         if (strcmp(args[0], "cd") == 0)
         {
             if (args_count != 2)
@@ -115,7 +116,8 @@ int main(void)
             // The chdir() function causes the directory named by the pathname pointed to by the path argument to become the current working directory.
             if (chdir(args[1]) < 0)
             {
-                fprintf(stderr, "Error. No such directory.\n");
+                // fprintf(stderr, "Error. No such directory.\n");
+                perror("chdir");
                 continue;
             }
             continue;
