@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -65,6 +68,9 @@ int main(void)
     // Background process 
     int background = 0;
 
+    // Filename
+    char *filename = NULL;
+
     // zombie process reaping
     while (waitpid(-1, NULL, WNOHANG) > 0);
 
@@ -114,6 +120,13 @@ int main(void)
         // Print out the parsed command line in args[]
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
+            
+            if (strcmp(args[i], ">") == 0) {
+                filename = args[i+1];
+                args[i] = NULL;
+                continue;
+            }
+            
         }
 
         #endif
@@ -123,6 +136,11 @@ int main(void)
         
         if (pid == 0) {
             // printf("Child process\n");
+            
+            if (filename != NULL) {
+                int fd = open(filename, O_CREAT);
+                dup2(fd, 1);
+            }
             execvp(args[0],args);
         } else if (!background) {
             wait(NULL);
