@@ -104,6 +104,24 @@ int file_redirect(char **args, int args_count)
 }
 
 /**
+ * Checks if command output should be piped
+ *
+ * @param args {char **} Pointer to parsed command line arguments
+ * @param args_count {int} Number of command line arguments
+ *
+ * @returns true(1) or false(0)
+ */
+int pipe_command(char **args)
+{
+  for (int i = 0; args[i] != NULL; i++){
+    if (strcmp(args[i], "|") == 0)
+      return 1;
+  }
+
+  return 0;
+}
+
+/**
  * Prints out the parsed command line for debuggin
  *
  * @param args {char **} Pointer to an array of strings.
