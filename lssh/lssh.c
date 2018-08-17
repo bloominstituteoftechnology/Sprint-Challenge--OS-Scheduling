@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-
+#include <errno.h>
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
@@ -100,9 +100,32 @@ int main(void)
 
         #endif
         
-        /* Add your code for implementing the shell's logic here */
         
-    }
+        /* Add your code for implementing the shell's logic here */
+            if (strcmp(args[0], "cd") == 0) {
+                if (args_count != 2) {
+                    printf("Incorrect args input\n");
+                    continue;
+                } else {
+                    if (chdir(args[1]) == -1) {
+                        perror("chdir");
+                        continue;
+                    } else if (chdir(args[1]) == 0) {
+                        chdir(args[1]);
+                    }
+                    continue;
+                }
+            }
 
+        int rc = fork();
+
+        if (rc < 0) {
+            printf("Fork failed\n");
+            exit(1);
+        } else if (rc == 0){
+            execvp(args[0], args);
+            printf("This should not be seen!");
+    }
+}
     return 0;
 }
