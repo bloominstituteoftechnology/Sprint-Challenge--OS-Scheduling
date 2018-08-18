@@ -1,15 +1,21 @@
 # Sprint Challenge: Operating Systems and Scheduling
 
+
 ## Short Answer Questions
 
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+    The operating system manages memory by allocating it.
+    The operating system also creates processes and these processes need to be scheduled by some algorithm such as Multi-level Feedback Queue.
+    The operating system also manages all system programs.
+
 
 2. Describe the job of the Scheduler in the OS in general.
+    The operating system uses a scheduler to manage processes.  The scheduler can decide which processes has higher priority and which have lower priority.  In this manner the scheduler is responsible for which processes run before others.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
-
+    The Multi-level Feedback Queue seems like a very fair scheduler in that it doesn't waste time and it's more efficient.  It learns characteristics of each process so it can make more effecient scheduling decisions based on each processes observed behavior.  Like a process that uses the CPU for a long time, the MLFQ will reduce the priority level of that process.
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
 Important Safety Tip: Resist the urge to start coding until you:
