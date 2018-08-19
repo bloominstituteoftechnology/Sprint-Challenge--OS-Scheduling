@@ -152,10 +152,43 @@ int main(void)
             }
 
         char *redir_outfile = NULL;
+        int fd[2];
+        
         for (int i = 0; i < args_count; i++) {
             if (strcmp(args[i], ">") == 0){
                 redir_outfile = args[i+1];
                 args[i] = NULL;
+            }
+            else if (strcmp(args[i], "|") == 0) {
+                if (pipe(fd) < 0) {
+                    fprintf(stderr, "pipe failed\n");
+                    exit(4);
+                }
+                else {
+                  int pipefork = fork();
+
+                  if (pipefork < 0) {
+                    fprintf(stderr, "Fork failed");
+                    exit(5);
+                  }
+                  else if (pipefork == 0) {
+                    dup2(fd[0], 0);
+                    close(fd[1]);
+                    execlp(args[args_count-2], args[args_count-2], args[args_count-1], NULL);
+                    
+                    perror("exec child");
+                    exit(6);
+                  }
+                  else {
+                    dup2(fd[1], 1);
+                    close(fd[0]);
+
+                    execlp(args[0], args[0], args[1], NULL);
+                    
+                    perror("exec parent");
+                    exit(7);
+                  }
+                }
             }
         }
         if (strcmp(args[(args_count-1)], "&") == 0) {

@@ -1,0 +1,9 @@
+total 64
+drwxr-xr-x  8 amyshackles  staff   256 Aug 17 16:54 .
+drwxr-xr-x  5 amyshackles  staff   160 Aug 17 07:57 ..
+-rw-r--r--  1 amyshackles  staff    13 Aug 17 07:57 .gitignore
+-rw-r--r--  1 amyshackles  staff    40 Aug 17 07:57 Makefile
+-rw-r--r--  1 amyshackles  staff     0 Aug 17 16:54 file.txt
+-rw-r--r--  1 amyshackles  staff   447 Aug 17 13:08 foo.txt
+-rwxr-xr-x  1 amyshackles  staff  9560 Aug 17 13:22 lssh
+-rw-r--r--  1 amyshackles  staff  6850 Aug 17 13:21 lssh.c
