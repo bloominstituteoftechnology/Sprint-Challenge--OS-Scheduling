@@ -6,9 +6,17 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+    - scheduling
+    - networking
+    - hardware drivers
+
 2. Describe the job of the Scheduler in the OS in general.
 
+    The scheduler allocates memory and other resources for different processes using a series of queues.
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+    MLFQ (multi-level feedback queue) is a more efficient scheduling algorithm than round-robin. This is because the priority of processes, and the amount of time needed to complete a process, is informed by past behavior (feedback).
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
