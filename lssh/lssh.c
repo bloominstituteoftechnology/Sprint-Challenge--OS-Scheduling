@@ -7,7 +7,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -100,7 +100,22 @@ int main(void)
 
         #endif
         
-        /* Add your code for implementing the shell's logic here */
+        // Fork a child process
+        int rc = fork();
+
+        // Fork failed; exit
+        if (rc < 0) {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+
+        // Executing child process
+        } else if (rc == 0) {
+            execvp (args[0], args);
+
+        // Executing parent process
+        } else {
+            waitpid(rc, NULL, 0);
+        }
         
     }
 
