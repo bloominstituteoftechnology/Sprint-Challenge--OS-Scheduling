@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -110,6 +111,17 @@ int main(void)
 
         // Executing child process
         } else if (rc == 0) {
+            if (strcmp(args[0], "cd") == 0) {
+                if (args_count <= 1) {
+                    printf("enter a directory to change to");
+                    continue;
+                }
+                int dir = chdir(args[1]);
+                if (dir == -1) {
+                    perror("chdir");
+                }
+                continue;
+            }
             execvp (args[0], args);
 
         // Executing parent process
