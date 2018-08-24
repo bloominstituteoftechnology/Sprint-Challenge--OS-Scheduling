@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -102,6 +103,21 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
+        // Fork a child process to run the new command.
+        int rc = fork();
+
+        if (rc<0) {
+            fprintf(stderr, "ERROR: Fork Failed\n");
+            exit(1);
+        }
+        // Exec the command in the child process.
+        else if (rc == 0) {
+            execvp(args[0], args);
+        }
+        // Parent process waits for child to complete.
+        else {
+            waitpid(rc, NULL, 0);
+        }
     }
 
     return 0;
