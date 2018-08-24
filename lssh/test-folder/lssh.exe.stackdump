@@ -1,0 +1,7 @@
+Exception: STATUS_ACCESS_VIOLATION at eip=6111EA23
+eax=00001BB4 ebx=00230000 ecx=754A6ACA edx=00000000 esi=00000000 edi=00001BB4
+ebp=00000000 esp=0022C650 program=C:\users\windows7\LambdaSchool\Sprint-Challenge--OS-Scheduling\lssh\lssh.exe, pid 7872, thread main
+cs=001B ds=0023 es=0023 fs=003B gs=0000 ss=0023
+Stack trace:
+Frame     Function  Args
+End of stack trace

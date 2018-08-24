@@ -111,6 +111,17 @@ int main(void)
             continue;               // continues the loop/ iteration
         }
 
+        int bg = 0; // initialize bg
+
+        // check for the & at the end of the args array
+        if (strcmp(args[args_count-1], "&") == 0) {
+            // flip a boolean to indicate background task should be enabled
+            bg = 1; // for true
+            // strip away the &
+            args[args_count-1] = NULL;  // set to null 
+        }
+
+        while (wait(NULL) > 0); // while loop
 
         #if DEBUG
 
@@ -145,8 +156,11 @@ int main(void)
             // continue;   // continues the loop/ iteration
             exit(1);
         } else {
-            // wait(child_pid, NULL, 0);   // wait function is called
-            wait(NULL); // Parent process waits for child to complete
+            // in the parent context 
+            // check to see if the bg boolean is flipped to true
+            if (!bg) {  // if bg is false then we'll wait
+                wait(NULL); // Parent process waits for child to complete
+            }            
         }        
     }
 
