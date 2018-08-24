@@ -11,7 +11,7 @@ An OS handles resources such as cpu, SSD and RAM. It also it provides a gui for 
 the Scheduler allocates time to specific programs on the processer and uses a Queue to load to memory.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
-MLFQ optimizes turnaround time and it has good response time due to the way it handles processes.
+MLFQ optimizes turnaround time and it has good response time due to the way it handles processes.MLFQ is also priority based.q
 round robin schedulers on the other hand reduce response time but are bad at turn around.
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
@@ -22,7 +22,7 @@ then
 
 2. Inventory the code and figure out what needs to be written where.
 
-### Task 1: Implement the Ability to Execute Arbitrary Commands
+### Task 1: 
 This program implements a new shell that you can use to run commands from in Unix, similar to bash!
 
 At the end of the day, you should be able to run your shell, then run commands within it like in the following example.
@@ -205,3 +205,10 @@ This uses the `pipe()` system call.
 Use a process similar to the above extra credit challenges, along with [this
 description of how to implement pipes in
 C](https://github.com/LambdaSchool/CS-Wiki/wiki/How-Unix-Pipes-are-Implemented) to get pipes implemented in `lssh`.
+
+### TASKS ###
+- [x] read the readme and develop plan of attack
+- [ ] Implement the Ability to Execute Arbitrary Commands
+- [ ] Implement the Ability to Change Directories with `cd`
+- [ ] Stretch GOAL 1
+- [ ] Stretch GOAL 2
