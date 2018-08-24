@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -113,21 +114,32 @@ int main(void)
         }
         // Exec the command in the child process.
         else if (rc == 0) {
+
+        //Task 2
+        // 1. Check to make sure they've entered 2 total arguments
+            if (strcmp(args[0], "cd") == 0) {
+                if(args_count != 2 ){
+                    printf("cd to where?\n");
+                } else {
+        // 2. Run the system call chdir() on the second argument to change directories
+                    int cd_check = chdir(args[1]);
+        // 3. Error check the result of chdir(). If it returns -1, meaning an error
+        //    occurred, you can print out an error message with:
+        //       perror("chdir"); // #include <errno.h> to use this
+                    if (cd_check == -1) {
+                        perror("chdir");
+                    }
+                }
+        // 4. Execute a continue statement to short-circuit the rest of the main loop.
+                    continue;                
+            }
+
             execvp(args[0], args);
         }
         // Parent process waits for child to complete.
         else {
             waitpid(rc, NULL, 0);
         }
-
-        //Task 2
-        // 1. Check to make sure they've entered 2 total arguments
-
-        // 2. Run the system call chdir() on the second argument to change directories
-        // 3. Error check the result of chdir(). If it returns -1, meaning an error
-        //    occurred, you can print out an error message with:
-        //       perror("chdir"); // #include <errno.h> to use this
-        // 4. Execute a continue statement to short-circuit the rest of the main loop.
     }
 
     return 0;
