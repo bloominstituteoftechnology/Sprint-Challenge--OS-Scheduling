@@ -91,6 +91,25 @@ int main(void)
             // exit(1);
         }
 
+        
+
+        #if DEBUG
+
+        // Some debugging output
+
+        // Print out the parsed command line in args[]
+        for (int i = 0; args[i] != NULL; i++) {
+            printf("%d: '%s'\n", i, args[i]);
+        }
+
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
+
+        #endif
+        
+        /* Add your code for implementing the shell's logic here */
+
         // implement "cd" command to change directories
         if (strcmp(args[0], "cd") == 0) // strcmp compares the string in the first argument args[0] with the string "cd"
             // grab the path the user specified
@@ -111,19 +130,6 @@ int main(void)
             continue;               // continues the loop/ iteration
         }
 
-
-        #if DEBUG
-
-        // Some debugging output
-
-        // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
-
-        #endif
-        
-        /* Add your code for implementing the shell's logic here */
 
         //Fork a child process to run the new command
         pid_t child_pid = fork(); // initialize child_pid and set it to the fork system call; pid_t is a data type for representing a process ID 
