@@ -101,10 +101,40 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
-
-    return 0;
+        int rc = fork();
+        if (rc < 0) {
+            fprintf(stderr, "Failed to fork.\n");
+            exit(1);
+            } else if (rc == 0) {
+                for (int i = 0; i < args_count - 1; i++) {
+                    if (strcmp(args[i], ">") == 0) {
+                        sscanf("%s", args[i + 1]);
+                        printf(args[i + 1]);
+                    }
+                }
+                if (strcmp(args[0], "cd") == 0) {
+                    if (args_count < 2) {
+                        fprintf(stderr, "Use case: cd [directory]\n");
+                        continue;
+                    }
+                    if (chdir(args[1]) < 0) {
+                        perror("chdir");
+                        continue;
+                    } else {
+                        chdir(args[1]);
+                    }
+                    continue;
+                } else if (strcmp(args[args_count - 1], "&") == 0) {
+                    args[args_count - 1] = NULL;
+                    execvp(args[0], args);
+                    printf("%s", PROMPT);
+                    fflush(stdout);
+                } else {
+                    int wc = waitpid(rc, NULL, 0);
+                }
+          }
+     }
+     while (waitpid(-1, NULL, WNOHANG > 0));
+     return 0;
 }
 
-// Initial Commit 
