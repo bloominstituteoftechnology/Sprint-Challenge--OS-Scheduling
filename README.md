@@ -208,7 +208,7 @@ C](https://github.com/LambdaSchool/CS-Wiki/wiki/How-Unix-Pipes-are-Implemented) 
 
 ### TASKS ###
 - [x] read the readme and develop plan of attack
-- [ ] Implement the Ability to Execute Arbitrary Commands
+- [x] Implement the Ability to Execute Arbitrary Commands
 - [ ] Implement the Ability to Change Directories with `cd`
 - [ ] Stretch GOAL 1
 - [ ] Stretch GOAL 2

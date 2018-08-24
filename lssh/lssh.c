@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -111,23 +112,24 @@ int main(void)
 
         if (rc < 0)
         {
-            printf("No child!"); // prints this if no child has been forked
-            exit(1);             // exits
+            printf("No child, fork failed!"); // prints this if no child has been forked
+            exit(1);                          // exits
         }
         else if (rc == 0)
         {
-            char command[1024] = "";  // allocates 1024 bytes to memory for command
-            strcat(command, "/bin/"); // crates a destination for command
-            strcat(command, args[0]);
-            char *argv[1024];
-            int i;
-            for (i = 1; args[i] != NULL; i++) // iterates over the arguments
-            {
-                argv[i - 1] = args[i];
-            }
-            argv[i - 1] = NULL;
+            // char command[1024] = "";  // allocates 1024 bytes to memory for command
+            // strcat(command, "/usr/"); // crates a destination for command
+            // strcat(command, args[0]);
+            // char *argv[1024];
+            // int i;
+            // for (i = 1; args[i] != NULL; i++) // iterates over the arguments
+            // {
+            //     argv[i - 1] = args[i];
+            // }
+            // argv[i - 1] = NULL;
 
-            execvp(command, argv); // first argument is my file i want to execute and the second is arguments to the file
+            // execvp(command, argv); // first argument is my file i want to execute and the second is arguments to the file
+            execvp(args[0], args);
         }
         else
         {
