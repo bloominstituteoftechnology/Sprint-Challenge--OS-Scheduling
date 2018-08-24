@@ -1,7 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
+#include <stdio.h> //standard input/output
+#include <stdlib.h>//standard library
+#include <unistd.h>//defines miscellaneous symbolic constants and types,
+// and declares miscellaneous functions
+#include <string.h>//string functions/macros
 
 #define PROMPT "lambda-shell$ "
 
@@ -31,10 +32,14 @@
  */
 char **parse_commandline(char *str, char **args, int *args_count)
 {
-    char *token;
+    char *token; 
     
     *args_count = 0;
-
+    // takes a string and a delimiter, and breaks down a string into "tokens"
+    // This function returns a pointer to the first token found in the string.
+    // A null pointer is returned if there are no tokens left to retrieve
+    // Basically C equivelent of .split() from JS.
+    // \t=tab,\n=newline,\r=carriage return
     token = strtok(str, " \t\n\r");
 
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
@@ -101,6 +106,28 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+        pid_t child_pid = fork();
+        //error check
+        if (child_pid < 0)
+        {
+            fprintf(stderr, "Fork Failed\n");
+            continue;
+        }
+        //more checking
+        if (child_pid == 0)
+        {
+            //in child process context
+            // execvp is used because we can pass arrays as arguements
+            execvp(args[0], args);
+            //child process failed to transform into the program we specified.
+            fprintf(stderr, "Exec Failed\n");
+            exit(1);
+        }
+        else
+        {
+            // parent context
+            wait(NULL);
+        }
         
     }
 
