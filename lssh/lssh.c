@@ -1,7 +1,8 @@
-#include <stdio.h>
+#include <stdio.h>  // install the necessary libraries
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>  // to print error message for chdir() system call     
 
 #define PROMPT "lambda-shell$ "
 
@@ -104,6 +105,24 @@ int main(void)
 
         // implement "cd" command to change directories
         
+        if (strcmp(args[0], "cd") == 0) // strcmp compares the string in the first argument args[0] with the string "cd"
+        { 
+            if (args_count != 2 ) //error handling; if arguments passed are not equal to 2
+            {  
+                fprintf(stderr, "Error. Please enter correct directory format: cd <directory_name>\n"); // print this error message
+                continue;
+            }
+
+            // Run the chdir() system call on the second argument args[1] to change directories
+            if (chdir(args[1]) < 0) // error handling; if second argument is less than 0 or -1  
+            {
+                perror("chdir");    // print this error message
+                continue;
+            }
+            continue;
+        }
+
+       
         //Fork a child process to run the new command
         pid_t child_pid = fork(); // initialize child_pid and set it to the fork system call; pid_t is a data type for representing a process ID 
 
