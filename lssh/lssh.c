@@ -101,8 +101,32 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
+        // pid_t parentID;
+        int result;
+        int childProcess = fork();
 
-    return 0;
+        if (childProcess < 0)
+        {
+            fprintf(stderr, "fork failed \n");
+        }
+        else if (childProcess == 0)
+        {
+            if (strcmp(args[0], "cd") == 0 && args_count == 2)
+            {
+                result = chdir(args[1]);
+                if (result == -1)
+                {
+                    perror("chdir");
+                }
+            }
+
+            execvp(args[0], args);
+            continue;
+        }
+        else
+        {
+            int waitProcessID = waitpid(childProcess, NULL, 0);
+        }
+
+        return 0;
 }
