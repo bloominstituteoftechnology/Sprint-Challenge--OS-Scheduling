@@ -101,7 +101,29 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
+
+        // implement "cd" command to change directories
         
+        //Fork a child process to run the new command
+        pid_t child_pid = fork(); // initialize child_pid and set it to the fork system call; pid_t is a data type for representing a process ID 
+
+        // error handling
+        if (child_pid < 0) {
+            fprintf(stderr, "fork failed\n");   // if fork failed, print error message
+            continue;    
+
+        // Exec the command in the child process
+        // Exec functions replaces the current process with the new process called by exec
+        // This means that the child process can run a program different from what the parent is running
+        if (child_pid == 0) {
+            execvp(args[0], args); // runs the program for the child process taking in myargs
+            fprintf(stderr, "Function failed to run.\n" );   // print in case of error  
+            continue;
+        
+        // Parent process waits for child to complete
+        } else {
+            wait(child_pid, NULL, 0);   // wait function is called
+        }        
     }
 
     return 0;
