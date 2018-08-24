@@ -103,6 +103,7 @@ int main(void)
         
         /* Add your code for implementing the shell's logic here */
         
+        // Task 1
         // Fork a child process to run the new command.
         int rc = fork();
 
@@ -118,6 +119,15 @@ int main(void)
         else {
             waitpid(rc, NULL, 0);
         }
+
+        //Task 2
+        // 1. Check to make sure they've entered 2 total arguments
+
+        // 2. Run the system call chdir() on the second argument to change directories
+        // 3. Error check the result of chdir(). If it returns -1, meaning an error
+        //    occurred, you can print out an error message with:
+        //       perror("chdir"); // #include <errno.h> to use this
+        // 4. Execute a continue statement to short-circuit the rest of the main loop.
     }
 
     return 0;
