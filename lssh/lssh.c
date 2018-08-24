@@ -88,7 +88,8 @@ int main(void)
 
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
-            exit(1);
+            break;
+            // exit(1);
         }
 
         #if DEBUG
@@ -99,6 +100,10 @@ int main(void)
         for (int i = 0; args[i] != NULL; i++) {
             printf("%d: '%s'\n", i, args[i]);
         }
+
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
         #endif
         
@@ -128,7 +133,7 @@ int main(void)
         pid_t child_pid = fork(); // initialize child_pid and set it to the fork system call; pid_t is a data type for representing a process ID 
 
         // error handling
-        if (child_pid < 0) 
+        if (child_pid == -1) 
         {
             fprintf(stderr, "Fork failed.\n");   // if fork failed, print error message
             continue;    
