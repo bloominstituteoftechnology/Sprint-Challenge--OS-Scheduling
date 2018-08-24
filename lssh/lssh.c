@@ -7,7 +7,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1 // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0 // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -92,6 +92,25 @@ int main(void)
         if (strcmp(args[0], "exit") == 0)
         {
             break;
+        }
+
+        // Checking to see if args[0] is equal to cd (change directory)
+        if (strcmp(args[0], "cd") == 0)
+        {
+            // grab the path the user specified to cd into and make sure the user supplied the path
+            if (args_count != 2) // if they did not specify path they want to cd into
+            {
+                printf("usage: cd dirname\n"); // tell the user they need to provide a directory name after cd
+                continue;
+            }
+
+            if (chdir(args[1]) < 0) // chdir() returns -1 if it was unsuccessful. The current directory remains unchanged.
+            {
+                // Provide an error message telling user shell failed to switch to provided directory
+                fprintf(stderr, "Failed to switch directory to %s\n", args[1]);
+            }
+
+            continue;
         }
 
 #if DEBUG
