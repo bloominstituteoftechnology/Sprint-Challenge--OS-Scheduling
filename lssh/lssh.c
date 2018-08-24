@@ -58,21 +58,25 @@ int main(void)
     char commandline[COMMANDLINE_BUFSIZE];
 
     // Holds the parsed version of the command line
-    char *args[MAX_TOKENS];
+    char *args[MAX_TOKENS]; 
 
     // How many command line args the user typed
     int args_count;
 
-    // Shell loops forever (until we tell it to exit)
+    // Shell loops forever until we enter "exit" or CTRL+D.
     while (1) {
         // Print a prompt
         printf("%s", PROMPT);
+        // The fflush() function is typically used for output stream only. Its purpose is to clear (or flush) the output buffer 
+        // and move the buffered data to console (in case of stdout).
         fflush(stdout); // Force the line above to print
 
         // Read input from keyboard
+        // The fgets() function reads a line from the specified stream and stores it into the string pointed to by str.
         fgets(commandline, sizeof commandline, stdin);
 
         // Exit the shell on End-Of-File (CRTL-D)
+        // The feof() function finds the end of the file.
         if (feof(stdin)) {
             break;
         }
@@ -119,6 +123,7 @@ int main(void)
             if (chdir(args[1]) < 0)
             {
                 // fprintf(stderr, "Error. No such directory.\n");
+                // The perror() function stands for POSIX error and prints a descriptive error message.
                 perror("chdir");
                 continue;
             }
@@ -127,7 +132,7 @@ int main(void)
 
         // Enables user to execute arbitrary commands.
         
-        // WE use pid_t to indicate the type of data held by the variable.
+        // We use pid_t to indicate the type of data held by the variable.
         // pid_t is a data type which is capable of representing a process ID.
         // We initialize the child_pid variable and set it to equal the fork() system call.
         pid_t child_pid = fork();
@@ -150,6 +155,7 @@ int main(void)
             // Calls the exec function.
             // The exec type system call allows a process to run any program file.
             execvp(args[0], args);
+            // Throws an error if the first argument is not valid.
             fprintf(stderr, "Error. Exec function failed.\n");
             continue;
         } else {
