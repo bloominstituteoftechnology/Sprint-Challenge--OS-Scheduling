@@ -40,8 +40,9 @@ char **parse_commandline(char *str, char **args, int *args_count)
     while (token != NULL && *args_count < MAX_TOKENS - 1) {
         args[(*args_count)++] = token;
 
-        token = strtok(NULL, " \t\n\r");
+        token = strtok(NULL, " \t\n\r");//strtok breaks str into a series of tokens using the delimeter delim    
     }
+    // into smaller functions
 
     args[*args_count] = NULL;
 
@@ -88,6 +89,37 @@ int main(void)
         if (strcmp(args[0], "exit") == 0) {
             break;
         }
+        if(strcmp(args[0],"cd") == 0){
+            //grab the path the user specified
+            //make sure the user supplied the path
+            if(args_count != 2){
+                printf("usage: cd dirnam\n");
+                continue;
+            }
+            if(chdir(args[1]) < 0){
+                fprintf(stderr, "Faild to switch directory to %s\n", args[1]);
+
+                continue;
+            }
+            continue;
+        }
+        char *redir_outfile = NULL;
+        //check for ">"
+        for(int i = 0; i < args_count; i++){
+            if (strcmp(args[i], ">" == 0){
+                redir_outfile =args[i+1];
+                args[i]=NUll;
+            }
+        }
+     //check for the & at the end of the args array
+     if (strcmp(args[args_count-1], "&") == 0) {
+         //flip a boolean to indicate background task should enabled
+         bg = 1;
+         //strip away the &
+         args[args_count-1]=NULL;
+     }
+        while(wait(NULL)> 0);
+        
 
         #if DEBUG
 
@@ -101,8 +133,25 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
+         pid_t child_pid =fork();
 
+
+        if(child_pid < 0){
+            fprintf(stderr, "Fork failed\n");
+            continue;
+        }
+        if(child_pid == 0){
+            //in the child process's context
+            execvp(args[0], args);
+            fprintf(stderr, "Exec failed\n");
+            exit(1);
+        }else{
+            // in the parent context
+            if(!bg) {
+                wait(NULL);
+            }
+            
+            
+        }
+    }
     return 0;
-}
