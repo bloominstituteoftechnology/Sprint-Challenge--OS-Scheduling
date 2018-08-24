@@ -1,13 +1,15 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 1 // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -32,12 +34,13 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
+
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
 
-    while (token != NULL && *args_count < MAX_TOKENS - 1) {
+    while (token != NULL && *args_count < MAX_TOKENS - 1)
+    {
         args[(*args_count)++] = token;
 
         token = strtok(NULL, " \t\n\r");
@@ -63,7 +66,8 @@ int main(void)
     int args_count;
 
     // Shell loops forever (until we tell it to exit)
-    while (1) {
+    while (1)
+    {
         // Print a prompt
         printf("%s", PROMPT);
         fflush(stdout); // Force the line above to print
@@ -72,50 +76,87 @@ int main(void)
         fgets(commandline, sizeof commandline, stdin);
 
         // Exit the shell on End-Of-File (CRTL-D)
-        if (feof(stdin)) {
+        if (feof(stdin))
+        {
             break;
         }
 
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
-        if (args_count == 0) {
+        if (args_count == 0)
+        {
             // If the user entered no commands, do nothing
             continue;
         }
 
         // Exit the shell if args[0] is the built-in "exit" command
-        if (strcmp(args[0], "exit") == 0) {
-            break;
+        if (strcmp(args[0], "exit") == 0)
+        {
+            exit(1);
         }
 
-        if (strcmp(args[0], "cd") == 0) {
-            if (args_count !=2) {
-                printf("usage: cd dirname\n");
-                continue;
-            }
-
-            if (chdir(args[1]) < 0) {
-                fprintf(stderr, "failed to switch directory to %s\n", args[1]);
-                continue;
-            }
-
-            continue;
-
-        #if DEBUG
+#if DEBUG
 
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
+        for (int i = 0; args[i] != NULL; i++)
+        {
             printf("%d: '%s'\n", i, args[i]);
         }
 
-        #endif
-        
+#endif
+
         /* Add your code for implementing the shell's logic here */
 
-        
+        // Enables user to change directories with the "cd" command.
+        // The strcmp() function compares the string from the first argument and the string from the second argument.
+        if (strcmp(args[0], "cd") == 0)
+        {
+            // These if statements will catch the errors.
+            if (args_count != 2)
+            {
+                // You can use the pwd or "print working directory" command to see the full path of the diretory.
+                fprintf(stderr, "Error. Please provide name of directory and follow correct format: cd <name_of_directory>\n");
+                continue; // The 'continue' statement continues the loop/ iteration.
+            }
+            // The chdir() function causes the directory named by the pathname pointed to by the path argument to become the current working directory.
+            if (chdir(args[1]) < 0)
+            {
+                perror("chdir");
+                continue;
+            }
+            continue;
+        }
+
+        // Enables user to execute arbitrary commands.
+
+        // Initialize the child_pid variable and set it to equal the fork() system call.
+        pid_t child_pid = fork();
+
+        // Catches the error.
+        if (child_pid == -1)
+        {
+            fprintf(stderr, "Error. Failed to fork.\n");
+            continue;
+        }
+
+        // The execvp() function is a varient of exec().
+        // The exec family of functions replace the current running process with a new process.
+    
+        if (child_pid == 0)
+        {
+            // Child process.
+            execvp(args[0], args); // Calls the exec function.
+            fprintf(stderr, "Error. Exec function failed.\n");
+            continue;
+        }
+        else
+        {
+            // Parent process waits on the child process.
+            waitpid(child_pid, NULL, 0);
+        }
     }
 
     return 0;
