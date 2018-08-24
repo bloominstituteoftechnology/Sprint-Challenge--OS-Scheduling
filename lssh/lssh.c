@@ -89,6 +89,19 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count !=2) {
+                printf("usage: cd dirname\n");
+                continue;
+            }
+
+            if (chdir(args[1]) < 0) {
+                fprintf(stderr, "failed to switch directory to %s\n", args[1]);
+                continue;
+            }
+
+            continue;
+
         #if DEBUG
 
         // Some debugging output
@@ -101,7 +114,7 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+
         
     }
 
