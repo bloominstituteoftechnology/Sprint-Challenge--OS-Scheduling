@@ -17,8 +17,7 @@ Add your answers inline, below, with your pull request.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
     - MLFQ reduces turnaround time by adjusting the priority of a process whenever it runs, so a CPU-bound process will quickly trickle back down to a low priority level while an interactive process will remain at a high level.
-        >*from https://www.cs.rutgers.edu/~pxk/416/notes/07-scheduling.html*
-        >*     http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-mlfq.pdf*
+        >*from https://www.cs.rutgers.edu/~pxk/416/notes/07-scheduling.html ,     http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-mlfq.pdf*
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
