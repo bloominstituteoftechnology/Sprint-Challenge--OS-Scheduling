@@ -110,7 +110,6 @@ int main(void)
         /* Add your code for implementing the shell's logic here */
 
         // implement "cd" command to change directories
-        
         if (strcmp(args[0], "cd") == 0) // strcmp compares the string in the first argument args[0] with the string "cd"
         { 
             if (args_count != 2 ) //error handling; if arguments passed are not equal to 2
@@ -123,9 +122,9 @@ int main(void)
             if (chdir(args[1]) < 0) // error handling; if second argument is less than 0 or -1  
             {
                 perror("chdir");    // print this error message
-                continue;
+                continue;           // continues the loop/ iteration
             }
-            continue;
+            continue;               // continues the loop/ iteration
         }
 
 
@@ -133,20 +132,20 @@ int main(void)
         pid_t child_pid = fork(); // initialize child_pid and set it to the fork system call; pid_t is a data type for representing a process ID 
 
         // error handling
-        if (child_pid == -1) 
+        if (child_pid < 0)  // if fork failed 
         {
             fprintf(stderr, "Fork failed.\n");   // if fork failed, print error message
-            continue;    
+            continue;    // continues the loop/ iteration
         }
 
         // Exec the command in the child process
         // Exec functions replaces the current process with the new process called by exec
         // This means that the child process can run a program different from what the parent is running
-        if (child_pid == 0) 
+        if (child_pid == 0) // if fork successful 
         {
             execvp(args[0], args); // calls the exec function and runs the program for the child process taking in args
             fprintf(stderr, "Function failed to run.\n");   // print in case of error
-            continue;
+            continue;   // continues the loop/ iteration
         
         // Parent process waits for child to complete
         } else {
