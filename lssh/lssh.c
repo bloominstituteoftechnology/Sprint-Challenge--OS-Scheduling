@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>  // to print error message for chdir() system call     
+// #include <sys/wait.h>   // to call on the wait function
 
 #define PROMPT "lambda-shell$ "
 
@@ -87,7 +88,7 @@ int main(void)
 
         // Exit the shell if args[0] is the built-in "exit" command
         if (strcmp(args[0], "exit") == 0) {
-            break;
+            exit(1);
         }
 
         #if DEBUG
@@ -110,7 +111,7 @@ int main(void)
             if (args_count != 2 ) //error handling; if arguments passed are not equal to 2
             {  
                 fprintf(stderr, "Error. Please enter correct directory format: cd <directory_name>\n"); // print this error message
-                continue;
+                continue; // continues the loop/ iteration
             }
 
             // Run the chdir() system call on the second argument args[1] to change directories
@@ -122,21 +123,24 @@ int main(void)
             continue;
         }
 
-       
+
         //Fork a child process to run the new command
         pid_t child_pid = fork(); // initialize child_pid and set it to the fork system call; pid_t is a data type for representing a process ID 
 
         // error handling
-        if (child_pid < 0) {
-            fprintf(stderr, "fork failed\n");   // if fork failed, print error message
+        if (child_pid < 0) 
+        {
+            fprintf(stderr, "Fork failed.\n");   // if fork failed, print error message
             continue;    
+        }
 
         // Exec the command in the child process
         // Exec functions replaces the current process with the new process called by exec
         // This means that the child process can run a program different from what the parent is running
-        if (child_pid == 0) {
-            execvp(args[0], args); // runs the program for the child process taking in myargs
-            fprintf(stderr, "Function failed to run.\n" );   // print in case of error  
+        if (child_pid == 0) 
+        {
+            execvp(args[0], args); // calls the exec function and runs the program for the child process taking in args
+            fprintf(stderr, "Function failed to run.\n");   // print in case of error
             continue;
         
         // Parent process waits for child to complete
