@@ -4,7 +4,7 @@
 // and declares miscellaneous functions
 #include <string.h>//string functions/macros
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "lambda-shell-bg$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -112,6 +112,22 @@ int main(void)
 
             continue;
         }
+        //bg=background, a boolean value, initially set to false
+        int bg = 0;
+        // check for the & at the end of the args array
+        if (strcmp(args[args_count-1], "&") == 0)
+        {
+            // flip boolean value to true to indicate background
+            // task should be enabled.
+            bg = 1;
+            // drop the &
+            args[args_count-1] = NULL;
+        }
+
+        // this empty loop will just call wait() repeatedly until there are
+        // no more zombie processes to reap, then the program continues on
+        while(wait(NULL) > 0)
+            ; 
 
         #if DEBUG
 
@@ -145,7 +161,16 @@ int main(void)
         else
         {
             // parent context
-            wait(NULL);
+            // if the background is false, we wait.
+            if (!bg)
+            {
+                wait(NULL);
+            }
+            else
+            {
+                // not necessary, but more explicit
+                continue;
+            }
         }
         
     }
