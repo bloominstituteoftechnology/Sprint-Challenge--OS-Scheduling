@@ -3,8 +3,11 @@
 #include <unistd.h>//defines miscellaneous symbolic constants and types,
 // and declares miscellaneous functions
 #include <string.h>//string functions/macros
+#include <fcntl.h>// file control, allows use of O_CREATE and O_WONLY
+// O_CREATE = create file if it does not exist
+// O_WONLY = open for writing only
 
-#define PROMPT "lambda-shell$ "
+#define PROMPT "lambda-shell-redir$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
@@ -113,6 +116,17 @@ int main(void)
             continue;
         }
 
+        char *redir_outfile = NULL;
+        //check for >
+        for (int i=0; i<args_count; i++)
+        {
+            if (strcmp(args[i], ">") == 0)
+            {
+                redir_outfile = args[i+1];
+                args[i] = NULL;
+            }
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -135,6 +149,26 @@ int main(void)
         //more checking
         if (child_pid == 0)
         {
+            // change stdout to refer to the input file
+            if (redir_outfile != NULL)
+            {
+                //fd = file descriptor
+                int fd = open(redir_outfile, O_CREAT|O_WRONLY);
+
+                if (fd < 0)
+                {
+                    fprintf(stderr, "Failed to open file: %s\n", redir_outfile);
+                    continue;
+                }
+                else
+                {
+                    //standard output redirection
+                    dup2(fd, 1);   
+                }
+
+
+
+            }
             //in child process context
             // execvp is used because we can pass arrays as arguements
             execvp(args[0], args);
