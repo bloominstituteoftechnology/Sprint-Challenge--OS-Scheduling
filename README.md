@@ -6,9 +6,18 @@ Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
 
+An operating system handles the following: 
+a. It manages Processes and scheduling through the CPU.
+b. It allocates the memory resource in RAM to programs/processes allowing them to run.
+c. Facilitating I/O requests for I/O (input/output) devices. 
+
 2. Describe the job of the Scheduler in the OS in general.
 
+The Scheduler basically handles or "schedules" how and when the different processes/ programs in a computer are run. It is a mechanism that swap processes in the CPU. It has 3 criteria which create a Good Scheduling Scheme: Fair, Turnaround, and Priority/ Response Time.  
+
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+MLFQ stands for Multi-Level Feedback Queue. It is a scheduling algorithm that strikes a good balance of the above criteria. Unlike the regular queue, MLFQ holds multiple queues and each queue holds processes of different priorities. The highest priority processes are at the top queue. They don't require a lot of time to run. By default, all new processes are treated as top/high priority processes and they all go to the top queue. After the set cpu time and some programs still need more time to run, they are then trasnferred to the lower queues. This way, all programs/ processes are fairly given the chance to run as a top priority.  
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
