@@ -5,14 +5,27 @@
 Add your answers inline, below, with your pull request.
 
 1. Name at least three things that a general-purpose operating system is responsible for handling.
+   A:
+   An operating system is a set of programs that lies between applications software and the computer hardware. It's three main functions are:
+
+- 1. manage the computer's resources, such as the CPU, memory, disk drives, etc. (scheduling, memory allocation)
+- 2. establish a user interface (GUI to make it easy for users)
+- 3. execute and provide services for applications software
 
 2. Describe the job of the Scheduler in the OS in general.
+   A:
+
+- The process scheduling is the activity of the process manager that handles the removal of the running process from the CPU and the selection of another process on the basis of a particular strategy. The main task of a scheduler is to select the jobs to be submitted and decide which process to run at what time.
 
 3. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+   A:
+
+- The benefits of the Multi-level feedback queue over a round-robin scheduler is that the MLFQ does a much better job of giving processes appropriate priority. In a round-robin you would jump around from one process to the other with the main goal being fairness through equal time for each process that would cycle through until completed, while a MLFQ prioritizes turnover, and will drop your priority level if the process requires more time.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
 Important Safety Tip: Resist the urge to start coding until you:
+
 1. Read this complete challenge
 
 then
@@ -20,6 +33,7 @@ then
 2. Inventory the code and figure out what needs to be written where.
 
 ### Task 1: Implement the Ability to Execute Arbitrary Commands
+
 This program implements a new shell that you can use to run commands from in Unix, similar to bash!
 
 At the end of the day, you should be able to run your shell, then run commands within it like in the following example.
@@ -28,7 +42,7 @@ At the end of the day, you should be able to run your shell, then run commands w
 the user types in their names. And also the shell should be able to run _any_ command, not just `ls` and `head`.**
 
 ```
-[bash]$ ./lssh 
+[bash]$ ./lssh
 lambda-shell$ ls -l
 total 32
 -rwxr-xr-x  1 beej  staff  9108 Mar 15 13:28 lssh
@@ -45,30 +59,30 @@ lambda-shell$ head lssh.c
 #define COMMANDLINE_BUFSIZE 1024
 #define DEBUG 0  // Set to 1 to turn on some debugging output
 lambda-shell$ exit
-[bash]$ 
+[bash]$
 ```
 
 General plan of attack is to:
 
-* Loop until the user exits.
-  * Print a prompt.
-  * Read a line of input from the keyboard.
-  * Parse that line down into individual space-separated parts of the command.
-  * Fork a child process to run the new command.
-  * Exec the command in the child process.
-  * Parent process waits for child to complete.
+- Loop until the user exits.
+  - Print a prompt.
+  - Read a line of input from the keyboard.
+  - Parse that line down into individual space-separated parts of the command.
+  - Fork a child process to run the new command.
+  - Exec the command in the child process.
+  - Parent process waits for child to complete.
 
 Most of the shell's boilerplate is already written, but you'll have to implement the logic of it.
 
 Examine the `lssh.c` file and:
 
-* Determine which parts of the program do what.
-* Read the header comments.
-* Find the parts you need to implement.
-* Come up with an individual plan of attack for each of those parts.
-* Determine how to exit the shell.
-* What happens if you build it?
-* What happens if you run it?
+- Determine which parts of the program do what.
+- Read the header comments.
+- Find the parts you need to implement.
+- Come up with an individual plan of attack for each of those parts.
+- Determine how to exit the shell.
+- What happens if you build it?
+- What happens if you run it?
 
 Hint: you probably want one of the `exec` variants that has the `p` suffix on it so that the `PATH` will be searched for the file you're trying to run. Choose
 your `exec` variant carefully. Some will be hard-to-impossible to use. Some will be easy.
@@ -104,7 +118,7 @@ lambda-shell$ pwd
 /Users/example
 lambda-shell$ cd foobar
 chdir: No such file or directory
-lambda-shell$ 
+lambda-shell$
 ```
 
 If the user entered `cd` as the first argument:
@@ -158,7 +172,6 @@ Mini stretch challenge: wait for the `SIGCHLD` signal and put the above `while` 
 Note that you might get weird output when doing this, like the prompt might appear before the program completes, or not at all if the program's output overwrites it. If it looks like it hangs at the end, just hit `RETURN` to get
 another prompt back.
 
-
 ### Stretch Goal 2: File Redirection
 
 In bash, you can redirect the output of a program into a file with `>`. This creates a new file and puts the output of the command in there instead of writing it to the screen.
@@ -173,16 +186,19 @@ Check the `args` array for a `>`. If it's there:
 2. Strip everything out of `args` from the `>` on. (Set the `args` element with
    the `>` in it to `NULL`).
 3. In the child process:
-    1. `open()` the file for output. Store the resultant file descriptor in a
-       variable `fd`.
-    2. Use the `dup2()` system call to make `stdout` (file descriptor `1`) refer
-       to the newly-opened file instead:
 
-	    ```c
-		int fd = open(...
-		dup2(fd, 1);  // Now stdout goes to the file instead
-		```
-	3. `exec` the program like normal.
+   1. `open()` the file for output. Store the resultant file descriptor in a
+      variable `fd`.
+   2. Use the `dup2()` system call to make `stdout` (file descriptor `1`) refer
+      to the newly-opened file instead:
+
+      ````c
+      		int fd = open(...
+      		dup2(fd, 1);  // Now stdout goes to the file instead
+      		```
+      ````
+
+   3. `exec` the program like normal.
 
 Note that depending on your [`umask`](https://en.wikipedia.org/wiki/Umask), the
 newly-created file might not be actually readable by you. If you can't read it, run `chmod 600 filename` on the new file and then you'll have permission.
