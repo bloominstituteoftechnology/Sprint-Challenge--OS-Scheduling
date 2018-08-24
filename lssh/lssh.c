@@ -129,7 +129,23 @@ int main(void)
             // argv[i - 1] = NULL;
 
             // execvp(command, argv); // first argument is my file i want to execute and the second is arguments to the file
-            execvp(args[0], args);
+
+            if (strcmp(args[0], "cd") == 0)
+            {
+                if (args_count < 2)
+                    printf("enter directory to change to");
+                else
+                {
+                    int change = chdir(args[1]);
+                    if (change < 0)
+                        perror("chdir");
+                    continue;
+                }
+            }
+            else
+            {
+                execvp(args[0], args);
+            }
         }
         else
         {
