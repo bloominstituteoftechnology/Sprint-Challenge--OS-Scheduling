@@ -110,8 +110,21 @@ int main(void)
                 fprintf(stderr, "Failed to switch directory to %s\n", args[1]);
             }
 
-            continue;
+            continue; // Execute a continue statement to short-circuit the rest of the main loop
         }
+        int bg = 0; // initialize a bg variable to signify state of background task (disabled as default or enabled)
+
+        // Checking to see if the end of the args array contains an &
+        if (strcmp(args[args_count - 1], "&") == 0)
+        {
+            // flip a boolean to indicate background task should be enabled
+            bg = 1;
+            // Strip the & off the args (by setting that pointer to NULL).
+            args[args_count - 1] = NULL;
+        }
+
+        while (wait(NULL) > 0)
+            ;
 
 #if DEBUG
 
@@ -142,8 +155,11 @@ int main(void)
         }
         else
         {
-            //Parent process waits for child to complete
-            int wc = waitpid(rc, NULL, 0);
+            //Parent process waits for child to complete if the bg boolean is false
+            if (!bg)
+            {
+                int wc = waitpid(rc, NULL, 0);
+            }
         }
     }
 
