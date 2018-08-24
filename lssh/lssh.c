@@ -94,6 +94,25 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0)
+        {
+            // grab the path the user specified
+            // make sure the user supplied the path
+            if (args_count != 2)
+            {
+                printf("usage: cd <directory name>\n");
+                continue;
+            }
+
+            if (chdir(args[1]) < 0)
+            {
+                fprintf(stderr, "Failed to switch directory to %s\n", args[1]);
+                continue;
+            }
+
+            continue;
+        }
+
         #if DEBUG
 
         // Some debugging output
