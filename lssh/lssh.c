@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -89,20 +90,59 @@ int main(void)
             break;
         }
 
+        // Checks to see if cd is in args[0]
+            // Checks to see if 2 arguments are passed into args
+                // Run 'chdir', print error if returns -1
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count == 2) {
+                if (chdir(args[1])== -1) perror("chdir");
+                chdir(args[1]);
+            }
+            continue;
+        }
+
+        // Stretch Goal #1: Background Tasks Progress
+        // Check to see if the last argument is an `&`.
+            // Strip the `&` off the `args` (by setting that pointer to `NULL`).
+        if (strcmp(args[args_count - 1], "&") == 0) {
+            args[args_count - 1] = NULL;
+            continue;
+        }
+
+        // Stretch Goal #2: File Redirection Progress 
+        // if (strcmp(args[0], ">") == 0) {
+        //     const filename = args[1];
+            
+        //     args[0] = NULL;
+        // }
+
+
         #if DEBUG
 
         // Some debugging output
 
         // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
-            printf("%d: '%s'\n", i, args[i]);
-        }
+        // for (int i = 0; args[i] != NULL; i++) {
+        //     printf("%d: '%s'\n", i, args[i]);
+        // }
 
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        // * Fork a child process to run the new command.
+        // * Exec the command in the child process.
+        // * Parent process waits for child to complete.
+        int rc = fork();
+        if (rc < 0) {
+            fprintf(stderr, "Fork Failed\n");
+            exit(1);
+        } 
+        else if (rc == 0) { 
+            execvp(args[0], args);
+        }
+        else { 
+            waitpid(rc, NULL, 0);
+        }
     }
-
     return 0;
 }
