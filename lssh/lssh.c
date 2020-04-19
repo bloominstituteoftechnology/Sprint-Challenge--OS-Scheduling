@@ -32,7 +32,6 @@
 char **parse_commandline(char *str, char **args, int *args_count)
 {
     char *token;
-    
     *args_count = 0;
 
     token = strtok(str, " \t\n\r");
@@ -45,7 +44,7 @@ char **parse_commandline(char *str, char **args, int *args_count)
 
     args[*args_count] = NULL;
 
-    return args;
+    return args; 
 }
 
 /**
@@ -101,8 +100,55 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
-    }
+        // pid_t parentID;
+        int result;
+        pid_t childProcess = fork(); //fork a child process to run a new command
 
-    return 0;
+        // if (childProcess < 0)
+        // {
+        //     fprintf(stderr, "fork failed \n"); // call error if fork fails
+        //     continue; // don't break out of the shell
+        // }
+        // else if (childProcess == 0)
+        //     //in the childprocess's context
+        // {
+        //     if (strcmp(args[0], "cd") == 0 && args_count == 2)
+        //     {
+        //         result = chdir(args[1]);
+        //         if (result == -1)
+        //         {
+        //             perror("chdir");
+        //         }
+        //     }
+
+        //     execvp(args[0], args);
+        //     continue;
+        // }
+        // else
+        // {
+        //     int waitProcessID = waitpid(childProcess, NULL, 0);
+        // }
+
+        if (childProcess < 0)
+        {
+            fprintf(stderr, "fork failed \n"); // call error if fork fails
+            continue; // don't break out of the shell
+        }
+
+        if (childProcess == 0)
+        {
+            // in the child's process context
+            execvp(args[0], args); //call execvp
+            // childprocess failed to transform into the program that we specified
+            fprintf(stderr, "Exec failed\n");
+            exit(1); //exit from this context. The child will exit but the parent will continue
+
+        } else {
+            // back in the parent context. The parent doesn't finish execution until the child finishes
+            wait(NULL); // will wait for all child processes to finish
+
+        }
+
+        return 0;
+    }
 }
